@@ -9,8 +9,6 @@
   <ItemGroup>
     <Folder Include="css_C\" />
     <Folder Include="css_E\" />
-    <Folder Include="css_R\" />
-    <Folder Include="css_L\" />
   </ItemGroup>
 
   <ItemGroup>
