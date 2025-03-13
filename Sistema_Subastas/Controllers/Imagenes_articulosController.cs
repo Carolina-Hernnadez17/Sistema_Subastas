@@ -46,9 +46,10 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Imagenes_articulos/Create
-        public IActionResult Create()
+        public IActionResult Create(int articulo_id)
         {
-            return View();
+            var model = new imagenes_articulos { articulo_id = articulo_id };
+            return View(model);
         }
 
 

@@ -59,7 +59,10 @@ namespace Sistema_Subastas.Controllers
             {
                 _context.Add(articulos);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                int articuloId = articulos.Id;
+
+                return RedirectToAction("Create", "Imagenes_articulos", new { articulo_id = articuloId });
             }
             return View(articulos);
         }
