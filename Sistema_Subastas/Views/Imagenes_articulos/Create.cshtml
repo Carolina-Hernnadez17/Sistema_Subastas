@@ -1,0 +1,38 @@
+﻿@model Sistema_Subastas.Models.imagenes_articulos
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>imagenes_articulos</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="articulo_id" class="control-label"></label>
+                <input asp-for="articulo_id" class="form-control" />
+                <span asp-validation-for="articulo_id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="url_imagen" class="control-label"></label>
+                <input asp-for="url_imagen" class="form-control" />
+                <span asp-validation-for="url_imagen" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

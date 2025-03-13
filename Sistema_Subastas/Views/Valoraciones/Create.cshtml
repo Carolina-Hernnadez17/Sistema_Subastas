@@ -1,0 +1,53 @@
+﻿@model Sistema_Subastas.Models.valoraciones
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>valoraciones</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="usuario_valorado_id" class="control-label"></label>
+                <input asp-for="usuario_valorado_id" class="form-control" />
+                <span asp-validation-for="usuario_valorado_id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="usuario_que_valora_id" class="control-label"></label>
+                <input asp-for="usuario_que_valora_id" class="form-control" />
+                <span asp-validation-for="usuario_que_valora_id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="puntuacion" class="control-label"></label>
+                <input asp-for="puntuacion" class="form-control" />
+                <span asp-validation-for="puntuacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="comentario" class="control-label"></label>
+                <input asp-for="comentario" class="form-control" />
+                <span asp-validation-for="comentario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fceha" class="control-label"></label>
+                <input asp-for="fceha" class="form-control" />
+                <span asp-validation-for="fceha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

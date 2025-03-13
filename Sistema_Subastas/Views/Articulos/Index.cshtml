@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Sistema_Subastas.Models.articulos>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.estado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.precio_salida)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.precio_venta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fecha_inicio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fecha_fin)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.usuario_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.estado_subasta)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.estado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.precio_salida)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.precio_venta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fecha_inicio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fecha_fin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.usuario_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.estado_subasta)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

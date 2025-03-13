@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Sistema_Subastas.Models.valoraciones>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.usuario_valorado_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.usuario_que_valora_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.puntuacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.comentario)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fceha)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.usuario_valorado_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.usuario_que_valora_id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.puntuacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.comentario)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fceha)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

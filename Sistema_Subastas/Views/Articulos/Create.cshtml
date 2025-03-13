@@ -1,0 +1,73 @@
+﻿@model Sistema_Subastas.Models.articulos
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>articulos</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="titulo" class="control-label"></label>
+                <input asp-for="titulo" class="form-control" />
+                <span asp-validation-for="titulo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="descripcion" class="control-label"></label>
+                <input asp-for="descripcion" class="form-control" />
+                <span asp-validation-for="descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="estado" class="control-label"></label>
+                <input asp-for="estado" class="form-control" />
+                <span asp-validation-for="estado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="precio_salida" class="control-label"></label>
+                <input asp-for="precio_salida" class="form-control" />
+                <span asp-validation-for="precio_salida" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="precio_venta" class="control-label"></label>
+                <input asp-for="precio_venta" class="form-control" />
+                <span asp-validation-for="precio_venta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fecha_inicio" class="control-label"></label>
+                <input asp-for="fecha_inicio" class="form-control" />
+                <span asp-validation-for="fecha_inicio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fecha_fin" class="control-label"></label>
+                <input asp-for="fecha_fin" class="form-control" />
+                <span asp-validation-for="fecha_fin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="usuario_id" class="control-label"></label>
+                <input asp-for="usuario_id" class="form-control" />
+                <span asp-validation-for="usuario_id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="estado_subasta" class="control-label"></label>
+                <input asp-for="estado_subasta" class="form-control" />
+                <span asp-validation-for="estado_subasta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
