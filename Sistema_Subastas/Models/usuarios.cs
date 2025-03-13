@@ -14,7 +14,6 @@ namespace Sistema_Subastas.Models
         public string telefono { get; set; }
         public string direccion { get; set; }
         public string contrasena { get; set; }
-        public float reputacion { get; set; }
         public DateTime fecha_registro { get; set; }
 
     }

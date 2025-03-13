@@ -53,7 +53,7 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,reputacion,fecha_registro")] usuarios usuarios)
+        public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro")] usuarios usuarios)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +85,7 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,reputacion,fecha_registro")] usuarios usuarios)
+        public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro")] usuarios usuarios)
         {
             if (id != usuarios.id)
             {
