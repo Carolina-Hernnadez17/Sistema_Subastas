@@ -1,4 +1,4 @@
-﻿@model Sistema_Subastas.Models.imagenes_articulos
+﻿@* @model Sistema_Subastas.Models.imagenes_articulos
 
 @{
     ViewData["Title"] = "Details";
@@ -28,3 +28,17 @@
     <a asp-action="Edit" asp-route-id="@Model?.id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+ *@
+
+@model Sistema_Subastas.Models.imagenes_articulos
+
+<h2>Detalles de la Imagen</h2>
+
+<div>
+    <p><strong>ID:</strong> @Model.id</p>
+    <p><strong>Artículo ID:</strong> @Model.articulo_id</p>
+    <p><strong>Imagen:</strong></p>
+    <img src="@Model.url_imagen" alt="Imagen del artículo" style="width: 300px; height: auto;" />
+</div>
+
+<a asp-action="Index">Volver a la lista</a>

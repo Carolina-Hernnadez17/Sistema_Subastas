@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Sistema_Subastas.Models.imagenes_articulos>
+﻿@* @model IEnumerable<Sistema_Subastas.Models.imagenes_articulos>
 
 @{
     ViewData["Title"] = "Index";
@@ -37,5 +37,38 @@
             </td>
         </tr>
 }
+    </tbody>
+</table>
+ *@
+
+@model IEnumerable<Sistema_Subastas.Models.imagenes_articulos>
+
+<h2>Lista de Imágenes</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Artículo ID</th>
+            <th>Imagen</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.id</td>
+                <td>@item.articulo_id</td>
+                <td>
+                    <img src="@item.url_imagen" alt="Imagen del artículo" style="width: 100px; height: auto;" />
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.id">Detalles</a> |
+                    <a asp-action="Edit" asp-route-id="@item.id">Editar</a> |
+                    <a asp-action="Delete" asp-route-id="@item.id">Eliminar</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
