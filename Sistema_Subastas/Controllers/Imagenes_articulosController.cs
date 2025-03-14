@@ -56,16 +56,16 @@ namespace Sistema_Subastas.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,articulo_id,url_imagen")] imagenes_articulos img_articulos, IFormFile file)
+        public async Task<IActionResult> Create(int articulo_id, List<IFormFile> files)
         {
+            if (files == null || files.Count == 0)
+            {
+                ModelState.AddModelError("files", "Debe seleccionar al menos una imagen.");
+                return View();
+            }
+
             try
             {
-                if (file == null || file.Length == 0)
-                {
-                    ModelState.AddModelError("file", "Debe seleccionar una imagen válida.");
-                    return View(img_articulos);
-                }
-
                 // Configuración de Cloudinary
                 var account = new Account(
                     "daxbwcgw2",
@@ -74,36 +74,45 @@ namespace Sistema_Subastas.Controllers
                 );
                 var cloudinary = new Cloudinary(account);
 
-                var uploadParams = new ImageUploadParams()
+                foreach (var file in files)
                 {
-                    File = new FileDescription(file.FileName, file.OpenReadStream()),
-                    Folder = "Subasta"
-                };
+                    if (file.Length > 0)
+                    {
+                        // Subir archivo a Cloudinary
+                        var uploadParams = new ImageUploadParams()
+                        {
+                            File = new FileDescription(file.FileName, file.OpenReadStream()),
+                            Folder = "Subasta"
+                        };
 
-                var uploadResult = await Task.Run(() => cloudinary.Upload(uploadParams));
+                        var uploadResult = await Task.Run(() => cloudinary.Upload(uploadParams));
 
-                if (uploadResult == null || string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
-                {
-                    ModelState.AddModelError("file", "Error al subir la imagen a Cloudinary.");
-                    return View(img_articulos);
+                        if (uploadResult != null && !string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
+                        {
+                            // Guardar en la base de datos
+                            var imagen = new imagenes_articulos
+                            {
+                                articulo_id = articulo_id,
+                                url_imagen = uploadResult.SecureUrl.ToString()
+                            };
+
+                            _context.imagenes_articulos.Add(imagen);
+                        }
+                    }
                 }
 
-                // Guardar URL en el modelo
-                img_articulos.url_imagen = uploadResult.SecureUrl.ToString();
-
-                // Guardar en la base de datos usando Entity Framework
-                _context.Add(img_articulos);
                 await _context.SaveChangesAsync();
 
-                TempData["SuccessMessage"] = "Imagen agregada exitosamente";
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Imágenes agregadas exitosamente";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "Error al agregar la imagen: " + ex.Message);
-                return View(img_articulos);
+                ModelState.AddModelError("", "Error al subir imágenes: " + ex.Message);
+                return View();
             }
         }
+
 
 
 
