@@ -206,8 +206,10 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<script>
-    $(document).ready(function () {
+@* <script>
+        $(document).ready(function () {
+        //localStorage.setItem("userId", response.userId);
+
         let input = document.querySelector("#telefono");
         let iti = window.intlTelInput(input, {
             initialCountry: "sv", // Cambia esto si quieres otro país por defecto
@@ -215,13 +217,67 @@
             utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/utils.js"
         });
 
-        // Capturar el número formateado antes de enviar el formulario
-        $("#createForm").submit(function () {
+        $("#createForm").submit(function (e) {
             let numeroCompleto = iti.getNumber(); // Obtiene el número con el código del país
-            $("#telefono").val(numeroCompleto); // Guarda el número completo en el input
+            let esValido = iti.isValidNumber(); // Verifica si el número es válido según el país
+
+            if (!esValido) {
+                e.preventDefault(); // Evita el envío del formulario si el número no es válido
+                alert("Por favor, ingrese un número de teléfono válido.");
+            } else {
+                $("#telefono").val(numeroCompleto); // Guarda el número completo en el input
+            }
+        });
+    });
+</script> *@
+<script>
+        $(document).ready(function () {
+        let input = document.querySelector("#telefono");
+        let iti = window.intlTelInput(input, {
+            initialCountry: "sv",
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/utils.js"
+        });
+
+        $("#createForm").submit(function (e) {
+            let numeroCompleto = iti.getNumber();
+            let esValido = iti.isValidNumber();
+
+            if (!esValido) {
+                e.preventDefault();
+                alert("Por favor, ingrese un número de teléfono válido.");
+            } else {
+                $("#telefono").val(numeroCompleto);
+
+                // Realizamos el envío del formulario con AJAX
+                $.ajax({
+                    type: "POST",
+                    url: $(this).attr("action"),
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            // Guardamos el userId en localStorage
+                            localStorage.setItem("userId", response.userId);
+
+                            // También puedes hacer una redirección o mostrar un mensaje de éxito
+                            alert("Usuario creado correctamente.");
+                            window.location.href = "/usuarios/PreguntasSeguridad"; // Redirigir a la página de lista de usuarios
+                        } else {
+                            alert("Hubo un problema al guardar los datos.");
+                        }
+                    },
+                    error: function () {
+                        alert("Hubo un error al enviar los datos.");
+                    }
+                });
+
+                // Evitar que el formulario se envíe de la manera tradicional
+                e.preventDefault();
+            }
         });
     });
 </script>
+
 
 @section Scripts {
     @{

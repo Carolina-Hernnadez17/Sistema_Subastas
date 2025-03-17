@@ -19,5 +19,6 @@ namespace Sistema_Subastas.Models
         public DbSet<seguimiento_subastas> seguimiento_subastas { get; set; }
         public DbSet<usuarios> usuarios { get; set; }
         public DbSet<valoraciones> valoraciones { get; set; }
+        public DbSet<PreguntasSeguridad> PreguntasSeguridad { get; set; }
     }
 }

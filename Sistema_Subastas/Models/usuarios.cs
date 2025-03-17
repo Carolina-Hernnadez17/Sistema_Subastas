@@ -25,7 +25,7 @@ namespace Sistema_Subastas.Models
         public string correo { get; set; }
 
         [Required(ErrorMessage = "El teléfono es obligatorio.")]
-        [Phone(ErrorMessage = "El teléfono no tiene un formato válido.")]
+        [RegularExpression(@"^\+\d{1,3}\s?\d{6,14}$", ErrorMessage = "Número de teléfono no válido.")]
         public string telefono { get; set; }
 
         [Required(ErrorMessage = "La dirección es obligatoria.")]
