@@ -25,6 +25,9 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a id="perfilLink" class="nav-link text-dark" href="#">Mi perfil</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -45,5 +48,27 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var userId = '@TempData["UserId"]';
+
+            if (userId && userId !== "null" && userId !== "") {
+                localStorage.setItem("userId", userId);
+                console.log("Usuario ID guardado en localStorage:", userId);
+            }
+        });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var userId = localStorage.getItem("userId");
+
+            if (userId) {
+                document.getElementById("perfilLink").href = `/Usuarios/Details/${userId}`;
+            } else {
+                document.getElementById("perfilLink").href = "/Usuarios/Login"; // O redirigir a otra página
+            }
+        });
+    </script>
+
 </body>
 </html>

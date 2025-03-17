@@ -18,13 +18,49 @@ namespace Sistema_Subastas.Controllers
             _context = context;
         }
 
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(usuarios usuario)
+        {
+            try
+            {
+                var user = _context.usuarios.FirstOrDefault(u => u.correo == usuario.correo && u.Estado == true);
+
+                if (user == null)
+                {
+                    TempData["Mensaje"] = "Cuenta inexistente o cerrada.";
+                    return RedirectToAction("Login");
+                }
+
+                // Comparar contraseñas directamente (sin hash)
+                if (user.contrasena != usuario.contrasena)
+                {
+                    TempData["Mensaje"] = "Correo o contraseña incorrectos.";
+                    return RedirectToAction("Login");
+                }
+
+                TempData["UserId"] = user.id;
+                return RedirectToAction("Index", "Home");
+
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Mensaje = "Error al realizar el login: " + ex.Message;
+                return View();
+            }
+        }
+
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
             return View(await _context.usuarios.ToListAsync());
         }
 
-        // GET: Usuarios/Details/5
+        //GET: Usuarios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -42,6 +78,7 @@ namespace Sistema_Subastas.Controllers
             return View(usuarios);
         }
 
+
         // GET: Usuarios/Create
         public IActionResult Create()
         {
@@ -53,7 +90,7 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro")] usuarios usuarios)
+        public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
         {
             if (ModelState.IsValid)
             {
@@ -85,7 +122,7 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro")] usuarios usuarios)
+        public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
         {
             if (id != usuarios.id)
             {
