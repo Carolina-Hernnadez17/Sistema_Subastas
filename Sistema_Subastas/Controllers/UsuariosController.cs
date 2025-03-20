@@ -43,6 +43,8 @@ namespace Sistema_Subastas.Controllers
                     TempData["Mensaje"] = "Correo o contraseña incorrectos.";
                     return RedirectToAction("Login");
                 }
+                HttpContext.Session.SetInt32("id_usuario", user.id);
+                HttpContext.Session.SetString("NombreUser", user.nombre);
 
                 TempData["UserId"] = user.id;
                 return RedirectToAction("Index", "Home");
@@ -64,13 +66,20 @@ namespace Sistema_Subastas.Controllers
         //GET: Usuarios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            
+            var usuarioId = HttpContext.Session.GetInt32("usuario_id");
+            //var nombre = HttpContext.Session.GetString("NombreUser");
+            if (usuarioId == null)
+            {
+                return RedirectToAction("Login", "Usuarios");
+            }
             if (id == null)
             {
                 return NotFound();
             }
-
+            
             var usuarios = await _context.usuarios
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.id == usuarioId);
             if (usuarios == null)
             {
                 return NotFound();
@@ -124,96 +133,38 @@ namespace Sistema_Subastas.Controllers
             return View(usuarios);
         }
 
-        // Acción para mostrar el formulario de pregunta de seguridad
-        public IActionResult PreguntasSeguridad(int userId)
+        [HttpGet]
+        public IActionResult PreguntasSeguridad()
         {
-            var preguntas = new List<string>
-            {
-                "¿Cuál es tu color favorito?",
-                "¿En qué ciudad naciste?",
-                "¿Cuál es el nombre de tu primera mascota?",
-                "¿Cuál es tu comida favorita?"
-            };
-            var preguntas2 = new List<string>
-            {
-                "¿Cuál es el nombre de tu abuela materna?",
-                "¿Cuál fue tu primer trabajo?",
-                "¿Cuál es tu película favorita?",
-                "¿Cuál era el nombre de tu peluche favorito?"
-            };
-
-            var viewModel = new PreguntasSeguridad
-            {
-                UserId = userId
-            };
-
-            ViewBag.Preguntas = preguntas;
-            ViewBag.Preguntas2 = preguntas2;
-
-            return View(viewModel);
+            return View();
         }
+
 
         [HttpPost]
-        public async Task<IActionResult> GuardarPreguntasSeguridad(int userId, string question1, string answer1, string question2, string answer2)
+        public IActionResult GuardarPreguntas(int userId, string question1, string answer1, string question2, string answer2)
         {
-            if (ModelState.IsValid)
+            var pregunta1 = new PreguntasSeguridad
             {
-                try
-                {
-                    // Crear la primera instancia de PreguntasSeguridad
-                    var pregunta1 = new PreguntasSeguridad
-                    {
-                        UserId = userId,
-                        Question = question1,  // Primera pregunta
-                        Answer = answer1       // Primera respuesta
-                    };
-
-                    // Crear la segunda instancia de PreguntasSeguridad
-                    var pregunta2 = new PreguntasSeguridad
-                    {
-                        UserId = userId,
-                        Question = question2,  // Segunda pregunta
-                        Answer = answer2       // Segunda respuesta
-                    };
-
-                    // Agregar las preguntas a la base de datos
-                    _context.PreguntasSeguridad.AddRange(pregunta1, pregunta2);
-                    await _context.SaveChangesAsync(); // Guardar en la base de datos usando Entity Framework
-
-                    // Redirigir al login después de guardar
-                    return RedirectToAction("Login", "Usuarios");
-                }
-                catch (Exception ex)
-                {
-                    // Si hay un error, mostrar el mensaje de error
-                    ViewBag.Error = "Error al guardar las respuestas: " + ex.Message;
-                    return View("PreguntasSeguridad");  // Volver a la vista con el error
-                }
-            }
-
-            // Si el modelo no es válido, volver a cargar las preguntas
-            ViewBag.Preguntas = new List<string>
-            {
-                "¿Cuál es tu color favorito?",
-                "¿En qué ciudad naciste?",
-                "¿Cuál es el nombre de tu primera mascota?",
-                "¿Cuál es tu comida favorita?"
+                //id = 1,
+                user_id = userId,
+                question = question1,
+                answer = answer1
             };
-            ViewBag.Preguntas2 = new List<string>
-            {
-                "¿Cuál es el nombre de tu abuela materna?",
-                "¿Cuál fue tu primer trabajo?",
-                "¿Cuál es tu película favorita?",
-                "¿Cuál era el nombre de tu peluche favorito?"
-            };
+            _context.Add(pregunta1);
+            _context.SaveChanges();
 
-            return View("PreguntasSeguridad"); // Si hay error, se vuelve a mostrar el formulario
+            var pregunta2 = new PreguntasSeguridad
+            {
+               // id = 2,
+                user_id = userId,
+                question = question2,
+                answer = answer2
+            };
+            _context.Add(pregunta2);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index", "Home"); // Redirige después de guardar
         }
-
-
-
-
-
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

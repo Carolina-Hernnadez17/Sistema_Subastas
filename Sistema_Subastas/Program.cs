@@ -5,6 +5,16 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
+builder.Services.AddControllersWithViews();
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(600);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 //Inyeccion a la base de datos
 // Configurar la conexión a MySQL
@@ -12,8 +22,8 @@ var connectionString = builder.Configuration.GetConnectionString("subastaDbConne
 builder.Services.AddDbContext<subastaDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+
+
 
 
 var app = builder.Build();
@@ -56,8 +66,11 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseSession();
+
+
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Usuarios}/{action=Login}/{id?}");
 
 app.Run();

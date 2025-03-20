@@ -15,6 +15,13 @@ namespace Sistema_Subastas.Controllers
 
         public IActionResult Index()
         {
+            var usuario = HttpContext.Session.GetInt32("usuario_id");
+            var nombre = HttpContext.Session.GetString("NombreUser");
+            if(usuario == null && nombre == null)
+            {
+                return RedirectToAction("Login", "Usuarios");
+            }
+            ViewBag.NombreUsuario = nombre;
             return View();
         }
 

@@ -261,7 +261,8 @@
 
                             // También puedes hacer una redirección o mostrar un mensaje de éxito
                             alert("Usuario creado correctamente.");
-                            window.location.href = "/usuarios/PreguntasSeguridad"; // Redirigir a la página de lista de usuarios
+                            window.location.href = '@Url.Action("PreguntasSeguridad", "Usuarios")' + '?userId=' + response.userId;
+
                         } else {
                             alert("Hubo un problema al guardar los datos.");
                         }
