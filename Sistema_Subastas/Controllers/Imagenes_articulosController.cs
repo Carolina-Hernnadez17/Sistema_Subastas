@@ -16,6 +16,7 @@ namespace Sistema_Subastas.Controllers
     {
         private readonly subastaDbContext _context;
         private MySqlConnection conexion;
+
         public Imagenes_articulosController(subastaDbContext context)
         {
             _context = context;
@@ -24,26 +25,53 @@ namespace Sistema_Subastas.Controllers
         // GET: Imagenes_articulos
         public async Task<IActionResult> Index()
         {
-            return View(await _context.imagenes_articulos.ToListAsync());
-        }
+            var imagenes = await _context.imagenes_articulos
+                                .GroupBy(img => img.articulo_id)
+                                .Select(g => g.First())
+                                .ToListAsync();
 
+            var articulos = await _context.articulos.ToListAsync();
+            var categorias = await _context.categorias.ToListAsync();
+
+            ViewBag.Articulos = articulos;
+            ViewBag.Categorias = categorias;
+
+            return View(imagenes);
+
+
+        }
         // GET: Imagenes_articulos/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
+
+
             var imagenes_articulos = await _context.imagenes_articulos
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.articulo_id == id);
+
+            var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
+            ViewBag.Articulos = articulo;
+
+            DateTime fecha_cierre = Convert.ToDateTime(articulo.fecha_fin);
+            DateTime fecha_actual = DateTime.UtcNow;
+
+            TimeSpan fecha_res = fecha_cierre - fecha_actual;
+            
+
+            ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
+
             if (imagenes_articulos == null)
             {
                 return NotFound();
             }
-
+            
             return View(imagenes_articulos);
         }
+      
 
         // GET: Imagenes_articulos/Create
         public IActionResult Create(int articulo_id)
@@ -58,11 +86,7 @@ namespace Sistema_Subastas.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int articulo_id, List<IFormFile> files)
         {
-            if (files == null || files.Count == 0)
-            {
-                ModelState.AddModelError("files", "Debe seleccionar al menos una imagen.");
-                return View();
-            }
+            
 
             try
             {
@@ -279,6 +303,13 @@ namespace Sistema_Subastas.Controllers
         private bool imagenes_articulosExists(int id)
         {
             return _context.imagenes_articulos.Any(e => e.id == id);
+        }
+
+        public void tiempo_restante()
+        {
+           
+
+
         }
     }
 }
