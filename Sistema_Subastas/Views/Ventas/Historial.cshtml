@@ -1,0 +1,42 @@
+﻿@model List<Sistema_Subastas.Models.HistorialVenta>
+
+@{
+    ViewData["Title"] = "Historial de Ventas";
+}
+
+<h2>Historial de Ventas</h2>
+
+<p>Ventas cargadas: @Model?.Count()</p>
+
+@if (Model != null && Model.Count > 0)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Precio Final</th>
+                <th>Fecha de Cierre</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var venta in Model)
+            {
+                <tr>
+                    <td>@venta.Nombre</td>
+                    <td>@venta.Descripcion</td>
+                    <td>$@venta.PrecioFinal</td>
+                    <td>@venta.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@venta.EstadoTransaccion</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">
+        No tienes ventas registradas aún.
+    </div>
+}
