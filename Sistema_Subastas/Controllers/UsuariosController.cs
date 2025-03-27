@@ -66,20 +66,21 @@ namespace Sistema_Subastas.Controllers
         //GET: Usuarios/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            
-            var usuarioId = HttpContext.Session.GetInt32("usuario_id");
-            //var nombre = HttpContext.Session.GetString("NombreUser");
-            if (usuarioId == null)
-            {
-                return RedirectToAction("Login", "Usuarios");
-            }
+
+            //var usuarioId = HttpContext.Session.GetInt32("usuario_id");
+            //var jiji = HttpContext.
+            ////var nombre = HttpContext.Session.GetString("NombreUser");
+            //if (usuarioId == null)
+            //{
+            //    return RedirectToAction("Login", "Usuarios");
+            //}
             if (id == null)
             {
                 return NotFound();
             }
             
             var usuarios = await _context.usuarios
-                .FirstOrDefaultAsync(m => m.id == usuarioId);
+                .FirstOrDefaultAsync(m => m.id == id);
             if (usuarios == null)
             {
                 return NotFound();
@@ -98,40 +99,72 @@ namespace Sistema_Subastas.Controllers
         // POST: Usuarios/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
         //public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
         //{
-        //    if (ModelState.IsValid)
+        //    try
         //    {
-        //        _context.Add(usuarios);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
+
+        //        if (ModelState.IsValid)
+        //        {
+        //            if (usuarios.correo != null)
+        //            {
+        //                ViewBag.Error = "El correo ya existe ingrese uno nuevo.";
+
+        //            }
+        //            _context.Add(usuarios);
+        //            await _context.SaveChangesAsync(); // Guarda los cambios en la BD
+
+        //            // Obtener el ID del usuario recién insertado
+        //            int userId = usuarios.id; // Como `id` es clave primaria con autoincrement, EF lo asigna automáticamente
+
+        //            return Json(new { success = true, userId = userId });
+        //        }
+
+        //        return View(usuarios);
         //    }
-        //    // Obtener el ID del usuario recién insertado
-        //    string getUserIdQuery = "SELECT LAST_INSERT_ID()";
-        //    MySqlCommand getUserIdCmd = new MySqlCommand(getUserIdQuery, conn);
-        //    int userId = Convert.ToInt32(getUserIdCmd.ExecuteScalar());
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.Mensaje = "Error al realizar el guardado de datos: " + ex.Message;
+        //        return View();
+        //    }
 
-        //    return Json(new { success = true, userId = userId });
-        //    return View(usuarios);
         //}
-
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(usuarios);
-                await _context.SaveChangesAsync(); // Guarda los cambios en la BD
+                if (ModelState.IsValid)
+                {
+                    // Verificar si el correo ya existe en la base de datos
+                    bool correoExiste = await _context.usuarios.AnyAsync(u => u.correo == usuarios.correo);
+                    if (correoExiste)
+                    {
+                        ModelState.AddModelError("correo", "El correo ya existe, ingrese uno nuevo.");
+                        return Json(new { success = false, message = "El correo ya existe, ingrese uno nuevo." });
+                    }
 
-                // Obtener el ID del usuario recién insertado
-                int userId = usuarios.id; // Como `id` es clave primaria con autoincrement, EF lo asigna automáticamente
+                    _context.Add(usuarios);
+                    await _context.SaveChangesAsync(); // Guarda los cambios en la BD
 
-                return Json(new { success = true, userId = userId });
+                    // Obtener el ID del usuario recién insertado
+                    int userId = usuarios.id;
+
+                    return Json(new { success = true, userId = userId });
+                }
+
+                return Json(new { success = false, message = "Datos inválidos, revise el formulario." });
             }
-
-            return View(usuarios);
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al realizar el guardado de datos: " + ex.Message });
+            }
         }
+
+
 
         [HttpGet]
         public IActionResult PreguntasSeguridad()
