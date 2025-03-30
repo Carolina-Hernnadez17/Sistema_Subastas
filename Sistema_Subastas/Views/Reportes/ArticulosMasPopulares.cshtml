@@ -1,0 +1,35 @@
+﻿@model dynamic
+
+@{
+    ViewData["Title"] = "Reporte de Artículos Más Populares";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<h3>Reporte de Artículos por Pujas Recibidas</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre del Artículo</th>
+            <th>Categoría</th>
+            <th>Número de Pujas</th>
+            <th>Precio Actual Más Alto</th>
+            <th>Fecha Límite de Subasta</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.ReportePorPujas)
+        {
+            <tr>
+                <td>@item.titulo</td>
+                <td>@item.Categoria</td>
+                <td>@item.NumeroDePujas</td>
+                <td>@item.PrecioMaximo</td>
+                <td>@item.fecha_fin.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+<a href="@Url.Action("DescargarReportePdf")" class="btn btn-primary">Descargar Reporte en PDF</a>
