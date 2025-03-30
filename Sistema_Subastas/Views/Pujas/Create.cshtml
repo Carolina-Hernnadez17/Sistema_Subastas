@@ -1,48 +1,49 @@
-﻿@model Sistema_Subastas.Models.pujas
+﻿@model List<Sistema_Subastas.Models.pujas>
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Pujas del Artículo";
+    var articuloId = ViewBag.ArticuloId;
+    var errorMessage = TempData["Error"] as string;
+    var successMessage = TempData["Success"] as string;
 }
 
-<h1>Create</h1>
+<h2>Pujas del Artículo</h2>
 
-<h4>pujas</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="articulo_id" class="control-label"></label>
-                <input asp-for="articulo_id" class="form-control" />
-                <span asp-validation-for="articulo_id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="usuario_id" class="control-label"></label>
-                <input asp-for="usuario_id" class="form-control" />
-                <span asp-validation-for="usuario_id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="monto" class="control-label"></label>
-                <input asp-for="monto" class="form-control" />
-                <span asp-validation-for="monto" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fecha_puja" class="control-label"></label>
-                <input asp-for="fecha_puja" class="form-control" />
-                <span asp-validation-for="fecha_puja" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Monto</th>
+            <th>Usuario</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var puja in Model)
+        {
+            <tr>
+                <td>@puja.monto.ToString("C")</td>
+                <td>@puja.usuario_id</td>
+                <td>@puja.fecha_puja.ToString("dd/MM/yyyy HH:mm")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Realizar una nueva puja</h3>
+<form asp-action="RealizarPuja" method="post">
+    <input type="hidden" name="articuloId" value="@articuloId" />
+    <div class="form-group">
+        <label for="monto">Monto:</label>
+        <input type="number" name="monto" class="form-control" required min="0.01" step="0.01">
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <button type="submit" class="btn btn-primary mt-2">Pujar</button>
+</form>
