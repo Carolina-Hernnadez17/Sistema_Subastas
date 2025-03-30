@@ -5,6 +5,8 @@
     var articuloId = ViewBag.ArticuloId;
     var errorMessage = TempData["Error"] as string;
     var successMessage = TempData["Success"] as string;
+    var articulo = ViewBag.Articulo; // Obtenemos el artículo que está siendo subastado
+    var montoActual = articulo.precio_salida; // Usamos el precio de salida como el monto mínimo
 }
 
 <h2>Pujas del Artículo</h2>
@@ -39,11 +41,21 @@
 </table>
 
 <h3>Realizar una nueva puja</h3>
-<form asp-action="RealizarPuja" method="post">
+<form asp-action="Create" method="post">
     <input type="hidden" name="articuloId" value="@articuloId" />
-    <div class="form-group">
-        <label for="monto">Monto:</label>
-        <input type="number" name="monto" class="form-control" required min="0.01" step="0.01">
-    </div>
-    <button type="submit" class="btn btn-primary mt-2">Pujar</button>
+
+    @* Verificación de si el usuario está autenticado *@
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="form-group">
+            <label for="monto">Monto (Debe ser mayor a @montoActual.ToString("C")):</label>
+            <input type="number" name="monto" class="form-control" required min="@montoActual" step="0.01" placeholder="Ingrese el monto de su puja" />
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-2">Pujar</button>
+    }
+    else
+    {
+        <div class="alert alert-warning">Debe estar autenticado para realizar una puja. <a href="/Account/Login">Iniciar sesión</a></div>
+    }
 </form>
