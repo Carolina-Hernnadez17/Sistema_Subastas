@@ -1,4 +1,6 @@
 ﻿using CloudinaryDotNet.Actions;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
@@ -119,5 +121,83 @@ namespace Sistema_Subastas.Controllers
                 return File(memoryStream.ToArray(), "application/pdf", "Reporte_Articulos_Populares.pdf");
             }
         }
+
+
+        public async Task<IActionResult> UsuariosMasActivos()
+        {
+            var usuariosActivos = await _context.usuarios
+                .Select(u => new
+                {
+                    Nombre = u.nombre,
+                    ArticulosPublicados = _context.articulos.Count(a => a.usuario_id == u.id),
+                    PujasRealizadas = _context.pujas.Count(p => p.usuario_id == u.id),
+                    TotalGastado = _context.pujas
+                        .Where(p => p.usuario_id == u.id)
+                        .Sum(p => (decimal?)p.monto) ?? 0
+                })
+                .OrderByDescending(u => u.PujasRealizadas + u.ArticulosPublicados)
+                .ToListAsync();
+
+            return View(usuariosActivos);
+        }
+
+        public IActionResult DescargarReporteUsuarios()
+        {
+            var usuariosActivos = _context.usuarios
+                .Select(u => new
+                {
+                    Nombre = u.nombre,
+                    ArticulosPublicados = _context.articulos.Count(a => a.usuario_id == u.id),
+                    PujasRealizadas = _context.pujas.Count(p => p.usuario_id == u.id),
+                    TotalGastado = _context.pujas
+                        .Where(p => p.usuario_id == u.id)
+                        .Sum(p => (decimal?)p.monto) ?? 0
+                })
+                .OrderByDescending(u => u.PujasRealizadas + u.ArticulosPublicados)
+                .ToList();
+
+            using (var memoryStream = new System.IO.MemoryStream())
+            {
+                var pdfWriter = new PdfWriter(memoryStream);
+                var pdfDocument = new PdfDocument(pdfWriter);
+                var document = new Document(pdfDocument);
+
+                // Fuente en negrita para el título
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                // Título del reporte
+                document.Add(new Paragraph("Reporte de Usuarios Más Activos")
+                    .SetFont(boldFont)
+                    .SetFontSize(14));
+
+                document.Add(new Paragraph(" "));
+
+                // Tabla con 4 columnas
+                var table = new Table(4);
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Nombre del Usuario").SetFont(boldFont)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Artículos Publicados").SetFont(boldFont)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Pujas Realizadas").SetFont(boldFont)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Total Gastado en Pujas").SetFont(boldFont)));
+
+                // Agregar los datos
+                foreach (var usuario in usuariosActivos)
+                {
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.Nombre)));
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.ArticulosPublicados.ToString())));
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.PujasRealizadas.ToString())));
+
+                    if (usuario.TotalGastado > 0)
+                        table.AddCell(new Cell().Add(new Paragraph(usuario.TotalGastado.ToString("C"))));
+                    else
+                        table.AddCell(new Cell().Add(new Paragraph("N/A")));
+                }
+
+                document.Add(table);
+                document.Close();
+
+                return File(memoryStream.ToArray(), "application/pdf", "Reporte_Usuarios_Activos.pdf");
+            }
+        }
+
     }
 }

@@ -1,0 +1,46 @@
+﻿@model List<dynamic>
+
+@{
+    ViewData["Title"] = "Usuarios Más Activos";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Usuarios Más Activos</h2>
+
+    <div class="text-end mb-3">
+        <a href="@Url.Action("DescargarReporteUsuarios", "Reportes")" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+        </a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nombre del Usuario</th>
+                <th>Artículos Publicados</th>
+                <th>Pujas Realizadas</th>
+                <th>Total Gastado en Pujas</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var usuario in Model)
+            {
+                <tr>
+                    <td>@usuario.Nombre</td>
+                    <td>@usuario.ArticulosPublicados</td>
+                    <td>@usuario.PujasRealizadas</td>
+                    <td>
+                        @if (usuario.TotalGastado > 0)
+                        {
+                            @usuario.TotalGastado.ToString("C")
+                        }
+                        else
+                        {
+                            <span class="text-muted">N/A</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
