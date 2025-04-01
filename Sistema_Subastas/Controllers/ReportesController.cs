@@ -199,5 +199,88 @@ namespace Sistema_Subastas.Controllers
             }
         }
 
+        public async Task<IActionResult> SubastasActivas()
+        {
+            var fechaActual = DateTime.Now;
+
+            var subastasActivas = await _context.articulos
+                .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin > fechaActual)
+                .Select(a => new
+                {
+                    id = a.Id,
+                    Titulo = a.titulo,
+                    PrecioSalida = a.precio_salida,
+                    FechaCierre = a.fecha_fin,
+                    NumeroPujas = _context.pujas.Count(p => p.articulo_id == a.Id)
+                })
+                .OrderBy(a => a.FechaCierre)
+                .ToListAsync();
+
+            return View(subastasActivas);
+        }
+
+        // GET: 
+        public IActionResult DescargarReporteSubastas()
+        {
+            var fechaActual = DateTime.Now;
+
+            var subastasActivas = _context.articulos
+                .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin > fechaActual)
+                .Select(a => new
+                {
+                    id = a.Id,
+                    Titulo = a.titulo,
+                    PrecioSalida = a.precio_salida,
+                    FechaCierre = a.fecha_fin,
+                    NumeroPujas = _context.pujas.Count(p => p.articulo_id == a.Id)
+                })
+                .OrderBy(a => a.FechaCierre)
+                .ToList();
+
+            
+            using (var memoryStream = new MemoryStream())
+            {
+                var pdfWriter = new PdfWriter(memoryStream);
+                var pdfDocument = new PdfDocument(pdfWriter);
+                var document = new Document(pdfDocument);
+
+                
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                
+                document.Add(new Paragraph("Reporte de Subastas Activas")
+                    .SetFont(boldFont)
+                    .SetFontSize(14));
+
+                document.Add(new Paragraph("Fecha de generación: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"))
+                    .SetFontSize(10));
+
+                document.Add(new Paragraph(" "));
+
+                
+                var table = new Table(4);
+
+                
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Título de la subasta").SetFont(boldFont)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Precio inicial").SetFont(boldFont)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Fecha de cierre").SetFont(boldFont)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Número de pujas").SetFont(boldFont)));
+
+                
+                foreach (var item in subastasActivas)
+                {
+                    table.AddCell(new Cell().Add(new Paragraph(item.Titulo)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.PrecioSalida.ToString("C"))));
+                    table.AddCell(new Cell().Add(new Paragraph(item.FechaCierre.ToString("dd/MM/yyyy HH:mm"))));
+                    table.AddCell(new Cell().Add(new Paragraph(item.NumeroPujas.ToString())));
+                }
+
+                document.Add(table);
+                              
+                document.Close();
+                return File(memoryStream.ToArray(), "application/pdf", "Reporte_Subastas_Activas.pdf");
+            }
+        }
     }
 }
+

@@ -1,0 +1,68 @@
+﻿@* Views/Subastas/SubastasActivas.cshtml *@
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Subastas Activas";
+}
+
+<div class="container mt-4">
+    
+    <div class="row mb-3">
+        <div class="col-md-8">
+            <h2>Reporte de Subastas Activas</h2>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>Subastas disponibles</h4>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título de la subasta</th>
+                                    <th>Precio inicial</th>
+                                    <th>Fecha de cierre</th>
+                                    <th>Número de pujas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var subasta in Model)
+                                {
+                                    <tr>
+                                        <td>@subasta.Titulo</td>
+                                        <td>@subasta.PrecioSalida.ToString("F")</td>
+                                        <td>@subasta.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>@subasta.NumeroPujas</td>
+                                        <td>
+                                            <a href="@Url.Action("Details", "Imagenes_articulos", new { id = subasta.id })" >
+                                                Ver detalle
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.Any())
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center">No hay subastas activas en este momento</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 text-right">
+        <a asp-action="DescargarReporteSubastas" class="btn btn-danger">
+            <i class="fas fa-file-pdf"></i> Descargar PDF
+        </a>
+    </div>
+</div>
