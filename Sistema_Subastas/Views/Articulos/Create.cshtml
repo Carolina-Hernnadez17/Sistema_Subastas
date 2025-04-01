@@ -48,19 +48,18 @@
                 <input asp-for="fecha_fin" class="form-control" />
                 <span asp-validation-for="fecha_fin" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="usuario_id" class="control-label"></label>
-                <input asp-for="usuario_id" class="form-control" />
-                <span asp-validation-for="usuario_id" class="text-danger"></span>
-            </div>
+            <input type="hidden" id="userId" name="userId" />
+            
             <div class="form-group">
                 <label for="categoria">Seleccione una categoría:</label>
                 <select name="categoria_id" id="categoria" class="form-control" required>
                     <option value="">Seleccione una opción</option>
+
                     @foreach (var categoria in ViewBag.Categorias)
                     {
-                        <option value="@categoria.Id">@categoria.nombre</option>
+                        <option value="@categoria.Id" >@categoria.nombre</option>
                     }
+                    
                 </select>
             </div>
 
@@ -79,3 +78,13 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let usuarioId = localStorage.getItem("userId");
+
+        if (usuarioId) {
+            document.getElementById("userId").value = usuarioId;
+        }
+    });
+</script>
+

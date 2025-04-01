@@ -57,10 +57,13 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta")] articulos articulos, int categoria_id)
+        public async Task<IActionResult> Create([Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta")] articulos articulos, int categoria_id, int userId)
         {
+            articulos.usuario_id = userId;
+
             if (ModelState.IsValid)
             {
+
                 // Guardar el artículo
                 _context.Add(articulos);
                 await _context.SaveChangesAsync();
@@ -73,7 +76,8 @@ namespace Sistema_Subastas.Controllers
                     var articuloCategoria = new articulo_categoria
                     {
                         articulo_id = articuloId,
-                        categoria_id = categoria_id
+                        categoria_id = categoria_id,
+                        
                     };
 
                     _context.articulo_categoria.Add(articuloCategoria);
@@ -83,8 +87,8 @@ namespace Sistema_Subastas.Controllers
                 return RedirectToAction("Create", "Imagenes_articulos", new { articulo_id = articuloId });
             }
 
-            
-            
+
+
             return View(articulos);
         }
 

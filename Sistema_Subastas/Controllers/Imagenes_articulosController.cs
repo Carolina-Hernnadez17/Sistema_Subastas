@@ -32,8 +32,10 @@ namespace Sistema_Subastas.Controllers
 
             var articulos = await _context.articulos.ToListAsync();
             var categorias = await _context.categorias.ToListAsync();
+            var articuloCategorias = await _context.articulo_categoria.ToListAsync();
 
             ViewBag.Articulos = articulos;
+            ViewBag.ArticuloCategorias = articuloCategorias;
             ViewBag.Categorias = categorias;
 
             return View(imagenes);
@@ -90,7 +92,7 @@ namespace Sistema_Subastas.Controllers
 
             try
             {
-                // Configuración de Cloudinary
+                
                 var account = new Account(
                     "daxbwcgw2",
                     "346927586337937",
@@ -102,7 +104,7 @@ namespace Sistema_Subastas.Controllers
                 {
                     if (file.Length > 0)
                     {
-                        // Subir archivo a Cloudinary
+                        
                         var uploadParams = new ImageUploadParams()
                         {
                             File = new FileDescription(file.FileName, file.OpenReadStream()),
@@ -113,7 +115,7 @@ namespace Sistema_Subastas.Controllers
 
                         if (uploadResult != null && !string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
                         {
-                            // Guardar en la base de datos
+                           
                             var imagen = new imagenes_articulos
                             {
                                 articulo_id = articulo_id,
