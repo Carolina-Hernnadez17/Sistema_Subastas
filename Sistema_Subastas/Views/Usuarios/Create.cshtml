@@ -2,140 +2,234 @@
 
 @{
     ViewData["Title"] = "Create";
+    Layout = null;
 }
 
-<h1>Create</h1>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/intlTelInput.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/css/intlTelInput.min.css">
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/19.5.6/css/intlTelInput.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/19.5.6/js/intlTelInput.min.js"></script>
 
-<!-- CSS de intlTelInput -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css">
 
-<link href="../css_R/Registroo.css" rel="stylesheet" />
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/intlTelInput.min.js"></script>
 
-<!-- Scripts -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/intlTelInput.min.js"></script>
-
-<style>
-    /* Ajustes para el campo de teléfono */
-    .phone-input-container .intl-tel-input {
-        display: table-cell;
-    }
-
-        .phone-input-container .intl-tel-input .selected-flag {
-            z-index: 4;
+    <style>
+        body {
+            background: url('../css_R/Resources_Login/descarga.jpg') no-repeat center center/cover;
+            backdrop-filter: blur(40px);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FCFCFC;
         }
 
-        .phone-input-container .intl-tel-input .country-list {
-            z-index: 5;
+        .register-container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(25, 25, 25, 0.9);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: white;
         }
-</style>
 
-<h4>usuarios</h4>
-<hr />
-<div class="row"> 
-    <div class="col-md-4">
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger">@ViewBag.Error</div>
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 15px;
         }
+
+        .form-control {
+            border-radius: 10px;
+            background: #101010;
+            color: white;
+            border: 1px solid #6f4832;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .btn-register {
+            background-color: #6f4832;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+            width: 100%;
+            font-size: 16px;
+        }
+
+            .btn-register:hover {
+                background-color: #573b29;
+            }
+
+        .color {
+            color: black;
+        }
+
+        .phone-input-container .intl-tel-input {
+            display: table-cell;
+        }
+
+            .phone-input-container .intl-tel-input .selected-flag {
+                z-index: 4;
+            }
+
+            .phone-input-container .intl-tel-input .country-list {
+                z-index: 5;
+            }
+
+        .iti__country-list {
+            background-color: #ffffff; /* Fondo blanco para el desplegable */
+            color: black; /* Texto en negro */
+        }
+
+        .iti__country {
+            color: black !important; /* Asegura que los nombres de los países sean negros */
+        }
+
+            .iti__country:hover,
+            .iti__country:focus {
+                background-color: #f0f0f0; /* Cambia el fondo al pasar el mouse */
+            }
+
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2 class="text-light" style="text-align: center;">Registro de Usuario</h2>
         <form asp-action="Create" id="createForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
-                <label asp-for="nombre" class="control-label"></label>
-                <input asp-for="nombre" class="form-control" />
-                <span asp-validation-for="nombre" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="apellido" class="control-label"></label>
-                <input asp-for="apellido" class="form-control" />
-                <span asp-validation-for="apellido" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="correo" class="control-label"></label>
-                <input asp-for="correo" class="form-control" />
-                <span asp-validation-for="correo" class="text-danger"></span>
-            </div>
-
-            <div class="form-group phone-input-container">
-                <label asp-for="telefono" class="control-label">Teléfono</label>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="nombre" class="control-label"></label>
+                        <input asp-for="nombre" class="form-control" />
+                        <span asp-validation-for="nombre" class="text-danger"></span>
+                    </div>
+                </div>
                 <br />
-                <input type="tel" id="telefono" class="form-control phone-input" name="telefono">
-                <span asp-validation-for="telefono" class="text-danger"></span>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="apellido" class="control-label"></label>
+                        <input asp-for="apellido" class="form-control" />
+                        <span asp-validation-for="apellido" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="direccion" class="control-label"></label>
-                <input asp-for="direccion" class="form-control" />
-                <span asp-validation-for="direccion" class="text-danger"></span>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="correo" class="control-label"></label>
+                        <input asp-for="correo" class="form-control" />
+                        <span asp-validation-for="correo" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="col">
+                    <div class="form-group phone-input-container">
+                        <label asp-for="telefono" class="control-label">Teléfono</label>
+                        <input type="tel" id="telefono" class="form-control phone-input" name="telefono">
+                        <span asp-validation-for="telefono" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="form-group">
-                <label asp-for="contrasena" class="control-label"></label>
-                <input asp-for="contrasena" class="form-control" />
-                <span asp-validation-for="contrasena" class="text-danger"></span>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="direccion" class="control-label"></label>
+                        <input asp-for="direccion" class="form-control" />
+                        <span asp-validation-for="direccion" class="text-danger"></span>
+                    </div>
+                </div>
+                <br />
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="contrasena" class="control-label"></label>
+                        <input asp-for="contrasena" class="form-control" type="password" />
+                        <span asp-validation-for="contrasena" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
+            <br />
 
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <button type="submit" class="btn-register">Crear Cuenta</button>
             </div>
         </form>
+        <a asp-action="Index" class="text-light">Volver a la lista</a>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-<script>
+    <script>
         $(document).ready(function () {
-        let input = document.querySelector("#telefono");
-        let iti = window.intlTelInput(input, {
-            initialCountry: "sv",
-            separateDialCode: true,
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/utils.js"
-        });
+            let input = document.querySelector("#telefono");
+            let iti = window.intlTelInput(input, {
+                initialCountry: "sv",
+                separateDialCode: true,
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/18.1.1/js/utils.js"
+            });
 
-        $("#createForm").submit(function (e) {
-            let numeroCompleto = iti.getNumber();
-            let esValido = iti.isValidNumber();
+            $("#createForm").submit(function (e) {
+                if (!$(this).valid()) {
+                    e.preventDefault();
+                    return;
+                }
 
-            if (!esValido) {
-                e.preventDefault();
-                alert("Por favor, ingrese un número de teléfono válido.");
-            } else {
-                $("#telefono").val(numeroCompleto);
+                let numeroCompleto = iti.getNumber();
+                let esValido = iti.isValidNumber();
 
-                // Realizamos el envío del formulario con AJAX
-                $.ajax({
-                    type: "POST",
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        if (response.success) {
-                            localStorage.setItem("userId", response.userId);
-                            alert("Usuario creado correctamente.");
-                            window.location.href = '@Url.Action("PreguntasSeguridad", "Usuarios")' + '?userId=' + response.userId;
-                        } else {
-                            // Mostrar el mensaje de error en la página
-                            alert(response.message);
+                if (!esValido) {
+                    e.preventDefault();
+                    alert("Por favor, ingrese un número de teléfono válido.");
+                } else {
+                    $("#telefono").val(numeroCompleto);
+                    $.ajax({
+                        type: "POST",
+                        url: $(this).attr("action"),
+                        data: $(this).serialize(),
+                        success: function (response) {
+                            if (response.success) {
+                                localStorage.setItem("userId", response.userId);
+                                alert("Usuario creado correctamente.");
+                                window.location.href = '@Url.Action("PreguntasSeguridad", "Usuarios")' + '?userId=' + response.userId;
+                            } else {
+                                alert(response.message);
+                            }
                         }
-                    }
-
-                });
-
-                // Evitar que el formulario se envíe de la manera tradicional
-                e.preventDefault();
-            }
+                    });
+                    e.preventDefault();
+                }
+            });
         });
-    });
-</script>
-
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.3/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+</body>
+</html>

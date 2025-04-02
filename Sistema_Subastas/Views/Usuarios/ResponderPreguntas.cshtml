@@ -1,0 +1,31 @@
+﻿@{
+    // Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Responder Preguntas de Seguridad</title>
+    <link rel="stylesheet" href="~/css_R/Resources_Login/style.css">
+</head>
+<body>
+    <div class="register-container">
+        <form asp-action="ResponderPreguntas" method="post">
+            <h2>Responda sus preguntas de seguridad</h2>
+            <input type="hidden" name="id" value="@ViewBag.Preguntas[0].user_id">
+            @for (int i = 0; i < ViewBag.Preguntas.Count; i++)
+            {
+                <label>@ViewBag.Preguntas[i].pregunta</label>
+                <input type="text" name="respuesta@(i + 1)" class="form-control" required>
+            }
+            <button type="submit" class="btn-register">Validar</button>
+            @if (ViewBag.Mensaje != null)
+            {
+                <p style="color: red;">@ViewBag.Mensaje</p>
+            }
+        </form>
+    </div>
+</body>
+</html>
+

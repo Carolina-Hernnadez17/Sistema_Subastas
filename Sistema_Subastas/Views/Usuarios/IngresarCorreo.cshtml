@@ -1,0 +1,26 @@
+﻿@{
+    // Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Recuperar Contraseña</title>
+    <link rel="stylesheet" href="~/css_R/Resources_Login/style.css">
+</head>
+<body>
+    <div class="register-container">
+        <form asp-action="IngresarCorreo" method="post">
+            <h2>Ingrese su correo</h2>
+            <input type="email" name="correo" class="form-control" required>
+            <button type="submit" class="btn-register">Continuar</button>
+            @if (ViewBag.Mensaje != null)
+            {
+                <p style="color: red;">@ViewBag.Mensaje</p>
+            }
+        </form>
+    </div>
+</body>
+</html>
+

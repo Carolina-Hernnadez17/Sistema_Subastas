@@ -1,0 +1,22 @@
+﻿@{
+    // Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cambiar Contraseña</title>
+    <link rel="stylesheet" href="~/css_R/Resources_Login/style.css">
+</head>
+<body>
+    <div class="register-container">
+        <form asp-action="CambiarContrasena" method="post">
+            <h2>Ingrese su nueva contraseña</h2>
+            <input type="hidden" name="id" value="@Model.id">
+            <input type="password" name="nuevaContrasena" class="form-control" required>
+            <button type="submit" class="btn-register">Actualizar</button>
+        </form>
+    </div>
+</body>
+</html>
