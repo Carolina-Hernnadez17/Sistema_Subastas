@@ -1,0 +1,130 @@
+﻿@* @{
+    ViewData["Title"] = "Prueba Chart.js";
+}
+
+<div class="container">
+    <h2>Prueba de Chart.js</h2>
+    <div class="row">
+        <div class="col-md-10">
+            <canvas id="testChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+    <div id="status"></div>
+</div>
+
+@section Scripts {
+    <!-- Cargar Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        function obtenerMeses() {
+            return ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusDiv = document.getElementById('status');
+
+            // Verificar si Chart está definido
+            if (typeof Chart === 'undefined') {
+                statusDiv.innerHTML = '<div style="color: red">ERROR: Chart.js no está cargado</div>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<div style="color: green">Chart.js cargado correctamente</div>';
+
+            // Crear un gráfico de prueba simple
+            const ctx = document.getElementById('testChart').getContext('2d');
+
+            // Datos de prueba estáticos
+            const data = {
+                labels: obtenerMeses(),
+                datasets: [{
+                    label: 'Datos de Prueba',
+                    data: [12, 19, 3, 5, 2, 3],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            // Crear el gráfico
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: data,
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+} *@
+
+@{
+    ViewData["Title"] = "Resumen de Usuarios";
+}
+
+<div id="container"></div>
+
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            
+            var datosGrafica = @Html.Raw(ViewBag.DatosGrafica);
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Registro de Usuarios por Mes'
+                },
+                subtitle: {
+                    text: 'Distribución de usuarios registrados'
+                },
+                accessibility: {
+                    announceNewData: {
+                        enabled: true
+                    }
+                },
+                xAxis: {
+                    type: 'category'
+                },
+                yAxis: {
+                    title: {
+                        text: 'Número de usuarios'
+                    }
+                },
+                legend: {
+                    enabled: false
+                },
+                plotOptions: {
+                    series: {
+                        borderWidth: 0,
+                        dataLabels: {
+                            enabled: true,
+                            format: '{point.y}'
+                        }
+                    }
+                },
+                tooltip: {
+                    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                    pointFormat: '<span style="color:{point.color}">{point.name}</span>: ' +
+                        '<b>{point.y}</b> usuarios<br/>'
+                },
+                series: datosGrafica.series
+            });
+        });
+    </script>
+}
