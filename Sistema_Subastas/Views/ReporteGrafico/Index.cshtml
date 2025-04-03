@@ -1,0 +1,79 @@
+﻿@* @{
+    ViewData["Title"] = "Reporte de Usuarios";
+}
+
+<h2>Generar Reporte de Usuarios</h2>
+
+<form asp-controller="ReporteGrafico" asp-action="GenerarPDF" method="post">
+    <div>
+        <label for="fechaInicio">Fecha de inicio:</label>
+        <input type="date" id="fechaInicio" name="fechaInicio" required>
+    </div>
+
+    <div>
+        <label for="fechaFin">Fecha de fin:</label>
+        <input type="date" id="fechaFin" name="fechaFin" required>
+    </div>
+
+    <br>
+
+    <button type="submit">Generar PDF</button>
+</form> *@
+
+@model List<Sistema_Subastas.Models.usuarios>
+
+@{
+    ViewData["Title"] = "Reporte de Usuarios";
+}
+
+<h2 class="text-center">Reporte de Usuarios Registrados</h2>
+
+<form asp-action="GenerarReporte" method="post" class="mt-3">
+    <div class="row">
+        <div class="col-md-4">
+            <label>Fecha Inicio:</label>
+            <input type="date" name="fechaInicio" class="form-control" required />
+        </div>
+        <div class="col-md-4">
+            <label>Fecha Fin:</label>
+            <input type="date" name="fechaFin" class="form-control" required />
+        </div>
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary mt-4">Mostrar Reporte</button>
+        </div>
+    </div>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <div class="mt-4">
+        <h4>Usuarios registrados en el período seleccionado:</h4>
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Fecha de Registro</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.id</td>
+                        <td>@usuario.nombre</td>
+                        <td>@usuario.fecha_registro.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form asp-action="GenerarPDF" method="post">
+            <input type="hidden" name="fechaInicio" value="@ViewData["fechaInicio"]" />
+            <input type="hidden" name="fechaFin" value="@ViewData["fechaFin"]" />
+            <button type="submit" class="btn btn-danger">Descargar PDF</button>
+        </form>
+    </div>
+}
+
+
