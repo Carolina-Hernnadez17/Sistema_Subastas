@@ -281,6 +281,75 @@ namespace Sistema_Subastas.Controllers
                 return File(memoryStream.ToArray(), "application/pdf", "Reporte_Subastas_Activas.pdf");
             }
         }
+
+        public IActionResult SubastasCerradas()
+        {
+            var subastas = _context.usuarios
+                .Select(u => new
+                {
+                    Nombre = u.nombre + " " + u.apellido,
+                    ArticulosVendidos = _context.articulos.Count(a => a.usuario_id == u.id && a.estado_subasta == "Vendido"),
+                    PujasRealizadas = _context.pujas.Count(p => p.usuario_id == u.id),
+                    TotalGastado = _context.pujas.Where(p => p.usuario_id == u.id).Sum(p => (decimal?)p.monto) ?? 0
+                })
+                .Where(s => s.ArticulosVendidos > 0)
+                .ToList();
+
+            ViewBag.Subastas = subastas;
+            return View();
+        }
+
+        public IActionResult DescargarReporteSubastas()
+        {
+            var subastas = _context.usuarios
+                .Select(u => new
+                {
+                    Nombre = u.nombre + " " + u.apellido,
+                    ArticulosVendidos = _context.articulos.Count(a => a.usuario_id == u.id && a.estado_subasta == "Vendido"),
+                    PujasRealizadas = _context.pujas.Count(p => p.usuario_id == u.id),
+                    TotalGastado = _context.pujas.Where(p => p.usuario_id == u.id).Sum(p => (decimal?)p.monto) ?? 0
+                })
+                .Where(s => s.ArticulosVendidos > 0)
+                .ToList();
+
+            if (!subastas.Any())
+            {
+                TempData["Mensaje"] = "No hay subastas cerradas y adjudicadas.";
+                return RedirectToAction("SubastasCerradas");
+            }
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                PdfWriter writer = new PdfWriter(ms);
+                PdfDocument pdf = new PdfDocument(writer);
+                Document document = new Document(pdf);
+
+                document.Add(new Paragraph("Reporte de Subastas Cerradas y Adjudicadas")
+                    .SetFontSize(18)
+                    .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
+
+                document.Add(new Paragraph("\n"));
+
+                Table table = new Table(4);
+                table.AddHeaderCell("Nombre del Usuario");
+                table.AddHeaderCell("Artículos Vendidos");
+                table.AddHeaderCell("Pujas Realizadas");
+                table.AddHeaderCell("Total Gastado en Pujas");
+
+                foreach (var subasta in subastas)
+                {
+                    table.AddCell(subasta.Nombre);
+                    table.AddCell(subasta.ArticulosVendidos.ToString());
+                    table.AddCell(subasta.PujasRealizadas.ToString());
+                    table.AddCell(subasta.TotalGastado > 0 ? subasta.TotalGastado.ToString("C") : "N/A");
+                }
+
+                document.Add(table);
+                document.Close();
+
+                return File(ms.ToArray(), "application/pdf", "Reporte_Subastas_Cerradas.pdf");
+            }
+        }
     }
 }
 

@@ -1,0 +1,46 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Reporte de Subastas Cerradas y Adjudicadas";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            No se encontraron subastas cerradas y adjudicadas.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre de Usuario</th>
+                    <th>Número de Artículos Publicados</th>
+                    <th>Número de Pujas Realizadas</th>
+                    <th>Total Gastado en Pujas</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NombreUsuario</td>
+                        <td>@item.NumeroArticulos</td>
+                        <td>@item.NumeroPujas</td>
+                        <td>@item.TotalGastadoEnPujas.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="mt-4">
+            <a href="@Url.Action("ExportarReporte", "Reportes")" class="btn btn-primary">
+                Exportar a PDF
+            </a>
+        </div>
+    }
+</div>
