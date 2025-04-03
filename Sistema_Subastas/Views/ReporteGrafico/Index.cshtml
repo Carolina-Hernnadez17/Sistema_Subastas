@@ -1,26 +1,4 @@
-﻿@* @{
-    ViewData["Title"] = "Reporte de Usuarios";
-}
-
-<h2>Generar Reporte de Usuarios</h2>
-
-<form asp-controller="ReporteGrafico" asp-action="GenerarPDF" method="post">
-    <div>
-        <label for="fechaInicio">Fecha de inicio:</label>
-        <input type="date" id="fechaInicio" name="fechaInicio" required>
-    </div>
-
-    <div>
-        <label for="fechaFin">Fecha de fin:</label>
-        <input type="date" id="fechaFin" name="fechaFin" required>
-    </div>
-
-    <br>
-
-    <button type="submit">Generar PDF</button>
-</form> *@
-
-@model List<Sistema_Subastas.Models.usuarios>
+﻿@model List<Sistema_Subastas.Models.usuarios>
 
 @{
     ViewData["Title"] = "Reporte de Usuarios";
