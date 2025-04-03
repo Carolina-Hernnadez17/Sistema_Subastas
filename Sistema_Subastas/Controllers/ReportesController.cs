@@ -299,7 +299,7 @@ namespace Sistema_Subastas.Controllers
             return View();
         }
 
-        public IActionResult DescargarReporteSubastas()
+        public IActionResult DescargarReporteSubastasCerrada()
         {
             var subastas = _context.usuarios
                 .Select(u => new
