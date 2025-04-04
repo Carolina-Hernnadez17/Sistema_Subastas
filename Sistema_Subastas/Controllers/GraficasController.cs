@@ -75,6 +75,40 @@ namespace Sistema_Subastas.Controllers
             return View();
         }
 
+        
+        public async Task<IActionResult> RelacionPrecioSalidaFinal()
+        {
+           
+            var articulosVendidos = _subastaDbContext.articulos
+                .Where(a => a.precio_venta != null && a.estado_subasta == "Vendido")
+                .Select(a => new
+                {
+                    Titulo = a.titulo,
+                    PrecioSalida = a.precio_salida,
+                    PrecioFinal = a.precio_venta
+                })
+                .ToList();
 
+            
+            var datosGrafica = new
+            {
+                series = new[]
+                {
+                    new
+                    {
+                        name = "Artículos Subastados",
+                        data = articulosVendidos.Select(a => new object[]
+                        {
+                            a.PrecioSalida,     
+                            a.PrecioFinal,      
+                            a.Titulo            
+                        }).ToArray()
+                    }
+        }
+            };
+
+            ViewBag.DatosGraficaP = JsonConvert.SerializeObject(datosGrafica);
+            return View();
+        }
     }
 }

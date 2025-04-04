@@ -1,0 +1,109 @@
+﻿@{
+    ViewData["Title"] = "Relación entre Precio de Salida y Precio Final";
+}
+
+<div class="container">
+    <div id="container" style="min-height: 500px;"></div>
+</div>
+
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var datosGrafica = @Html.Raw(ViewBag.DatosGraficaP);
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'scatter',
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: 'Relación entre Precio de Salida y Precio Final'
+                },
+                subtitle: {
+                    text: 'Análisis de influencia del precio inicial en el precio final'
+                },
+                xAxis: {
+                    title: {
+                        text: 'Precio de Salida'
+                    },
+                    labels: {
+                        formatter: function() {
+                            return '$' + this.value;
+                        }
+                    },
+                    startOnTick: true,
+                    endOnTick: true,
+                    showLastLabel: true
+                },
+                yAxis: {
+                    title: {
+                        text: 'Precio Final'
+                    },
+                    labels: {
+                        formatter: function() {
+                            return '$' + this.value;
+                        }
+                    }
+                },
+                plotOptions: {
+                    scatter: {
+                        marker: {
+                            radius: 5,
+                            states: {
+                                hover: {
+                                    enabled: true,
+                                    lineColor: 'rgb(100,100,100)'
+                                }
+                            }
+                        },
+                        states: {
+                            hover: {
+                                marker: {
+                                    enabled: false
+                                }
+                            }
+                        },
+                        tooltip: {
+                            headerFormat: '<b>{point.point.z}</b><br>',
+                            pointFormat: 'Precio de salida: ${point.x}<br>Precio final: ${point.y}'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Artículos',
+                    color: 'rgba(70, 130, 180, 0.7)',
+                    data: datosGrafica.series[0].data
+                }]
+            });
+
+            
+            setTimeout(function() {
+                const chart = $('#container').highcharts();
+                if (chart) {
+                    
+                    const xMax = chart.xAxis[0].getExtremes().max;
+                    const yMax = chart.yAxis[0].getExtremes().max;
+                    const maxValue = Math.max(xMax, yMax);
+
+                   
+                    chart.addSeries({
+                        type: 'line',
+                        name: 'Precio Final = Precio Inicial',
+                        data: [[0, 0], [maxValue, maxValue]],
+                        color: 'rgba(223, 83, 83, 0.5)',
+                        dashStyle: 'shortdot',
+                        marker: {
+                            enabled: false
+                        },
+                        enableMouseTracking: false
+                    });
+                }
+            }, 100); 
+        });
+    </script>
+}
