@@ -126,7 +126,7 @@ namespace Sistema_Subastas.Controllers
         public async Task<IActionResult> UsuariosMasActivos()
         {
             var usuariosActivos = await _context.usuarios
-                .Select(u => new
+                .Select(u => new UsuarioActivoViewModel
                 {
                     Nombre = u.nombre,
                     ArticulosPublicados = _context.articulos.Count(a => a.usuario_id == u.id),
@@ -144,7 +144,7 @@ namespace Sistema_Subastas.Controllers
         public IActionResult DescargarReporteUsuarios()
         {
             var usuariosActivos = _context.usuarios
-                .Select(u => new
+                .Select(u => new UsuarioActivoViewModel
                 {
                     Nombre = u.nombre,
                     ArticulosPublicados = _context.articulos.Count(a => a.usuario_id == u.id),
@@ -156,30 +156,26 @@ namespace Sistema_Subastas.Controllers
                 .OrderByDescending(u => u.PujasRealizadas + u.ArticulosPublicados)
                 .ToList();
 
-            using (var memoryStream = new System.IO.MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
                 var pdfWriter = new PdfWriter(memoryStream);
                 var pdfDocument = new PdfDocument(pdfWriter);
                 var document = new Document(pdfDocument);
 
-                // Fuente en negrita para el título
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
-                // Título del reporte
                 document.Add(new Paragraph("Reporte de Usuarios Más Activos")
                     .SetFont(boldFont)
                     .SetFontSize(14));
 
                 document.Add(new Paragraph(" "));
 
-                // Tabla con 4 columnas
                 var table = new Table(4);
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Nombre del Usuario").SetFont(boldFont)));
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Artículos Publicados").SetFont(boldFont)));
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Pujas Realizadas").SetFont(boldFont)));
                 table.AddHeaderCell(new Cell().Add(new Paragraph("Total Gastado en Pujas").SetFont(boldFont)));
 
-                // Agregar los datos
                 foreach (var usuario in usuariosActivos)
                 {
                     table.AddCell(new Cell().Add(new Paragraph(usuario.Nombre)));

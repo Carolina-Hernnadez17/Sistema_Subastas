@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Distribución de Categorías";
+}
+
+<div id="container"></div>
+
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/data.js"></script>
+    <script src="https://code.highcharts.com/modules/drilldown.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var datosGrafica = @Html.Raw(ViewBag.DatosGrafica);
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Distribución de Artículos por Categoría'
+                },
+                subtitle: {
+                    text: 'Proporción de artículos en cada categoría'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y:.1f}%</b>'
+                },
+                accessibility: {
+                    announceNewData: {
+                        enabled: true
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y:.1f} %'
+                        }
+                    }
+                },
+                series: datosGrafica.series
+            });
+        });
+    </script>
+}
