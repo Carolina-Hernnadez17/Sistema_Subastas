@@ -298,8 +298,38 @@ namespace Sistema_Subastas.Controllers
                 var pdfDocument = new PdfDocument(pdfWriter);
                 var document = new Document(pdfDocument);
 
-                
+                // Definir colores
+                Color headerColor = new DeviceRgb(111, 72, 50); // Color #6f4832
+                Color textColor = new DeviceRgb(255, 255, 255);
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                // Agregar el logo arriba centrado
+                string logoPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "logo.png");
+                if (System.IO.File.Exists(logoPath))
+                {
+                    Image img = new Image(ImageDataFactory.Create(logoPath)).ScaleToFit(100, 100);
+                    document.Add(img.SetHorizontalAlignment(HorizontalAlignment.CENTER));
+                }
+
+                // Franja con el nombre de la empresa
+                Table titleTable = new Table(1).UseAllAvailableWidth();
+                titleTable.AddCell(new Cell()
+                    .SetBackgroundColor(headerColor)
+                    .SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things").SetFont(boldFont).SetFontSize(20)));
+                document.Add(titleTable);
+
+                // Información general
+                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFontSize(12));
+                document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetFontSize(12));
+                document.Add(new Paragraph("\n"));
+
+                
 
                 
                 document.Add(new Paragraph("Reporte de Subastas Activas")
@@ -330,7 +360,15 @@ namespace Sistema_Subastas.Controllers
                 }
 
                 document.Add(table);
-                              
+
+                // Pie de página
+                document.Add(new Paragraph("\n"));
+                Table footerTable = new Table(1).UseAllAvailableWidth();
+                footerTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things@email.com | (+503) 2490 8943 | El Salvador")));
+                document.Add(footerTable);
+
                 document.Close();
                 return File(memoryStream.ToArray(), "application/pdf", "Reporte_Subastas_Activas.pdf");
             }
