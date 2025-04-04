@@ -6,6 +6,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
+using Paragraph = iText.Layout.Element.Paragraph;
+
 
 namespace Sistema_Subastas.Controllers
 {
@@ -152,5 +159,57 @@ namespace Sistema_Subastas.Controllers
         {
             return _context.disputas.Any(e => e.id == id);
         }
+
+        public async Task<IActionResult> DescargarReporteDisputas()
+        {
+        var disputas = await _context.disputas.ToListAsync();
+
+            using (var ms = new MemoryStream())
+            {
+                var writer = new PdfWriter(ms);
+                var pdf = new PdfDocument(writer);
+                var document = new Document(pdf);
+
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                document.Add(new Paragraph("Reporte de Disputas Registradas")
+                .SetFontSize(16)
+                .SetFont(boldFont));
+
+
+                document.Add(new Paragraph("Fecha de generación: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm")));
+
+                document.Add(new Paragraph("\n"));
+
+                var table = new Table(6);
+
+                table.AddHeaderCell("Artículo ID");
+                table.AddHeaderCell("Comprador");
+                table.AddHeaderCell("Vendedor");
+                table.AddHeaderCell("Motivo");
+                table.AddHeaderCell("Estado");
+                table.AddHeaderCell("Fecha");
+
+                foreach (var d in disputas)
+                {
+                    table.AddCell(d.articulo_id.ToString());
+                    table.AddCell(d.comprador_id.ToString());
+                    table.AddCell(d.vendedor_id.ToString());
+                    table.AddCell(d.motivo ?? "N/A");
+                    table.AddCell(d.estado ?? "N/A");
+                    table.AddCell(d.fecha.ToString("dd/MM/yyyy HH:mm"));
+                }
+
+                document.Add(table);
+                document.Close();
+
+                return File(ms.ToArray(), "application/pdf", "Reporte_Disputas.pdf");
+            }
+        }
+
+
     }
+
+
+
 }

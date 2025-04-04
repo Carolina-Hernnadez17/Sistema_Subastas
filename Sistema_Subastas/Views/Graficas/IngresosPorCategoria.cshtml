@@ -1,0 +1,59 @@
+﻿@model Sistema_Subastas.Views.Graficas.IngresosPorCategoriaModel
+
+@{
+    ViewData["Title"] = "Ingresos por Categoría";
+}
+
+<h3 class="mt-4">Comparación de Ingresos por Categoría</h3>
+
+<div id="grafico-categorias" style="height: 400px;"></div>
+
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categorias = @Html.Raw(ViewBag.Categorias);
+            const ingresos = @Html.Raw(ViewBag.Ingresos);
+            const articulos = @Html.Raw(ViewBag.Articulos);
+
+            Highcharts.chart('grafico-categorias', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Ingresos por Categoría'
+                },
+                xAxis: {
+                    categories: categorias,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Monto en dólares ($)'
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                plotOptions: {
+                    column: {
+                        grouping: true,
+                        dataLabels: {
+                            enabled: true
+                        }
+                    }
+                },
+                series: [{
+                    name: 'Ingresos Netos',
+                    data: ingresos
+                }, {
+                    name: 'Artículos Vendidos',
+                    data: articulos
+                }]
+            });
+        });
+    </script>
+}
+

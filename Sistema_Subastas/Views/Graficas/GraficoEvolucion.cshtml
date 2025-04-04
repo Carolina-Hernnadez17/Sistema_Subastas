@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Evolución de Pujas";
+    var categorias = ViewBag.Categorias;
+    var valores = ViewBag.Valores;
+    var titulo = ViewBag.NombreArticulo;
+}
+
+<h3 class="mt-4">Evolución de Pujas - @titulo</h3>
+
+<div id="container" style="height: 400px;"></div>
+
+@section Scripts {
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'line'
+                },
+                title: {
+                    text: 'Evolución de Pujas en el Tiempo'
+                },
+                subtitle: {
+                    text: 'Artículo: @titulo'
+                },
+                xAxis: {
+                    categories: @Html.Raw(categorias),
+                    title: {
+                        text: 'Fecha'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Cantidad de Pujas'
+                    },
+                    allowDecimals: false
+                },
+                tooltip: {
+                    shared: true,
+                    valueSuffix: ' pujas'
+                },
+                series: [{
+                    name: 'Pujas',
+                    data: @Html.Raw(valores)
+                }]
+            });
+        });
+    </script>
+}

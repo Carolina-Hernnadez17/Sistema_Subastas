@@ -15,6 +15,27 @@
     <a asp-controller="ReporteGrafico" asp-action="ReportesUsuarios" class="btn colorCafe">
         Mostrar Reporte Usuarios Totales
     </a>
+    
+    <a asp-controller="Estadisticas" asp-action="IngresosPorCategoria" class="btn colorCafe">
+        Ver Gráfico de Ingresos por Categoría
+    </a>
+
+    
+    <a asp-controller="ReporteIngresos" asp-action="VerIngresos" class="btn colorCafe">
+        Ver Reporte de Ingresos por Subastas
+    </a>
+
+    <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-articuloId="5" class="btn colorCafe">
+        Ver Gráfico de Pujas (Artículo 5)
+    </a>
+
+    <a asp-controller="Disputas" asp-action="Index" class="btn colorCafe">
+        Ver Reporte de Disputas
+    </a>
+
+    
+
+
     <a asp-controller="ReporteGrafico" asp-action="Graficos" class="btn colorCafe">
         Mostrar Grafico de subastas abiertas y cerradas
     </a>
