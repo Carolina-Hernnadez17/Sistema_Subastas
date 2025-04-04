@@ -1,70 +1,52 @@
 ﻿using CloudinaryDotNet.Actions;
 using iText.IO.Font.Constants;
+using iText.IO.Image;
+using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using iText.Layout.Properties;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
+using iText.Kernel.Font;
+using Newtonsoft.Json;
+using iText.Kernel.Colors;
+using iText.Layout.Borders;
 using System.Linq;
 using System.Threading.Tasks;
 using Paragraph = iText.Layout.Element.Paragraph;
+using iTextSharp.text.pdf;
+using PdfFont = iText.Kernel.Font.PdfFont;
+using PdfDocument = iText.Kernel.Pdf.PdfDocument;
+using PdfWriter = iText.Kernel.Pdf.PdfWriter;
 
 namespace Sistema_Subastas.Controllers
 {
     public class ReportesController : Controller
     {
         private readonly subastaDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ReportesController(subastaDbContext context)
+        public ReportesController(subastaDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<IActionResult> ArticulosMasPopulares()
+        public IActionResult ArticulosMasPopulares()
         {
-            // Reporte por Pujas
-            var articulosConPujas = await _context.articulos
-                .Join(_context.articulo_categoria, a => a.Id, ac => ac.articulo_id, (a, ac) => new { a, ac })
-                .Join(_context.categorias, ac => ac.ac.categoria_id, c => c.Id, (ac, c) => new { ac.a, Categoria = c.nombre })
-                .Join(_context.pujas, a => a.a.Id, p => p.articulo_id, (a, p) => new { a.a, a.Categoria, p })
-                .GroupBy(a => new { a.a.Id, a.a.titulo, a.Categoria, a.a.fecha_fin })
-                .Select(g => new
-                {
-                    g.Key.titulo,
-                    g.Key.Categoria,
-                    NumeroDePujas = g.Count(),
-                    PrecioMaximo = g.Max(p => p.p.monto),
-                    g.Key.fecha_fin
-                })
-                .OrderByDescending(a => a.NumeroDePujas)
-                .ToListAsync();
-
-            // Reporte por Visualizaciones
-            var articulosConVisualizaciones = await _context.articulos
-                .Join(_context.articulo_categoria, a => a.Id, ac => ac.articulo_id, (a, ac) => new { a, ac })
-                .Join(_context.categorias, ac => ac.ac.categoria_id, c => c.Id, (ac, c) => new { ac.a, Categoria = c.nombre })
-                .Join(_context.seguimiento_subastas, a => a.a.Id, s => s.articulo_id, (a, s) => new { a.a, a.Categoria, s })
-                .GroupBy(a => new { a.a.Id, a.a.titulo, a.Categoria, a.a.fecha_fin })
-                .Select(g => new
-                {
-                    g.Key.titulo,
-                    g.Key.Categoria,
-                    NumeroDeVisualizaciones = g.Count(),
-                    g.Key.fecha_fin
-                })
-                .OrderByDescending(a => a.NumeroDeVisualizaciones)
-                .ToListAsync();
-
-            var model = new
+            // Lógica para obtener datos
+            var viewModel = new ReporteArticulosViewModel
             {
-                ReportePorPujas = articulosConPujas,
-                ReportePorVisualizaciones = articulosConVisualizaciones
+                ReportePorPujas = ObtenerReportePorPujas(), // Debe ser una lista de Articulo
+                ReportePorVistas = ObtenerReportePorVistas()  // Debe ser una lista de Articulo
             };
 
-            return View(model);
+            return View(viewModel);
         }
 
         public IActionResult DescargarReportePdf()
@@ -85,41 +67,89 @@ namespace Sistema_Subastas.Controllers
                 .OrderByDescending(a => a.NumeroDePujas)
                 .ToList();
 
-            // Crear documento PDF
-            using (var memoryStream = new System.IO.MemoryStream())
+            using (var memoryStream = new MemoryStream())
             {
-                var pdfWriter = new PdfWriter(memoryStream);
-                var pdfDocument = new PdfDocument(pdfWriter);
-                var document = new Document(pdfDocument);
+                var writer = new PdfWriter(memoryStream);
+                var pdf = new PdfDocument(writer);
+                var document = new Document(pdf);
 
-                document.Add(new Paragraph("Reporte de Artículos Más Populares"));
-                document.Add(new Paragraph(" "));
+                // Colores y fuentes
+                Color headerColor = new DeviceRgb(111, 72, 50); // Color del encabezado
+                Color textColor = new DeviceRgb(255, 255, 255); // Color del texto
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD); // Fuente negrita
 
-                // Crear tabla
-                var table = new Table(5);
+                // Cargar logo
+                string logoPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "logo.png");
+                if (System.IO.File.Exists(logoPath))
+                {
+                    Image img = new Image(ImageDataFactory.Create(logoPath)).ScaleToFit(100, 100);
+                    document.Add(img.SetHorizontalAlignment(HorizontalAlignment.CENTER));
+                }
 
-                // Añadir encabezados
-                table.AddHeaderCell("Nombre del Artículo");
-                table.AddHeaderCell("Categoría");
-                table.AddHeaderCell("Número de Pujas");
-                table.AddHeaderCell("Precio Actual Más Alto");
-                table.AddHeaderCell("Fecha Límite de Subasta");
+                // Título de la página
+                var titleTable = new Table(1).UseAllAvailableWidth();
+                titleTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things").SetFont(boldFont).SetFontSize(20)));
+                document.Add(titleTable);
 
-                // Añadir filas
+                // Fecha y dirección
+                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("\n"));
+
+                // Encabezado de sección
+                document.Add(new Paragraph("Artículos Más Populares por Pujas")
+                    .SetFont(boldFont).SetFontSize(16).SetTextAlignment(TextAlignment.CENTER));
+                document.Add(new Paragraph("\n"));
+
+                // Tabla de datos
+                var table = new Table(5).UseAllAvailableWidth();
+                string[] headers = { "Artículo", "Categoría", "Pujas", "Precio Máximo", "Fecha Límite" };
+                foreach (var header in headers)
+                {
+                    table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                        .Add(new Paragraph(header).SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
+                }
+
+                // Rellenar tabla con datos
                 foreach (var item in articulosConPujas)
                 {
-                    table.AddCell(item.titulo);
-                    table.AddCell(item.Categoria);
-                    table.AddCell(item.NumeroDePujas.ToString());
-                    table.AddCell(item.PrecioMaximo.ToString("C"));
-                    table.AddCell(item.fecha_fin.ToString("dd/MM/yyyy HH:mm"));
+                    table.AddCell(new Cell().Add(new Paragraph(item.titulo).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.Categoria).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.NumeroDePujas.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.PrecioMaximo.ToString("C")).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.fecha_fin.ToString("dd/MM/yyyy HH:mm")).SetTextAlignment(TextAlignment.CENTER)));
                 }
 
                 document.Add(table);
+                document.Add(new Paragraph("\n"));
+
+                // Pie de página
+                Table footerTable = new Table(1).UseAllAvailableWidth();
+                footerTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things@email.com | (+503) 2490 8943 | El Salvador")));
+                document.Add(footerTable);
 
                 document.Close();
                 return File(memoryStream.ToArray(), "application/pdf", "Reporte_Articulos_Populares.pdf");
             }
+        }
+
+
+        private List<Articulo> ObtenerReportePorPujas()
+        {
+            // Obtener datos de la base de datos o cualquier fuente
+            return new List<Articulo>(); // Debería devolver una lista de objetos Articulo
+        }
+
+        private List<Articulo> ObtenerReportePorVistas()
+        {
+            // Obtener datos de la base de datos o cualquier fuente
+            return new List<Articulo>(); // Debería devolver una lista de objetos Articulo
         }
 
 
@@ -158,42 +188,70 @@ namespace Sistema_Subastas.Controllers
 
             using (var memoryStream = new MemoryStream())
             {
-                var pdfWriter = new PdfWriter(memoryStream);
-                var pdfDocument = new PdfDocument(pdfWriter);
-                var document = new Document(pdfDocument);
+                var writer = new PdfWriter(memoryStream);
+                var pdf = new PdfDocument(writer);
+                var document = new Document(pdf);
 
+                Color headerColor = new DeviceRgb(111, 72, 50); // #6f4832
+                Color textColor = new DeviceRgb(255, 255, 255);
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
-                document.Add(new Paragraph("Reporte de Usuarios Más Activos")
-                    .SetFont(boldFont)
-                    .SetFontSize(14));
+                string logoPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "logo.png");
+                if (System.IO.File.Exists(logoPath))
+                {
+                    Image img = new Image(ImageDataFactory.Create(logoPath)).ScaleToFit(100, 100);
+                    document.Add(img.SetHorizontalAlignment(HorizontalAlignment.CENTER));
+                }
 
-                document.Add(new Paragraph(" "));
+                Table titleTable = new Table(1).UseAllAvailableWidth();
+                titleTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things").SetFont(boldFont).SetFontSize(20)));
+                document.Add(titleTable);
 
-                var table = new Table(4);
-                table.AddHeaderCell(new Cell().Add(new Paragraph("Nombre del Usuario").SetFont(boldFont)));
-                table.AddHeaderCell(new Cell().Add(new Paragraph("Artículos Publicados").SetFont(boldFont)));
-                table.AddHeaderCell(new Cell().Add(new Paragraph("Pujas Realizadas").SetFont(boldFont)));
-                table.AddHeaderCell(new Cell().Add(new Paragraph("Total Gastado en Pujas").SetFont(boldFont)));
+                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("\n"));
+
+                document.Add(new Paragraph("Usuarios Más Activos")
+                    .SetFont(boldFont).SetFontSize(16).SetTextAlignment(TextAlignment.CENTER));
+                document.Add(new Paragraph("\n"));
+
+                var table = new Table(4).UseAllAvailableWidth();
+                table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .Add(new Paragraph("Usuario").SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
+                table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .Add(new Paragraph("Artículos").SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
+                table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .Add(new Paragraph("Pujas").SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
+                table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .Add(new Paragraph("Total Gastado").SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
 
                 foreach (var usuario in usuariosActivos)
                 {
-                    table.AddCell(new Cell().Add(new Paragraph(usuario.Nombre)));
-                    table.AddCell(new Cell().Add(new Paragraph(usuario.ArticulosPublicados.ToString())));
-                    table.AddCell(new Cell().Add(new Paragraph(usuario.PujasRealizadas.ToString())));
-
-                    if (usuario.TotalGastado > 0)
-                        table.AddCell(new Cell().Add(new Paragraph(usuario.TotalGastado.ToString("C"))));
-                    else
-                        table.AddCell(new Cell().Add(new Paragraph("N/A")));
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.Nombre).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.ArticulosPublicados.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.PujasRealizadas.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(usuario.TotalGastado > 0 ? usuario.TotalGastado.ToString("C") : "N/A").SetTextAlignment(TextAlignment.CENTER)));
                 }
 
                 document.Add(table);
+
+                document.Add(new Paragraph("\n"));
+                Table footerTable = new Table(1).UseAllAvailableWidth();
+                footerTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things@email.com | (+503) 2490 8943 | El Salvador")));
+                document.Add(footerTable);
+
                 document.Close();
 
                 return File(memoryStream.ToArray(), "application/pdf", "Reporte_Usuarios_Activos.pdf");
             }
         }
+
 
         public async Task<IActionResult> SubastasActivas()
         {

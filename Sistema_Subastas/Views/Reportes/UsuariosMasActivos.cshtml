@@ -4,43 +4,49 @@
     ViewData["Title"] = "Usuarios Más Activos";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center mb-4">Usuarios Más Activos</h2>
+<h2 class="text-center">@ViewData["Title"]</h2>
+<link href="../css_C/StyleC.css" rel="stylesheet" />
 
-    <div class="text-end mb-3">
-        <a href="@Url.Action("DescargarReporteUsuarios", "Reportes")" class="btn btn-danger">
-            <i class="fas fa-file-pdf"></i> Descargar PDF
-        </a>
+<form asp-action="DescargarReporteUsuarios" method="post" class="mt-3">
+    <div class="row">
+        <button type="submit" class="btn colorCafe">Mostrar Reporte</button>
     </div>
+</form>
 
-    <table class="table table-bordered table-striped">
-        <thead class="table-dark">
-            <tr>
-                <th>Nombre del Usuario</th>
-                <th>Artículos Publicados</th>
-                <th>Pujas Realizadas</th>
-                <th>Total Gastado en Pujas</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var usuario in Model)
-            {
+@if (Model != null && Model.Any())
+{
+    <div class="mt-4">
+        <h4>Usuarios con mayor actividad:</h4>
+        <table class="table table-bordered table-striped">
+            <thead class="table colorc">
                 <tr>
-                    <td>@usuario.Nombre</td>
-                    <td>@usuario.ArticulosPublicados</td>
-                    <td>@usuario.PujasRealizadas</td>
-                    <td>
-                        @if (usuario.TotalGastado > 0)
-                        {
-                            @usuario.TotalGastado.ToString("C")
-                        }
-                        else
-                        {
-                            <span class="text-muted">N/A</span>
-                        }
-                    </td>
+                    <th>Nombre del Usuario</th>
+                    <th>Artículos Publicados</th>
+                    <th>Pujas Realizadas</th>
+                    <th>Total Gastado en Pujas</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (var usuario in Model)
+                {
+                    <tr>
+                        <td>@usuario.Nombre</td>
+                        <td>@usuario.ArticulosPublicados</td>
+                        <td>@usuario.PujasRealizadas</td>
+                        <td>
+                            @if (usuario.TotalGastado > 0)
+                            {
+                                @usuario.TotalGastado.ToString("C")
+                            }
+                            else
+                            {
+                                <span class="text-muted">N/A</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </div>
+}
