@@ -5,10 +5,12 @@
 }
 
 <h2 class="text-center">Reporte de Usuarios Totales Registrados</h2>
+<link href="../css_R/Style1.css" rel="stylesheet" />
+
 
 <form asp-action="GenerarReporteUsuarios" method="post" class="mt-3">
     <div class="row">
-            <button type="submit" class="btn btn-primary mt-4">Mostrar Reporte</button>
+            <button type="submit" class="btn colorCafe mt-4">Mostrar Reporte</button>
     </div>
 </form>
 
@@ -17,7 +19,7 @@
     <div class="mt-4">
         <h4>Usuarios totales registrados:</h4>
         <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+            <thead class="table colorc">
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
@@ -39,7 +41,7 @@
         <h5 class="text-end"><strong>Total de Usuarios Registrados: @Model.Count</strong></h5>
 
         <form asp-action="GenerarPDFUsuarios" method="post">
-            <button type="submit" class="btn btn-danger">Descargar PDF</button>
+            <button type="submit" class="btn colorCafe">Descargar PDF</button>
         </form>
     </div>
 }
