@@ -278,7 +278,7 @@ namespace Sistema_Subastas.Controllers
             }
         }
 
-        public IActionResult SubastasCerradas()
+        public IActionResult SubastaCerrada()
         {
             var subastas = _context.usuarios
                 .Select(u => new
