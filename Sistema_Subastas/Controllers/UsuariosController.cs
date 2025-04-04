@@ -44,6 +44,14 @@ namespace Sistema_Subastas.Controllers
                     TempData["Mensaje"] = "Correo o contraseña incorrectos.";
                     return RedirectToAction("Login");
                 }
+                if (user.TipoUser == false)
+                {
+                    HttpContext.Session.SetInt32("id_usuario", user.id);
+                    HttpContext.Session.SetString("NombreUser", user.nombre);
+
+                    TempData["UserId"] = user.id;
+                    return RedirectToAction("Index", "HomeAdmin");
+                }
                 HttpContext.Session.SetInt32("id_usuario", user.id);
                 HttpContext.Session.SetString("NombreUser", user.nombre);
 
@@ -56,6 +64,11 @@ namespace Sistema_Subastas.Controllers
                 ViewBag.Mensaje = "Error al realizar el login: " + ex.Message;
                 return View();
             }
+        }
+        public ActionResult CerrarSesion()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login", "Usuarios");
         }
 
         // GET: Usuarios

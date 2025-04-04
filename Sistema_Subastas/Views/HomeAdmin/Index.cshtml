@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Home Admin Page";
+    Layout = "~/Views/Shared/LayoutAdmin.cshtml";
+
+}
+
+<div class="text-center">
+    <link href="../css_R/Style1.css" rel="stylesheet" />
+
+    <h1 class="display-4">Welcome @ViewBag.NombreUsuario</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <a asp-controller="ReporteGrafico" asp-action="Index" class="btn colorCafe">
+        Mostrar Reporte Usuarios por fecha
+    </a>
+    <a asp-controller="ReporteGrafico" asp-action="ReportesUsuarios" class="btn colorCafe">
+        Mostrar Reporte Usuarios Totales
+    </a>
+    <a asp-controller="ReporteGrafico" asp-action="Graficos" class="btn colorCafe">
+        Mostrar Grafico de subastas abiertas y cerradas
+    </a>
+    <a asp-controller="ReporteGrafico" asp-action="SubastasPorUsuario" class="btn colorCafe">
+        Mostrar Grafico de subastas activas por usuario
+    </a>
+</div>

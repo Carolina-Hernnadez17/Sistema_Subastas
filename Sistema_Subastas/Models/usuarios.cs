@@ -47,6 +47,10 @@ namespace Sistema_Subastas.Models
 
         public bool Estado { get; set; } = true;
 
+        public bool TipoUser { get; set; } = true;
+
+
+
 
     }
 }
