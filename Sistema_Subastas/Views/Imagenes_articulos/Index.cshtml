@@ -18,6 +18,7 @@
 
 </head>
 <body>
+    
     <div class="row g-0">
         <div class="mb-4">
             <input type="text" id="searchNombre" placeholder="Buscar por nombre..." class="border p-2 mr-2">
@@ -58,6 +59,10 @@
                                 <li><h1 class="text-sm font-medium text-black-50 dark:text-black-400">@articulo.titulo</h1></li>
                                 <li class="flex items-center gap-2">
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Categoría: @categoria?.nombre</p>
+                                    
+                                </li>
+                                <li>
+                                    <p>Fecha de registros @articulo.fecha_registro</p>
                                 </li>
                                 <li>
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400">@ViewBag.Fecha</p>

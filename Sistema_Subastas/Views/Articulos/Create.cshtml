@@ -4,6 +4,7 @@
     ViewData["Title"] = "Create";
 }
 
+
 <h1>Create</h1>
 
 <h4>articulos</h4>
@@ -30,22 +31,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="precio_salida" class="control-label"></label>
-                <input asp-for="precio_salida" class="form-control" />
+                <input asp-for="precio_salida" class="form-control" required type="number" min="0.01"  step="0.01"   />
                 <span asp-validation-for="precio_salida" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="precio_venta" class="control-label"></label>
-                <input asp-for="precio_venta" class="form-control" />
+                <input asp-for="precio_venta" class="form-control" required type="number" min="0.01"  step="0.01"   />
                 <span asp-validation-for="precio_venta" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="fecha_inicio" class="control-label"></label>
-                <input asp-for="fecha_inicio" class="form-control" />
+                <input asp-for="fecha_inicio" id="fecha_inicio" class="form-control" required type="datetime-local" />
                 <span asp-validation-for="fecha_inicio" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="fecha_fin" class="control-label"></label>
-                <input asp-for="fecha_fin" class="form-control" />
+                <input asp-for="fecha_fin" id="fecha_fin" class="form-control" required type="datetime-local" />
                 <span asp-validation-for="fecha_fin" class="text-danger"></span>
             </div>
             <input type="hidden" id="userId" name="userId" />
@@ -68,7 +69,9 @@
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
+       
     </div>
+
 </div>
 
 <div>
@@ -85,6 +88,79 @@
         if (usuarioId) {
             document.getElementById("userId").value = usuarioId;
         }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var mensaje = '@Html.Raw(TempData["MensajeE"])';
+
+        if (mensaje.trim() !== "" && mensaje !== "null" && mensaje !== "undefined") {
+            document.getElementById('toast-text').textContent = mensaje;
+            document.getElementById('toast-container').style.display = "block";
+
+            var toastElement = document.getElementById('toastMensaje');
+            var toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+    });
+
+        document.addEventListener("DOMContentLoaded", function () {
+        const fechaInicioInput = document.getElementById("fecha_inicio");
+        const fechaFinInput = document.getElementById("fecha_fin");
+        const precioSalidaInput = document.getElementById("precio_salida");
+        const precioVentaInput = document.getElementById("precio_venta");
+
+        const now = new Date();
+        const todayFormatted = now.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+
+        fechaInicioInput.min = todayFormatted;
+        fechaFinInput.min = todayFormatted;
+
+        // Validación dinámica de fechas
+        fechaInicioInput.addEventListener("change", function () {
+            const fechaInicio = new Date(fechaInicioInput.value);
+            const nuevaMin = new Date(fechaInicio.getTime() + 60 * 1000); // +1 minuto
+            fechaFinInput.min = nuevaMin.toISOString().slice(0, 16);
+        });
+
+        // Validación al enviar formulario
+        const form = document.querySelector("form");
+        form.addEventListener("submit", function (e) {
+            const fechaInicio = new Date(fechaInicioInput.value);
+            const fechaFin = new Date(fechaFinInput.value);
+
+            if (fechaFin <= fechaInicio) {
+                alert("La fecha de fin debe ser mayor a la fecha de inicio.");
+                e.preventDefault();
+                return;
+            }
+
+            const precioSalida = parseFloat(precioSalidaInput.value);
+            const precioVenta = parseFloat(precioVentaInput.value);
+
+            if (isNaN(precioSalida) || precioSalida <= 0) {
+                alert("El precio de salida debe ser un número mayor a 0.");
+                e.preventDefault();
+                return;
+            }
+
+            if (isNaN(precioVenta) || precioVenta <= 0) {
+                alert("El precio de venta debe ser un número mayor a 0.");
+                e.preventDefault();
+                return;
+            }
+        });
+
+        // Bloquear entrada de letras/signos en campos numéricos
+        function bloquearNoNumericos(evt) {
+            const key = evt.key;
+            if (!/[0-9.]|\b/.test(key)) {
+                evt.preventDefault();
+            }
+        }
+
+        precioSalidaInput.addEventListener("keypress", bloquearNoNumericos);
+        precioVentaInput.addEventListener("keypress", bloquearNoNumericos);
     });
 </script>
 
