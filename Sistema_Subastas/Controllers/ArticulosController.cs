@@ -60,6 +60,7 @@ namespace Sistema_Subastas.Controllers
         public async Task<IActionResult> Create([Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta")] articulos articulos, int categoria_id, int userId)
         {
             articulos.usuario_id = userId;
+            articulos.Id = 0;
 
             if (ModelState.IsValid)
             {
