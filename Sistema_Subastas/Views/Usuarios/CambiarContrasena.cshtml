@@ -1,21 +1,34 @@
 ﻿@{
-    // Layout = null;
+    Layout = null;
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Cambiar Contraseña</title>
-    <link rel="stylesheet" href="~/css_R/Resources_Login/style.css">
+    <title>Nueva Contraseña</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/11.0.16/sweetalert2.min.css">
+    <link rel="stylesheet" href="../css_R/Loginn.css" />
 </head>
 <body>
-    <div class="register-container">
-        <form asp-action="CambiarContrasena" method="post">
-            <h2>Ingrese su nueva contraseña</h2>
-            <input type="hidden" name="id" value="@Model.id">
-            <input type="password" name="nuevaContrasena" class="form-control" required>
-            <button type="submit" class="btn-register">Actualizar</button>
+    <div class="container mt-5">
+        <h3 class="text-center">Ingrese su nueva contraseña</h3>
+        <hr />
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Error"]</div>
+        }
+
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">Nueva Contraseña</label>
+                <input type="password" name="nuevaContrasena" class="form-control" required />
+            </div>
+
+            <button type="submit" class="btn btn-outline-light">Guardar Contraseña</button>
         </form>
     </div>
 </body>

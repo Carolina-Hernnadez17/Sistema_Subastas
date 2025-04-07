@@ -49,31 +49,52 @@
             </div>
         </div>
     </div>
-    <!-- Contenedor del Toast -->
-    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050; display: none;">
-        <div id="toastMensaje" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+    <!-- TOAST DE ERROR -->
+    <div id="toast-container-error" class="position-fixed top-0 end-0 p-3" style="z-index: 1050; display: none;">
+        <div id="toastMensajeError" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body d-flex align-items-center">
                     <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.5rem; color: #6f4832;"></i>
-                    <span id="toast-text"></span>
+                    <span id="toast-text-error"></span>
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
     </div>
 
-    <!-- Script para mostrar el Toast solo si hay un mensaje -->
+    <!-- TOAST DE ÉXITO -->
+    <div id="toast-container-success" class="position-fixed top-0 end-0 p-3" style="z-index: 1050; display: none;">
+        <div id="toastMensajeSuccess" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill me-2" style="font-size: 1.5rem; color: #6f4832;"></i>
+                    <span id="toast-text-success"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var mensaje = '@Html.Raw(TempData["Mensaje"])';
+        document.addEventListener("DOMContentLoaded", function () {
+            var mensajeError = '@Html.Raw(TempData["Mensaje"])';
+            var mensajeExito = '@Html.Raw(TempData["Exito"])';
 
-            if (mensaje.trim() !== "" && mensaje !== "null" && mensaje !== "undefined") {
-                document.getElementById('toast-text').textContent = mensaje;
-                document.getElementById('toast-container').style.display = "block";
+            if (mensajeError.trim() !== "" && mensajeError !== "null" && mensajeError !== "undefined") {
+                document.getElementById('toast-text-error').textContent = mensajeError;
+                document.getElementById('toast-container-error').style.display = "block";
 
-                var toastElement = document.getElementById('toastMensaje');
-                var toast = new bootstrap.Toast(toastElement);
-                toast.show();
+                var toastElementError = document.getElementById('toastMensajeError');
+                var toastError = new bootstrap.Toast(toastElementError);
+                toastError.show();
+            }
+
+            if (mensajeExito.trim() !== "" && mensajeExito !== "null" && mensajeExito !== "undefined") {
+                document.getElementById('toast-text-success').textContent = mensajeExito;
+                document.getElementById('toast-container-success').style.display = "block";
+
+                var toastElementSuccess = document.getElementById('toastMensajeSuccess');
+                var toastSuccess = new bootstrap.Toast(toastElementSuccess);
+                toastSuccess.show();
             }
         });
     </script>
