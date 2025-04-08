@@ -1,74 +1,90 @@
-﻿@model Sistema_Subastas.Models.articulos
+﻿@{
+    ViewData["Title"] = "Editar Artículo";
 
-@{
-    ViewData["Title"] = "Edit";
+    var articulo = ViewBag.Articulo as Sistema_Subastas.Models.articulos;
+    var imagenes = ViewBag.Imagenes as List<Sistema_Subastas.Models.imagenes_articulos> ?? new List<Sistema_Subastas.Models.imagenes_articulos>();
 }
 
-<h1>Edit</h1>
-
-<h4>articulos</h4>
+<h1>Editar Artículo + Imágenes</h1>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="titulo" class="control-label"></label>
-                <input asp-for="titulo" class="form-control" />
-                <span asp-validation-for="titulo" class="text-danger"></span>
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" >
+
+            <div class="d-flex">
+                <div>
+                    <!-- Datos del artículo -->
+                    <input type="hidden" name="Id" value="@articulo.Id" />
+                    <input type="hidden" name="usuario_id" value="@articulo.usuario_id" />
+
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input class="form-control" name="titulo" value="@articulo.titulo" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descripción</label>
+                        <input class="form-control" name="descripcion" value="@articulo.descripcion" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado</label>
+                        <input class="form-control" name="estado" value="@articulo.estado" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio de salida</label>
+                        <input class="form-control" name="precio_salida" value="@articulo.precio_salida" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio de venta</label>
+                        <input class="form-control" name="precio_venta" value="@articulo.precio_venta" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha inicio</label>
+                        <input class="form-control" name="fecha_inicio" type="datetime-local" value="@Model.fecha_inicio.ToString("yyyy-MM-ddTHH:mm")" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Fecha fin</label>
+                        <input class="form-control" name="fecha_fin" type="datetime-local" value="@Model.fecha_fin.ToString("yyyy-MM-ddTHH:mm")" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado de la subasta</label>
+                        <input class="form-control" name="estado_subasta" value="@articulo.estado_subasta" />
+                    </div>
+                </div>
+
+                <div>
+                    <!-- Imágenes -->
+                    <h4 class="mt-4">Imágenes actuales</h4>
+                    <div class="form-group">
+                        @for (int i = 0; i < imagenes.Count; i++)
+                        {
+                            <div class="mb-3">
+                                <input type="hidden" name="Imagenes[@i].id" value="@imagenes[i].id" />
+                                <input type="hidden" name="Imagenes[@i].articulo_id" value="@imagenes[i].articulo_id" />
+
+                                <img src="@imagenes[i].url_imagen" alt="Imagen del artículo" width="200"
+                                     onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'" />
+
+                                <label class="form-label d-block mt-2">Cambiar imagen:</label>
+                                <input type="file" name="NuevasImagenes" class="form-control" />
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="descripcion" class="control-label"></label>
-                <input asp-for="descripcion" class="form-control" />
-                <span asp-validation-for="descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="estado" class="control-label"></label>
-                <input asp-for="estado" class="form-control" />
-                <span asp-validation-for="estado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="precio_salida" class="control-label"></label>
-                <input asp-for="precio_salida" class="form-control" />
-                <span asp-validation-for="precio_salida" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="precio_venta" class="control-label"></label>
-                <input asp-for="precio_venta" class="form-control" />
-                <span asp-validation-for="precio_venta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fecha_inicio" class="control-label"></label>
-                <input asp-for="fecha_inicio" class="form-control" />
-                <span asp-validation-for="fecha_inicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="fecha_fin" class="control-label"></label>
-                <input asp-for="fecha_fin" class="form-control" />
-                <span asp-validation-for="fecha_fin" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="usuario_id" class="control-label"></label>
-                <input asp-for="usuario_id" class="form-control" />
-                <span asp-validation-for="usuario_id" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="estado_subasta" class="control-label"></label>
-                <input asp-for="estado_subasta" class="form-control" />
-                <span asp-validation-for="estado_subasta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+            
+            
+
+            <!-- Botón único -->
+            <button type="submit" class="btn btn-success mt-3">Actualizar datos</button>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+<a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a>

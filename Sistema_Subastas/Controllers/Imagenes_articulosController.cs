@@ -83,7 +83,7 @@ namespace Sistema_Subastas.Controllers
                 fecha_res = TimeSpan.Zero;
             }
 
-            if (fecha_res.Hours >= articulo.fecha_fin.Hour || fecha_res == TimeSpan.Zero)
+            if (fecha_res.Days >= articulo.fecha_fin.Day || fecha_res == TimeSpan.Zero)
             {
                 ViewBag.Fecha = "Subasta Cerrada";
             }

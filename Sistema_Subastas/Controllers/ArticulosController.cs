@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CloudinaryDotNet.Actions;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -95,56 +97,74 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Articulos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
+            var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
+            if (articulo == null)
             {
                 return NotFound();
             }
 
-            var articulos = await _context.articulos.FindAsync(id);
-            if (articulos == null)
-            {
-                return NotFound();
-            }
-            return View(articulos);
+            var imagenes = _context.imagenes_articulos
+                .Where(i => i.articulo_id == id)
+                .ToList();
+
+            ViewBag.Articulo = articulo;
+            ViewBag.Imagenes = imagenes;
+
+            return View(articulo); 
         }
+
 
         // POST: Articulos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta")] articulos articulos, int userId)
+        public async Task<IActionResult> Edit(articulos articulo, List<imagenes_articulos> Imagenes, List<IFormFile> NuevasImagenes)
         {
-            if (id != articulos.Id)
+            try
             {
-                return NotFound();
+                _context.Update(articulo);
+
+                var account = new Account("daxbwcgw2", "346927586337937", "YqqRBDv2Ha3x_qxjNknM8_sT83Q");
+                var cloudinary = new Cloudinary(account);
+
+                for (int i = 0; i < Imagenes.Count; i++)
+                {
+                    var imagenDB = await _context.imagenes_articulos.FindAsync(Imagenes[i].id);
+
+                    if (imagenDB != null && i < NuevasImagenes.Count && NuevasImagenes[i] != null)
+                    {
+                        var file = NuevasImagenes[i];
+                        if (file.Length > 0)
+                        {
+                            var uploadParams = new ImageUploadParams()
+                            {
+                                File = new FileDescription(file.FileName, file.OpenReadStream()),
+                                Folder = "Subasta"
+                            };
+
+                            var uploadResult = await Task.Run(() => cloudinary.Upload(uploadParams));
+
+                            if (uploadResult != null && !string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
+                            {
+                                imagenDB.url_imagen = uploadResult.SecureUrl.ToString();
+                                _context.Update(imagenDB);
+                            }
+                        }
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Artículo e imágenes actualizados correctamente.";
+                return RedirectToAction("Index");
             }
-
-            articulos.usuario_id = userId;
-
-            if (ModelState.IsValid)
+            catch (Exception ex)
             {
-                try
-                {
-                    _context.Update(articulos);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!articulosExists(articulos.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Error al actualizar: " + ex.Message);
+                return View();
             }
-            return View(articulos);
         }
 
         // GET: Articulos/Delete/5
