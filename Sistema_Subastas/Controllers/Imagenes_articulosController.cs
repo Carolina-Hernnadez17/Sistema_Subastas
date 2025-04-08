@@ -66,13 +66,15 @@ namespace Sistema_Subastas.Controllers
             var vendedor = _context.usuarios.FirstOrDefault(u => u.id == datos_vendedor.usuario_id);
 
             ViewBag.Vendedor = vendedor.nombre;
-
+            ViewBag.IdVendedor = vendedor.id;
             //Muestra los articulos
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
             ViewBag.Articulos = articulo;
 
+           
+
             DateTime fecha_cierre = Convert.ToDateTime(articulo.fecha_fin);
-            DateTime fecha_actual = DateTime.UtcNow;
+            DateTime fecha_actual = DateTime.Now;
 
             TimeSpan fecha_res = fecha_cierre - fecha_actual  ;
 
@@ -89,7 +91,17 @@ namespace Sistema_Subastas.Controllers
             {
                 ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
             }
-            
+
+            var cantidadP = _context.pujas.Count(p => p.articulo_id == id);
+            if (cantidadP == 0 || cantidadP == null)
+            {
+                ViewBag.CantidadP = 0;
+            }
+            else if (cantidadP > 0)
+            {
+                ViewBag.CantidadP = cantidadP;
+            }
+
 
             if (imagenes_articulos == null)
             {

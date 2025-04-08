@@ -115,12 +115,14 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta")] articulos articulos)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta")] articulos articulos, int userId)
         {
             if (id != articulos.Id)
             {
                 return NotFound();
             }
+
+            articulos.usuario_id = userId;
 
             if (ModelState.IsValid)
             {
