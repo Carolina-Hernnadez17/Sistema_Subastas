@@ -1,31 +1,76 @@
 ﻿@{
-    // Layout = null;
+    Layout = null;
+    var preguntas = ViewBag.Preguntas as List<Sistema_Subastas.Models.PreguntasSeguridad>;
 }
 
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Responder Preguntas de Seguridad</title>
-    <link rel="stylesheet" href="~/css_R/Resources_Login/style.css">
+    <title>Responder Preguntas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/11.0.16/sweetalert2.min.css">
+    <link rel="stylesheet" href="../css_R/Loginn.css" />
 </head>
 <body>
-    <div class="register-container">
-        <form asp-action="ResponderPreguntas" method="post">
-            <h2>Responda sus preguntas de seguridad</h2>
-            <input type="hidden" name="id" value="@ViewBag.Preguntas[0].user_id">
-            @for (int i = 0; i < ViewBag.Preguntas.Count; i++)
+    <div class="container mt-5">
+        <h3 class="text-center">Responda sus preguntas de seguridad</h3>
+        <hr />
+
+        @if (ViewBag.Mensaje != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Mensaje</div>
+        }
+
+        <form method="post">
+            @if (preguntas != null)
             {
-                <label>@ViewBag.Preguntas[i].pregunta</label>
-                <input type="text" name="respuesta@(i + 1)" class="form-control" required>
-            }
-            <button type="submit" class="btn-register">Validar</button>
-            @if (ViewBag.Mensaje != null)
-            {
-                <p style="color: red;">@ViewBag.Mensaje</p>
+                <form method="post">
+                    @foreach (var pregunta in preguntas)
+                    {
+                        <div class="mb-3">
+                            <label class="form-label">@pregunta.question</label>
+                            <input type="text" name="respuestas[@pregunta.id]" class="form-control" required />
+                        </div>
+                    }
+
+                    <button type="submit" class="btn btn-outline-light">Validar Respuestas</button>
+                </form>
             }
         </form>
     </div>
+    <!-- Contenedor del Toast -->
+    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1050; display: none;">
+        <div id="toastMensaje" class="toast align-items-center text-white bg-dark border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body d-flex align-items-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 1.5rem; color: #6f4832;"></i>
+                    <span id="toast-text"></span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para mostrar el Toast solo si hay un mensaje -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var mensaje = '@Html.Raw(TempData["MensajeErrorRespuestas"])';
+
+            if (mensaje.trim() !== "" && mensaje !== "null" && mensaje !== "undefined") {
+                document.getElementById('toast-text').textContent = mensaje;
+                document.getElementById('toast-container').style.display = "block";
+
+                var toastElement = document.getElementById('toastMensaje');
+                var toast = new bootstrap.Toast(toastElement);
+                toast.show();
+            }
+        });
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
 

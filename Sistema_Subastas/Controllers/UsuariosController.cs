@@ -30,6 +30,7 @@ namespace Sistema_Subastas.Controllers
         {
             try
             {
+                
                 var user = _context.usuarios.FirstOrDefault(u => u.correo == usuario.correo && u.Estado == true);
 
                 if (user == null)
@@ -114,90 +115,6 @@ namespace Sistema_Subastas.Controllers
         {
             return View();
         }
-
-        // POST: Usuarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
-        //{
-        //    try
-        //    {
-
-        //        if (ModelState.IsValid)
-        //        {
-        //            if (usuarios.correo != null)
-        //            {
-        //                ViewBag.Error = "El correo ya existe ingrese uno nuevo.";
-
-        //            }
-        //            _context.Add(usuarios);
-        //            await _context.SaveChangesAsync(); // Guarda los cambios en la BD
-
-        //            // Obtener el ID del usuario recién insertado
-        //            int userId = usuarios.id; // Como `id` es clave primaria con autoincrement, EF lo asigna automáticamente
-
-        //            return Json(new { success = true, userId = userId });
-        //        }
-
-        //        return View(usuarios);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ViewBag.Mensaje = "Error al realizar el guardado de datos: " + ex.Message;
-        //        return View();
-        //    }
-
-        //}
-        //[HttpGet]
-        //public async Task<IActionResult> RecuperarContraseña(string correo)
-        //{
-
-        //    usuarios? user = (from e in _context.usuarios
-        //                       where e.correo == correo
-        //                       select e).FirstOrDefault();
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    int? id = user.id;
-
-
-        //    return RedirectToAction("RespoderPreguntas", new { id = id });
-        //}
-
-        //[HttpGet]
-        //public async Task<IActionResult> RespoderPreguntas(int? id, string respuesta1, string respuesta2)
-        //{
-
-        //    var encontrarpreguntas = (from usuario in _context.usuarios 
-        //                              join preguntas in _context.PreguntasSeguridad on usuario.id equals preguntas.user_id 
-        //                              where usuario.id == id && preguntas.answer == respuesta1 && preguntas.answer == respuesta2
-        //                              select usuario).FirstOrDefault();
-        //    if(encontrarpreguntas == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return RedirectToAction("CambiarContrasena", new { id = id });
-        //}
-        //public async Task<IActionResult> CambiarContrasena(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var usuarios = await _context.usuarios.FindAsync(id);
-        //    if (usuarios == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(usuarios);
-        //}
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -371,20 +288,31 @@ namespace Sistema_Subastas.Controllers
             var user = _context.usuarios.FirstOrDefault(e => e.correo == correo);
             if (user == null)
             {
-                ViewBag.Mensaje = "Correo no encontrado.";
+                TempData["MensajeCorreo"] = "Correo no encontrado o inactivo.";
+                //ViewBag.Mensaje = "Correo no encontrado.";
                 return View();
             }
+            HttpContext.Session.SetInt32("id_usuario", user.id);
 
-            return RedirectToAction("ResponderPreguntas", new { id = user.id });
+            return RedirectToAction("ResponderPreguntas", "Usuarios");
         }
-
         [HttpGet]
-        public async Task<IActionResult> ResponderPreguntas(int id)
+        public IActionResult ResponderPreguntas()
         {
-            var preguntas = _context.PreguntasSeguridad.Where(p => p.user_id == id).ToList();
+            int? idUsuario = HttpContext.Session.GetInt32("id_usuario");
+            if (idUsuario == null)
+            {
+                return RedirectToAction("IngresarCorreo");
+            }
+
+            var preguntas = _context.PreguntasSeguridad
+                .Where(p => p.user_id == idUsuario)
+                .ToList();
+
             if (!preguntas.Any())
             {
-                return NotFound();
+                TempData["MensajeCorreo"] = "No se encontraron preguntas de seguridad registradas.";
+                return RedirectToAction("IngresarCorreo");
             }
 
             ViewBag.Preguntas = preguntas;
@@ -392,47 +320,91 @@ namespace Sistema_Subastas.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ResponderPreguntas(int id, string respuesta1, string respuesta2)
+        public IActionResult ResponderPreguntas(Dictionary<int, string> respuestas)
         {
-            var respuestasCorrectas = _context.PreguntasSeguridad
-                .Where(p => p.user_id == id)
-                .Select(p => p.answer)
+            int? idUsuario = HttpContext.Session.GetInt32("id_usuario");
+            if (idUsuario == null)
+            {
+                return RedirectToAction("IngresarCorreo");
+            }
+
+            var preguntas = _context.PreguntasSeguridad
+                .Where(p => p.user_id == idUsuario)
                 .ToList();
 
-            if (respuestasCorrectas.Count < 2 || respuestasCorrectas[0] != respuesta1 || respuestasCorrectas[1] != respuesta2)
+            bool respuestasCorrectas = true;
+
+            foreach (var pregunta in preguntas)
             {
-                ViewBag.Mensaje = "Respuestas incorrectas.";
-                ViewBag.Preguntas = _context.PreguntasSeguridad.Where(p => p.user_id == id).ToList();
-                return View();
+                if (respuestas.ContainsKey(pregunta.id))
+                {
+                    string respuestaIngresada = respuestas[pregunta.id]?.Trim().ToLower();
+                    string respuestaCorrecta = pregunta.answer?.Trim().ToLower();
+                    if (respuestaIngresada != respuestaCorrecta)
+                    {
+                        respuestasCorrectas = false;
+                        break;
+                    }
+                }
+                else
+                {
+                    respuestasCorrectas = false;
+                    break;
+                }
             }
 
-            return RedirectToAction("CambiarContrasena", new { id });
+            if (!respuestasCorrectas)
+            {
+                ViewBag.Preguntas = preguntas.Select(p => new { p.id, p.question }).ToList();
+                ViewBag.Mensaje = "Las respuestas no son correctas.";
+                TempData["MensajeErrorRespuestas"] = "Las respuestas no son correctas.";
+                return RedirectToAction("ResponderPreguntas");
+            }
+
+            return RedirectToAction("CambiarContrasena");
         }
-
         [HttpGet]
-        public async Task<IActionResult> CambiarContrasena(int id)
+        public IActionResult CambiarContrasena()
         {
-            var usuario = await _context.usuarios.FindAsync(id);
-            if (usuario == null)
+            int? idUsuario = HttpContext.Session.GetInt32("id_usuario");
+            if (idUsuario == null)
             {
-                return NotFound();
+                return RedirectToAction("IngresarCorreo");
             }
-            return View(usuario);
+
+            return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> CambiarContrasena(int id, string nuevaContrasena)
+        public async Task<IActionResult> CambiarContrasena(string nuevaContrasena)
         {
-            var usuario = await _context.usuarios.FindAsync(id);
-            if (usuario == null)
+            int? idUsuario = HttpContext.Session.GetInt32("id_usuario");
+            if (idUsuario == null)
             {
-                return NotFound();
+                return RedirectToAction("IngresarCorreo");
             }
 
-            usuario.contrasena = nuevaContrasena; // ⚠️ Considera encriptarla
+            var usuario = await _context.usuarios.FindAsync(idUsuario);
+            if (usuario == null)
+            {
+                TempData["Error"] = "Usuario no encontrado.";
+                return View();
+            }
+            if (nuevaContrasena.Length < 8)
+            {
+                TempData["Error"] = "La contraseña debe ser mayor o igual a 8 digitos.";
+                return View();
+
+            }
+            // Aquí puedes encriptar la contraseña si es necesario
+            usuario.contrasena = nuevaContrasena;
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Login");
+            TempData["Exito"] = "Contraseña actualizada correctamente.";
+            HttpContext.Session.Remove("id_usuario");
+
+            return RedirectToAction("Index", "Home");
         }
+
     }
 }
