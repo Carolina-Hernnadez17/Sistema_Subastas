@@ -104,6 +104,26 @@
             }
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        const userId = '@Context.Session.GetInt32("usuario_id")'; // Usa tu lógica de sesión
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/notificacionHub")
+            .build();
+
+        connection.start().then(() => {
+            console.log("Conectado al hub");
+        });
+
+        connection.on("RecibirNotificacion", (receptorId, mensaje) => {
+            if (receptorId == userId) {
+                alert("🔔 Nueva notificación: " + mensaje);
+                // También podrías actualizar la UI en vivo
+            }
+        });
+    </script>
+
 
 </body>
 </html>

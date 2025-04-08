@@ -152,5 +152,22 @@ namespace Sistema_Subastas.Controllers
         {
             return _context.notificaciones.Any(e => e.id == id);
         }
+        public IActionResult Notificacion()
+        {
+            int? usuarioId = HttpContext.Session.GetInt32("id_usuario");
+
+            if (usuarioId == null)
+            {
+                return RedirectToAction("Login", "Usuarios");
+            }
+            //int usuarioId = (int)HttpContext.Session.GetInt32("usuario_id");
+            var notis = _context.notificaciones
+                .Where(n => n.usuario_id == usuarioId)
+                .OrderByDescending(n => n.fecha)
+                .ToList();
+
+            return View(notis);
+        }
+
     }
 }

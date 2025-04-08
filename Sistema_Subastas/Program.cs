@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSignalR();
 
 builder.Services.AddSession(options =>
 {
@@ -67,6 +68,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseSession();
+app.MapHub<NotificacionHub>("/notificacionHub");
 
 
 app.MapControllerRoute(

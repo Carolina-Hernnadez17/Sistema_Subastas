@@ -1,0 +1,19 @@
+﻿@model List<Sistema_Subastas.Models.notificaciones>
+
+@{
+    ViewData["Title"] = "Notificacion";
+    
+}
+<h2>📢 Notificaciones</h2>
+<table class="table">
+    <thead><tr><th>Mensaje</th><th>Fecha</th></tr></thead>
+    <tbody>
+        @foreach (var n in Model)
+        {
+            <tr>
+                <td>@n.mensaje</td>
+                <td>@n.fecha.ToString("g")</td>
+            </tr>
+        }
+    </tbody>
+</table>
