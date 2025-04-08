@@ -4,11 +4,13 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edita tus datos de usuario</h1>
+<link href="../css_R/Style1.css" rel="stylesheet" />
+
 <!-- Agregar Intl-Tel-Input -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-<h4>usuarios</h4>
+<h4>Ingresa tus nuevos datos: </h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -59,14 +61,15 @@
                 <span asp-validation-for="fecha_registro" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Guardar" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    @* <a asp-action="Index">Back to List</a> *@
+    <a asp-action="Details">Volver a mi perfil</a>
 </div>
 
 @section Scripts {

@@ -206,6 +206,19 @@ namespace Sistema_Subastas.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
         {
+            var user = _context.usuarios.FirstOrDefault(u => u.correo == usuarios.correo && u.Estado == true);
+
+            if (user != null)
+            {
+                bool correoExiste = await _context.usuarios.AnyAsync(u => u.correo == usuarios.correo);
+                if (correoExiste)
+                {
+                    ModelState.AddModelError("correo", "El correo ya existe, ingrese uno nuevo.");
+                    return View(usuarios);
+                }
+
+            }
+
             if (id != usuarios.id)
             {
                 return NotFound();
@@ -229,9 +242,11 @@ namespace Sistema_Subastas.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                TempData["SeEdito"] = "Se edito correctamente";
+                return RedirectToAction("Details", "Usuarios");
             }
-            return View(usuarios);
+            return RedirectToAction("Details", "Usuarios");
         }
 
         // GET: Usuarios/Delete/5

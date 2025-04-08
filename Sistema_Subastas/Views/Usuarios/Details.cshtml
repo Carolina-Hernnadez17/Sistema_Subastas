@@ -4,10 +4,16 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Detalles del perfil</h1>
+<link href="../css_R/Style1.css" rel="stylesheet" />
+
+@if (@TempData["SeEdito"] != null)
+{
+    <div class="alert alert-success">@TempData["SeEdito"]</div>
+}
 
 <div>
-    <h4>usuarios</h4>
+    <h4>Información: </h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -56,5 +62,6 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.id">Edit</a> |
+    <a asp-action="Calificar" asp-route-id="@Model?.id">Calificar Usuarios</a> |
 @*     <a asp-action="Index">Back to List</a>
  *@</div>
