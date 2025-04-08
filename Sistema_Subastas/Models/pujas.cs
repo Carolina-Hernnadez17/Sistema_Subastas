@@ -11,5 +11,7 @@ namespace Sistema_Subastas.Models
         public int usuario_id { get; set; }
         public decimal monto { get; set; }
         public DateTime fecha_puja { get; set; }
+
+        public string estado_pujas { get; set; } = "En espera";
     }
 }
