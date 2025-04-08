@@ -1,8 +1,43 @@
 ﻿body {
+    background-color: lightgrey;
 }
 
 
 
 .text-precio{
     margin-right: 8px;
+}
+
+.img-zoom {
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+}
+
+.carousel-item {
+    overflow: hidden; 
+}
+.text-descripcion{
+    display:flex;
+    
+}
+
+.fecha_subasta {
+    color: gray;
+    font-size: 15px;
+    margin-top: -40px;
+}
+
+.precio {
+    font: bold;
+    font-size: 25px;
+    margin-inline: 10px;
+    margin-top: -8px;
+}
+
+.texto{
+
+    margin-inline: 10px;
+}
+.antialiased{
+    margin-bottom: 50px;
 }

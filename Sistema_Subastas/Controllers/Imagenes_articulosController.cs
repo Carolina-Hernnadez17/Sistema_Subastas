@@ -52,19 +52,44 @@ namespace Sistema_Subastas.Controllers
 
 
 
-            var imagenes_articulos = await _context.imagenes_articulos
-                .FirstOrDefaultAsync(m => m.articulo_id == id);
+            var imagenes_articulos = _context.imagenes_articulos.Where(m => m.articulo_id == id).ToList();
 
+
+            
+            var articuloCategoria = _context.articulo_categoria.FirstOrDefault(ac => ac.articulo_id == id);
+            var categoria = _context.categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
+            ViewBag.CategoriaNombre = categoria.nombre;
+
+
+           
+            var datos_vendedor = _context.articulos.FirstOrDefault(a => a.Id == id);
+            var vendedor = _context.usuarios.FirstOrDefault(u => u.id == datos_vendedor.usuario_id);
+
+            ViewBag.Vendedor = vendedor.nombre;
+
+            //Muestra los articulos
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
             ViewBag.Articulos = articulo;
 
             DateTime fecha_cierre = Convert.ToDateTime(articulo.fecha_fin);
             DateTime fecha_actual = DateTime.UtcNow;
 
-            TimeSpan fecha_res = fecha_cierre - fecha_actual;
-            
+            TimeSpan fecha_res = fecha_cierre - fecha_actual  ;
 
-            ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
+            if (fecha_res < TimeSpan.Zero)
+            {
+                fecha_res = TimeSpan.Zero;
+            }
+
+            if (fecha_res.Hours >= articulo.fecha_fin.Hour || fecha_res == TimeSpan.Zero)
+            {
+                ViewBag.Fecha = "Subasta Cerrada";
+            }
+            else
+            {
+                ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
+            }
+            
 
             if (imagenes_articulos == null)
             {
@@ -307,11 +332,5 @@ namespace Sistema_Subastas.Controllers
             return _context.imagenes_articulos.Any(e => e.id == id);
         }
 
-        public void tiempo_restante()
-        {
-           
-
-
-        }
     }
 }
