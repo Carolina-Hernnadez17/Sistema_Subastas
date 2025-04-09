@@ -1,0 +1,61 @@
+﻿@using Sistema_Subastas.Models
+
+@{
+    ViewData["Title"] = "Realizar Puja";
+    var articulo = ViewBag.Articulo as articulos;
+}
+
+<h2>Realizar Puja</h2>
+
+@if (articulo != null)
+{
+    <div class="card">
+        <div class="card-body">
+            <h4>@articulo.titulo</h4>
+            <p>@articulo.descripcion</p>
+            <p><strong>Estado:</strong> @articulo.estado</p>
+            <p><strong>Precio de salida:</strong> $@articulo.precio_salida</p>
+            <p><strong>Fecha fin:</strong> @articulo.fecha_fin</p>
+
+            @if (articulo.estado_subasta == "Publicado" && articulo.fecha_fin > DateTime.Now)
+            {
+                <form asp-action="RegistrarPuja" asp-controller="Pujas" method="post" id="pujaForm">
+                    <input type="hidden" name="ArticuloId" value="@articulo.Id" />
+                    <input type="hidden" name="UsuarioId" id="UsuarioId" />
+
+                    <div class="form-group">
+                        <label for="Monto">Monto de la puja</label>
+                        <input type="number" class="form-control" name="Monto" step="0.01" min="0.01" required />
+                    </div>
+
+                    <button type="submit" class="btn btn-success mt-3">Realizar Puja</button>
+                </form>
+            }
+            else
+            {
+                <div class="alert alert-warning mt-3">
+                    Esta subasta ya ha finalizado o no está disponible para pujas.
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No se encontró el artículo.</div>
+}
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const userId = localStorage.getItem("userId");
+
+            if (userId) {
+                document.getElementById("UsuarioId").value = userId;
+            } else {
+                alert("Debes iniciar sesión para pujar.");
+                document.getElementById("pujaForm").style.display = "none";
+            }
+        });
+    </script>
+}

@@ -16,6 +16,7 @@ namespace Sistema_Subastas.Models
         public DateTime? fecha_inicio { get; set; }
         public DateTime fecha_fin {  get; set; }
         public int usuario_id { get; set; }
+        public string visualizacion_puja { get; set; }
 
         public string estado_subasta { get; set; } = "Publicado";
         public DateTime fecha_registro { get; set; } = DateTime.Now;

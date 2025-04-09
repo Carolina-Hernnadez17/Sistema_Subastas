@@ -13,5 +13,7 @@ namespace Sistema_Subastas.Models
         public DateTime fecha_puja { get; set; }
 
         public string estado_pujas { get; set; } = "En espera";
+
+
     }
 }

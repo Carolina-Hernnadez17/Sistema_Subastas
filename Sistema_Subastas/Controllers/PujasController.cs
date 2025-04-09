@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,211 +21,78 @@ namespace Sistema_Subastas.Controllers
         }
 
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RealizarPuja(int articuloId, decimal monto)
+        // GET: Pujas/Realizar/5
+        public async Task<IActionResult> Realizar(int id)
         {
-            var usuarioId = 1; // Obtén el ID del usuario autenticado desde el contexto de usuario
-            var articulo = await _context.articulos.FindAsync(articuloId);
+            var articulo = await _context.articulos
+                .FirstOrDefaultAsync(a => a.Id == id);
 
-            // Verificar que el usuario está autenticado
-            if (usuarioId == 0) // Si el usuario no está autenticado
+            if (articulo == null || articulo.estado_subasta != "Publicado" || articulo.fecha_fin < DateTime.Now)
             {
-                return RedirectToAction("Login", "Account");
+                return NotFound("Artículo no disponible para pujas.");
             }
 
-            // Validaciones
-            if (articulo == null)
-            {
-                TempData["Error"] = "El artículo no existe.";
-                return RedirectToAction("Index", "Articulos");
-            }
+            var historial = await (from p in _context.pujas
+                                   join u in _context.usuarios on p.usuario_id equals u.id
+                                   where p.articulo_id == id
+                                   orderby p.monto descending
+                                   select new PujaHistorialViewModel
+                                   {
+                                       NombreUsuario = u.nombre,
+                                       Monto = p.monto,
+                                       Fecha = p.fecha_puja
+                                   }).ToListAsync();
 
-            if (articulo.usuario_id == usuarioId)
-            {
-                TempData["Error"] = "No puedes pujar por un artículo que tú mismo has publicado.";
-                return RedirectToAction("Details", "Articulos", new { id = articuloId });
-            }
+            ViewBag.Articulo = articulo;
+            ViewBag.Historial = historial;
 
-            if (articulo.fecha_fin < DateTime.Now)
-            {
-                TempData["Error"] = "La subasta ya ha finalizado.";
-                return RedirectToAction("Details", "Articulos", new { id = articuloId });
-            }
-
-            var pujaActual = await _context.pujas
-                .Where(p => p.articulo_id == articuloId)
-                .OrderByDescending(p => p.monto)
-                .FirstOrDefaultAsync();
-
-            if (pujaActual != null && monto <= pujaActual.monto)
-            {
-                TempData["Error"] = "La puja debe ser mayor que la puja actual.";
-                return RedirectToAction("Create", new { articuloId });
-            }
-
-            if (monto < articulo.precio_salida)
-            {
-                TempData["Error"] = "La puja debe ser mayor o igual al precio de salida.";
-                return RedirectToAction("Create", new { articuloId });
-            }
-
-            // Mostrar mensaje de confirmación antes de guardar
-            if (Request.Form["confirmar"] == "true")
-            {
-                var nuevaPuja = new pujas
-                {
-                    articulo_id = articuloId,
-                    usuario_id = usuarioId,
-                    monto = monto,
-                    fecha_puja = DateTime.Now
-                };
-
-                _context.Add(nuevaPuja);
-                await _context.SaveChangesAsync();
-
-                TempData["Success"] = "Puja realizada con éxito.";
-                return RedirectToAction("Details", "Articulos", new { id = articuloId });
-            }
-
-            return View(new { articuloId, monto });
+            return View();
         }
 
+        // Acción para registrar la puja
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CancelarPuja(int id)
+        public IActionResult RegistrarPuja(int ArticuloId, int UsuarioId, decimal Monto)
         {
-            var puja = await _context.pujas.FindAsync(id);
+            var articulo = _context.articulos.FirstOrDefault(a => a.Id == ArticuloId);
+            var usuario = _context.usuarios.FirstOrDefault(u => u.id == UsuarioId);
 
-            if (puja == null)
+            if (articulo == null || usuario == null)
             {
-                TempData["Error"] = "Puja no encontrada.";
-                return RedirectToAction("Index");
+                return NotFound("El artículo o el usuario no existen.");
             }
 
-            var articulo = await _context.articulos.FindAsync(puja.articulo_id);
-
-            if (articulo == null || articulo.fecha_fin < DateTime.Now)
+            if (articulo.estado_subasta != "Publicado" || articulo.fecha_fin < DateTime.Now)
             {
-                TempData["Error"] = "La subasta ha finalizado y no se puede cancelar la puja.";
-                return RedirectToAction("Details", "Articulos", new { id = articulo.Id });
+                return BadRequest("La subasta ya ha finalizado o no está disponible.");
             }
 
-            if (puja.usuario_id != 1) // Verificar si el usuario que está intentando cancelar la puja es el propietario de la misma
+            if (Monto <= articulo.precio_salida)
             {
-                TempData["Error"] = "No puedes cancelar una puja que no realizaste.";
-                return RedirectToAction("Details", "Articulos", new { id = articulo.Id });
+                return BadRequest("El monto de la puja debe ser mayor al precio de salida.");
             }
 
-            // Mostrar mensaje de confirmación antes de cancelar
-            if (Request.Form["confirmar"] == "true")
+            var puja = new pujas
             {
-                _context.pujas.Remove(puja);
-                await _context.SaveChangesAsync();
+                articulo_id = ArticuloId,
+                usuario_id = UsuarioId,
+                monto = Monto,
+                fecha_puja = DateTime.Now
+            };
 
-                TempData["Success"] = "Puja cancelada con éxito.";
-                return RedirectToAction("Details", "Articulos", new { id = articulo.Id });
-            }
+            _context.pujas.Add(puja);
+            _context.SaveChanges();
 
-            return View(puja);
+            return RedirectToAction("Details", "Imagenes_articulos", new { id = ArticuloId });
+
         }
+
+
 
 
         // GET: Pujas
         public async Task<IActionResult> Index()
         {
             return View(await _context.pujas.ToListAsync());
-        }
-
-        // GET: Pujas/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var pujas = await _context.pujas
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (pujas == null)
-            {
-                return NotFound();
-            }
-
-            return View(pujas);
-        }
-
-        // GET: Pujas/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Pujas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,articulo_id,usuario_id,monto,fecha_puja")] pujas pujas)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(pujas);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(pujas);
-        }
-
-        // GET: Pujas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var pujas = await _context.pujas.FindAsync(id);
-            if (pujas == null)
-            {
-                return NotFound();
-            }
-            return View(pujas);
-        }
-
-        // POST: Pujas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,articulo_id,usuario_id,monto,fecha_puja")] pujas pujas)
-        {
-            if (id != pujas.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(pujas);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!pujasExists(pujas.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(pujas);
         }
 
         // GET: Pujas/Delete/5
@@ -265,4 +133,12 @@ namespace Sistema_Subastas.Controllers
             return _context.pujas.Any(e => e.Id == id);
         }
     }
+
+    public class PujaHistorialViewModel
+    {
+        public string NombreUsuario { get; set; }
+        public decimal Monto { get; set; }
+        public DateTime Fecha { get; set; }
+    }
+
 }
