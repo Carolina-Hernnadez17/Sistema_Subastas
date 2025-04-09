@@ -123,6 +123,7 @@
                                asp-action="Realizar"
                                asp-route-id="@ViewBag.Articulos.Id"
                                title=""
+                               id="btn_puja"
                                class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100
                                     hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
                                     dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
@@ -141,6 +142,30 @@
                                           d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
                                 </svg>
                                 Realizar Oferta
+                            </a>
+
+                            <a asp-controller="Pujas"
+                               asp-action="VerPujas"
+                               asp-route-id="@ViewBag.Articulos.Id"
+                               id="ver_puja"
+                               class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-gray-200 rounded-lg border border-gray-300 hover:bg-gray-300
+                                hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
+                                dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                               role="button">
+                                <svg class="w-5 h-5 -ms-2 me-2"
+                                     aria-hidden="true"
+                                     xmlns="http://www.w3.org/2000/svg"
+                                     width="24"
+                                     height="24"
+                                     fill="none"
+                                     viewBox="0 0 24 24">
+                                    <path stroke="currentColor"
+                                          stroke-linecap="round"
+                                          stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M3 12l2-2 4 4 6-6 5 5" />
+                                </svg>
+                                Ver Pujas
                             </a>
 
                             @if (ViewBag.CantidadP == 0)
@@ -203,10 +228,11 @@
             let usuarioId = localStorage.getItem("userId");
             const idVendedor = "@ViewBag.IdVendedor";
 
-            // Mostrar botón de editar si ES el vendedor
+           
             if (usuarioId && usuarioId === idVendedor) {
                 document.getElementById("editarBtn").style.display = "flex";
                 document.getElementById("btn_puja").style.display = "none";
+                document.getElementById("ver_puja").style.display = "none";
 
             }
         });
