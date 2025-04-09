@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
 using MySql.Data.MySqlClient;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Sistema_Subastas.Controllers
 {
@@ -34,10 +35,13 @@ namespace Sistema_Subastas.Controllers
             var categorias = await _context.categorias.ToListAsync();
             var articuloCategorias = await _context.articulo_categoria.ToListAsync();
 
+            var articulo = _context.articulos.FirstOrDefault();
+
             ViewBag.Articulos = articulos;
             ViewBag.ArticuloCategorias = articuloCategorias;
             ViewBag.Categorias = categorias;
 
+            
             return View(imagenes);
 
 
@@ -85,10 +89,12 @@ namespace Sistema_Subastas.Controllers
 
             if (fecha_res.Days >= articulo.fecha_fin.Day || fecha_res == TimeSpan.Zero)
             {
+                
                 ViewBag.Fecha = "Subasta Cerrada";
             }
             else
             {
+                ViewBag.Estado = articulo.estado_subasta;
                 ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
             }
 

@@ -38,46 +38,51 @@
         </div>
         @foreach (var articulo in articulos)
         {
-            var imagen = imagenes.FirstOrDefault(img => img.articulo_id == articulo.Id);
-            if (imagen == null) continue; // Si no hay imagen, no se muestra
 
-            var articuloCategoria = ca_img.FirstOrDefault(ac => ac.articulo_id == articulo.Id);
-            if (articuloCategoria == null) continue; // Si no hay categoría, tampoco se muestra
+            @if (articulo.estado_subasta == "Publicado" || articulo.estado_subasta == "Finalizada" )
+            {
+                var imagen = imagenes.FirstOrDefault(img => img.articulo_id == articulo.Id);
+                if (imagen == null) continue; // Si no hay imagen, no se muestra
 
-            var categoria = categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
+                var articuloCategoria = ca_img.FirstOrDefault(ac => ac.articulo_id == articulo.Id);
+                if (articuloCategoria == null) continue; // Si no hay categoría, tampoco se muestra
 
-            <div class="col-12 col-sm-6 col-md-8 col-lg-4">
-                <a href="@Url.Action("Details", "Imagenes_articulos", new { id = imagen.articulo_id })" class="card text-decoration-none">
-                    <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 item-articulo"
-                         data-estado="@articulo.estado" data-nombre="@articulo.titulo" data-categoria="@categoria?.Id">
-                        <div class="imgen_p">
-                            <img src="@imagen.url_imagen" alt="Imagen del artículo"
-                                 onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'">
+                var categoria = categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
+
+                <div class="col-12 col-sm-6 col-md-8 col-lg-4">
+                    <a href="@Url.Action("Details", "Imagenes_articulos", new { id = imagen.articulo_id })" class="card text-decoration-none">
+                        <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 item-articulo"
+                             data-estado="@articulo.estado" data-nombre="@articulo.titulo" data-categoria="@categoria?.Id">
+                            <div class="imgen_p">
+                                <img src="@imagen.url_imagen" alt="Imagen del artículo"
+                                     onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'">
+                            </div>
+                            <div class="pt-6">
+                                <ul class="mt-2 items-center gap-4">
+                                    <li><h1 class="text-sm font-medium text-black-50 dark:text-black-400">@articulo.titulo</h1></li>
+                                    <li class="flex items-center gap-2">
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Categoría: @categoria?.nombre</p>
+
+                                    </li>
+                                    <li>
+                                        <p>Fecha de registros @articulo.fecha_registro</p>
+                                    </li>
+                                    <li>
+                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">@ViewBag.Fecha</p>
+                                    </li>
+                                    <li>
+                                        <div class="d-flex">
+                                            <p class="leading-tight text-gray-900 dark:text-dark text-precio">Precio de salida: </p>
+                                            <p class="font-extrabold leading-tight text-gray-900 dark:text-dark">$ @articulo.precio_salida</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
-                        <div class="pt-6">
-                            <ul class="mt-2 items-center gap-4">
-                                <li><h1 class="text-sm font-medium text-black-50 dark:text-black-400">@articulo.titulo</h1></li>
-                                <li class="flex items-center gap-2">
-                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Categoría: @categoria?.nombre</p>
-                                    
-                                </li>
-                                <li>
-                                    <p>Fecha de registros @articulo.fecha_registro</p>
-                                </li>
-                                <li>
-                                    <p class="text-sm font-medium text-gray-500 dark:text-gray-400">@ViewBag.Fecha</p>
-                                </li>
-                                <li>
-                                    <div class="d-flex">
-                                        <p class="leading-tight text-gray-900 dark:text-dark text-precio">Precio de salida: </p>
-                                        <p class="font-extrabold leading-tight text-gray-900 dark:text-dark">$ @articulo.precio_salida</p>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
+            }
+            
         }
     </div>
    

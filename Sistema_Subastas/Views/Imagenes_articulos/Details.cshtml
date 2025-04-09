@@ -85,7 +85,7 @@
                     
 
                     <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-                        @if (!ViewBag.Fecha.ToString().Trim().Equals("Subasta Cerrada"))
+                        @if (ViewBag.Estado.ToString().Trim().Equals("Publicado"))
                         {
                             <a asp-controller="Pujas"
                                asp-action="Realizar"
