@@ -39,7 +39,7 @@
         @foreach (var articulo in articulos)
         {
 
-            @if (articulo.estado_subasta == "Publicado" || articulo.estado_subasta == "Finalizada" )
+            @if (articulo.estado_subasta == "Publicado" || articulo.estado_subasta == "No vendido")
             {
                 var imagen = imagenes.FirstOrDefault(img => img.articulo_id == articulo.Id);
                 if (imagen == null) continue; // Si no hay imagen, no se muestra

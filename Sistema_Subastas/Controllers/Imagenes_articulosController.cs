@@ -91,6 +91,7 @@ namespace Sistema_Subastas.Controllers
             {
                 
                 ViewBag.Fecha = "Subasta Cerrada";
+                ViewBag.Estado = articulo.estado_subasta;
             }
             else
             {
