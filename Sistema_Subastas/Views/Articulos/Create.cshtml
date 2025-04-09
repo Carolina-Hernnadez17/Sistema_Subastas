@@ -45,6 +45,12 @@
                 <span asp-validation-for="fecha_inicio" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="visualizacion_puja" class="control-label"></label>
+                <input asp-for="visualizacion_puja" id="visualizacion_puja" class="form-control" required />
+                <span asp-validation-for="visualizacion_puja" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="fecha_fin" class="control-label"></label>
                 <input asp-for="fecha_fin" id="fecha_fin" class="form-control" required type="datetime-local" />
                 <span asp-validation-for="fecha_fin" class="text-danger"></span>

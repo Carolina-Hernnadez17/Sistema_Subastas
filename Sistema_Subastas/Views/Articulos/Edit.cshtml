@@ -3,7 +3,8 @@
 
     var articulo = ViewBag.Articulo as Sistema_Subastas.Models.articulos;
     var imagenes = ViewBag.Imagenes as List<Sistema_Subastas.Models.imagenes_articulos> ?? new List<Sistema_Subastas.Models.imagenes_articulos>();
-    var categorias = ViewBag.Categorias as List<Sistema_Subastas.Models.categorias>;
+    var categorias = ViewBag.CategoriasA as List<Sistema_Subastas.Models.categorias>;
+    var categoriaActual = ViewBag.CategoriaActual as int?;
 }
 
 <h1>Editar Artículo + Imágenes</h1>
@@ -46,8 +47,7 @@
                 <div class="form-group">
                     <label>Fecha inicio</label>
                     <input class="form-control" name="fecha_inicio" type="datetime-local"
-                           value="@Model.fecha_inicio.ToString("yyyy-MM-ddTHH:mm")" />
-
+                           value="@(articulo.fecha_inicio.HasValue ? articulo.fecha_inicio.Value.ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
                 </div>
 
                 <div class="form-group">
@@ -59,17 +59,19 @@
                     <label>Estado de la subasta</label>
                     <input class="form-control" name="estado_subasta" value="@articulo.estado_subasta" />
                 </div>
-
+                <div class="form-group">
+                    <label>Estado de la subasta</label>
+                    <input class="form-control" name="visualizacion_puja" value="@articulo.visualizacion_puja" />
+                </div>
                 <div class="form-group">
                     <label for="categoria">Seleccione una categoría:</label>
                     <select name="categoria_id" id="categoria" class="form-control" required>
                         <option value="">Seleccione una opción</option>
 
-                        @foreach (var categoria in ViewBag.CategoriasA)
+                        @foreach (var categoria in categorias)
                         {
-                            <option value="@categoria.Id">@categoria.nombre</option>
+                            <option value="@categoria.Id" selected="@(categoriaActual == categoria.Id)">@categoria.nombre</option>
                         }
-
                     </select>
                 </div>
             </div>
@@ -83,6 +85,7 @@
                         <div class="mb-3">
                             <input type="hidden" name="Imagenes[@i].id" value="@imagenes[i].id" />
                             <input type="hidden" name="Imagenes[@i].articulo_id" value="@imagenes[i].articulo_id" />
+                            <input type="hidden" name="Imagenes[@i].url_imagen" value="@imagenes[i].url_imagen" />
 
                             <img src="@imagenes[i].url_imagen" alt="Imagen del artículo" width="200"
                                  onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'" />
@@ -92,11 +95,19 @@
                         </div>
                     }
                 </div>
+                <!-- Opción para agregar nuevas imágenes -->
+                <div class="mt-4">
+                    <h4>Agregar nuevas imágenes</h4>
+                    <input type="file" name="ImagenesAdicionales" multiple class="form-control" />
+                </div>
             </div>
+
+                
+            
         </div>
 
         <button type="submit" class="btn btn-success mt-3">Actualizar datos</button>
     </form>
 </div>
 
-<a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a> 
+<a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a>

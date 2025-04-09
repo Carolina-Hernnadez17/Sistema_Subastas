@@ -109,74 +109,93 @@ namespace Sistema_Subastas.Controllers
                 .Where(i => i.articulo_id == id)
                 .ToList();
 
-            ViewBag.CategoriasA = _context.categorias.ToList();
+            // Obtener la categoría actual del artículo
+            var articuloCategoria = _context.articulo_categoria
+                .FirstOrDefault(ac => ac.articulo_id == id);
 
+            int? categoriaActual = articuloCategoria?.categoria_id;
+
+            ViewBag.CategoriasA = _context.categorias.ToList();
+            ViewBag.CategoriaActual = categoriaActual;
             ViewBag.Articulo = articulo;
             ViewBag.Imagenes = imagenes;
-            
 
             return View(articulo);
         }
 
-
         // POST: Articulos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(articulos articulo, List<imagenes_articulos> Imagenes, List<IFormFile> NuevasImagenes, int categoria_id)
         {
             try
             {
+                               
                 _context.Update(articulo);
 
                 // Actualizar categoría
-                var id_cat = _context.articulo_categoria.FirstOrDefault(c => c.articulo_id == articulo.Id);
-                if (id_cat != null)
+                var articuloCategoria = _context.articulo_categoria.FirstOrDefault(c => c.articulo_id == articulo.Id);
+                if (articuloCategoria != null)
                 {
-                    id_cat.categoria_id = categoria_id;
-                    _context.Update(id_cat);
+                    articuloCategoria.categoria_id = categoria_id;
+                    _context.Update(articuloCategoria);
                 }
+                
 
                 // Configuración de Cloudinary
                 var account = new Account("daxbwcgw2", "346927586337937", "YqqRBDv2Ha3x_qxjNknM8_sT83Q");
                 var cloudinary = new Cloudinary(account);
 
-                // Actualizar imágenes si hay nuevas
-                for (int i = 0; i < Imagenes.Count; i++)
+                // Actualizar imágenes existentes
+                if (NuevasImagenes != null)
                 {
-                    var imagenDB = await _context.imagenes_articulos.FindAsync(Imagenes[i].id);
-
-                    if (imagenDB != null && i < NuevasImagenes.Count)
+                    foreach (var imagen in Imagenes)
                     {
-                        var file = NuevasImagenes[i];
+                        // Encontrar el índice de esta imagen
+                        int index = Imagenes.FindIndex(i => i.id == imagen.id);
+
+                        // Buscar si hay un archivo nuevo para este índice
+                        var fileKey = $"NuevasImagenes[{index}]";
+                        var file = Request.Form.Files.FirstOrDefault(f => f.Name == fileKey);
+
                         if (file != null && file.Length > 0)
                         {
-                            var uploadParams = new ImageUploadParams()
+                            var imagenDB = await _context.imagenes_articulos.FindAsync(imagen.id);
+                            if (imagenDB != null)
                             {
-                                File = new FileDescription(file.FileName, file.OpenReadStream()),
-                                Folder = "Subasta"
-                            };
+                                var uploadParams = new ImageUploadParams()
+                                {
+                                    File = new FileDescription(file.FileName, file.OpenReadStream()),
+                                    Folder = "Subasta"
+                                };
 
-                            var uploadResult = await Task.Run(() => cloudinary.Upload(uploadParams));
+                                var uploadResult = await cloudinary.UploadAsync(uploadParams);
 
-                            if (uploadResult != null && !string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
-                            {
-                                imagenDB.url_imagen = uploadResult.SecureUrl.ToString();
-                                _context.Update(imagenDB);
+                                if (uploadResult != null && !string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
+                                {
+                                    imagenDB.url_imagen = uploadResult.SecureUrl.ToString();
+                                    _context.Update(imagenDB);
+                                }
                             }
                         }
-                        // Si no se sube nada, se conserva la imagen original
                     }
                 }
 
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Artículo e imágenes actualizados correctamente.";
-                return RedirectToAction("Index", "Imagenes_articulos");
+                TempData["MensajeE"] = "Artículo e imágenes actualizados correctamente.";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error al actualizar: " + ex.Message);
-                return View();
+
+                
+                ViewBag.CategoriasA = _context.categorias.ToList();
+                ViewBag.CategoriaActual = categoria_id;
+                ViewBag.Articulo = articulo;
+                ViewBag.Imagenes = _context.imagenes_articulos.Where(i => i.articulo_id == articulo.Id).ToList();
+
+                return View(articulo);
             }
         }
 
