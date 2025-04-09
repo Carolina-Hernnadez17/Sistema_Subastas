@@ -46,7 +46,7 @@
 
             <h5>Estado:</h5>
             <p>
-                @if (articulo.estado == "activa")
+                @if (articulo.estado_subasta == "Publicado")
                 {
                     <span class="badge bg-success">Activa</span>
                 }
@@ -97,18 +97,18 @@
                         <td>@puja.nombre_usuario</td>
                         <td>@puja.Fecha.ToString("g")</td>
                         <td>
-                            @if (puja.id_usuario == usuarioId && articulo.estado == "activa")
+                            @if (puja.id_usuario == usuarioId && articulo.estado_subasta == "Publicado")
                             {
                                 <form asp-action="CancelarPuja" asp-route-id="@puja.id_puja" method="post" onsubmit="return confirm('¿Estás seguro de cancelar esta puja?');">
                                     <button type="submit" class="btn btn-danger btn-sm btn-cancelar"
                                             data-id-puja="@puja.id_puja"
                                             data-id-usuario="@puja.id_usuario"
-                                            data-estado-subasta="@articulo.estado">
+                                            data-estado-subasta="@articulo.estado_subasta">
                                         Cancelar
                                     </button>
                                 </form>
                             }
-                            else if (puja.id_usuario == usuarioId && articulo.estado != "activa")
+                            else if (puja.id_usuario == usuarioId && articulo.estado_subasta != "Publicado")
                             {
                                 <span class="text-muted">Subasta finalizada</span>
                             }
@@ -147,7 +147,7 @@
                         return;
                     }
 
-                    if (estadoSubasta !== "activa") {
+                    if (estadoSubasta !== "Vendido") {
                         alert("No se puede cancelar la puja porque la subasta ya ha finalizado.");
                         e.preventDefault();
                         return;
