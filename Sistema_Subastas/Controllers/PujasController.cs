@@ -78,8 +78,17 @@ namespace Sistema_Subastas.Controllers
                 monto = Monto,
                 fecha_puja = DateTime.Now
             };
+            var notificacion = new notificaciones
+            {
+                usuario_id = articulo.usuario_id,
+                mensaje = $"📢 Nueva puja de ${puja.monto} en tu subasta: {articulo.titulo}",
+                leido = false,
+                fecha = DateTime.Now
+            };
 
             _context.pujas.Add(puja);
+            _context.notificaciones.Add(notificacion);
+
             _context.SaveChanges();
 
             return RedirectToAction("Details", "Imagenes_articulos", new { id = ArticuloId });
