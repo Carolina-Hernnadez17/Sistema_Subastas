@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+锘縰sing Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
@@ -18,18 +18,36 @@ namespace Sistema_Subastas.Controllers
             _hubContext = hubContext;
         }
 
-        public IActionResult Index()
+        //public IActionResult Index()
+        //{
+        //    var usuario = HttpContext.Session.GetInt32("usuario_id");
+        //    var nombre = HttpContext.Session.GetString("NombreUser");
+        //    if(usuario == null && nombre == null)
+        //    {
+        //        return RedirectToAction("Login", "Usuarios");
+        //    }
+        //    ViewBag.NombreUsuario = nombre;
+        //    CerrarSubastasFinalizadas();
+        //    return View();
+        //}
+        public async Task<IActionResult> Index()
         {
             var usuario = HttpContext.Session.GetInt32("usuario_id");
             var nombre = HttpContext.Session.GetString("NombreUser");
-            if(usuario == null && nombre == null)
+
+            if (usuario == null && nombre == null)
             {
                 return RedirectToAction("Login", "Usuarios");
             }
+
             ViewBag.NombreUsuario = nombre;
-            CerrarSubastasFinalizadas();
+
+            // Aqu铆 llamas al m茅todo async correctamente
+            await CerrarSubastasFinalizadas();
+
             return View();
         }
+
 
         public IActionResult Privacy()
         {
@@ -38,64 +56,71 @@ namespace Sistema_Subastas.Controllers
 
         public async Task<IActionResult> CerrarSubastasFinalizadas()
         {
-            // Obtener las subastas cerradas
-            var subastas = _context.articulos
+            // Subastas finalizadas con pujas
+            var subastasFinalizadas = _context.articulos
                 .Where(a => a.estado_subasta == "Finalizada")
                 .ToList();
 
-            foreach (var subasta in subastas)
+            foreach (var subasta in subastasFinalizadas)
             {
-                string mensaje;
+                string mensaje = $"馃摙 Tu subasta {subasta.titulo} ha finalizado el {subasta.fecha_fin:dd/MM/yyyy}.";
 
-                mensaje = $"Tu subasta '{subasta.titulo}' ha finalizado.";
+                // Verificar si ya se envi贸 esta notificaci贸n
+                bool yaExiste = _context.notificaciones.Any(n =>
+                    n.usuario_id == subasta.usuario_id &&
+                    n.mensaje == mensaje);
 
-                // Crear la notificaci髇 para el creador de la subasta
-                var notificacion = new notificaciones
+                if (!yaExiste)
                 {
-                    usuario_id = subasta.usuario_id,
-                    mensaje = mensaje,
-                    leido = false,
-                    fecha = DateTime.Now
-                };
+                    var notificacion = new notificaciones
+                    {
+                        usuario_id = subasta.usuario_id,
+                        mensaje = mensaje,
+                        leido = false,
+                        fecha = DateTime.Now
+                    };
 
-                // Agregar la notificaci髇 a la base de datos
-                _context.notificaciones.Add(notificacion);
+                    _context.notificaciones.Add(notificacion);
 
-                // Enviar la notificaci髇 en tiempo real (por SignalR)
-                await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
+                    await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
+                }
             }
 
-            // Obtener las subastas cerradas
-            var subastasNV = _context.articulos
+            // Subastas no vendidas (sin pujas)
+            var subastasNoVendidas = _context.articulos
                 .Where(a => a.estado_subasta == "No vendido")
                 .ToList();
 
-            foreach (var subastaN in subastasNV)
+            foreach (var subasta in subastasNoVendidas)
             {
-                string mensaje;
+                string mensaje = $"馃摙 Tu subasta {subasta.titulo} ha terminado sin pujas el {subasta.fecha_fin:dd/MM/yyyy}.";
 
-                mensaje = $"Tu subasta '{subastaN.titulo}' ha terminado sin pujas .";
+                // Verificar si ya se envi贸 esta notificaci贸n
+                bool yaExiste = _context.notificaciones.Any(n =>
+                    n.usuario_id == subasta.usuario_id &&
+                    n.mensaje == mensaje);
 
-                // Crear la notificaci髇 para el creador de la subasta
-                var notificacion = new notificaciones
+                if (!yaExiste)
                 {
-                    usuario_id = subastaN.usuario_id,
-                    mensaje = mensaje,
-                    leido = false,
-                    fecha = DateTime.Now
-                };
+                    var notificacion = new notificaciones
+                    {
+                        usuario_id = subasta.usuario_id,
+                        mensaje = mensaje,
+                        leido = false,
+                        fecha = DateTime.Now
+                    };
 
-                // Agregar la notificaci髇 a la base de datos
-                _context.notificaciones.Add(notificacion);
+                    _context.notificaciones.Add(notificacion);
 
-                // Enviar la notificaci髇 en tiempo real (por SignalR)
-                await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subastaN.usuario_id, mensaje);
+                    await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
+                }
             }
 
             await _context.SaveChangesAsync();
 
             return Ok("Subastas cerradas y notificaciones enviadas.");
         }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
