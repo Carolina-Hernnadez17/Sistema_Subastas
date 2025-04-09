@@ -126,7 +126,7 @@ namespace Sistema_Subastas.Controllers
         // POST: Articulos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(articulos articulo, List<imagenes_articulos> Imagenes, List<IFormFile> NuevasImagenes, int categoria_id)
+        public async Task<IActionResult> Edit(articulos articulo, List<imagenes_articulos> Imagenes,List<IFormFile> NuevasImagenes, List<IFormFile> ImagenesAdicionales, int categoria_id)
         {
             try
             {
@@ -181,6 +181,41 @@ namespace Sistema_Subastas.Controllers
                     }
                 }
 
+                var imagenesActuales = await _context.imagenes_articulos
+                                       .Where(i => i.articulo_id == articulo.Id)
+                                       .CountAsync();
+
+                if (ImagenesAdicionales != null && ImagenesAdicionales.Count > 0)
+                {
+                    foreach (var file in ImagenesAdicionales)
+                    {
+                        // Verificar si ya alcanzamos el límite de 5 imágenes
+                        if (imagenesActuales >= 5)
+                            break;
+
+                        if (file != null && file.Length > 0)
+                        {
+                            var uploadParams = new ImageUploadParams()
+                            {
+                                File = new FileDescription(file.FileName, file.OpenReadStream()),
+                                Folder = "Subasta"
+                            };
+
+                            var uploadResult = await cloudinary.UploadAsync(uploadParams);
+
+                            if (uploadResult != null && !string.IsNullOrEmpty(uploadResult.SecureUrl?.ToString()))
+                            {
+                                var nuevaImagen = new imagenes_articulos
+                                {
+                                    articulo_id = articulo.Id,
+                                    url_imagen = uploadResult.SecureUrl.ToString()
+                                };
+                                _context.Add(nuevaImagen);
+                                imagenesActuales++;
+                            }
+                        }
+                    }
+                }
                 await _context.SaveChangesAsync();
                 TempData["MensajeE"] = "Artículo e imágenes actualizados correctamente.";
                 return RedirectToAction("Index");
@@ -200,7 +235,37 @@ namespace Sistema_Subastas.Controllers
         }
 
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EliminarImagen(int id)
+        {
+            try
+            {
+                var imagen = await _context.imagenes_articulos.FindAsync(id);
+                if (imagen == null)
+                {
+                    return NotFound();
+                }
 
+                
+                int articuloId = imagen.articulo_id;
+
+                
+                _context.imagenes_articulos.Remove(imagen);
+                await _context.SaveChangesAsync();
+
+
+
+                
+                TempData["MensajeE"] = "Imagen eliminada correctamente.";
+                return RedirectToAction("Edit", new { id = articuloId });
+            }
+            catch (Exception ex)
+            {
+                TempData["MensajeE"] = "Error al eliminar la imagen: " + ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
 
         // GET: Articulos/Delete/5
         public async Task<IActionResult> Delete(int? id)

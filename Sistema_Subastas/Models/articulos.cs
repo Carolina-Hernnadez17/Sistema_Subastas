@@ -13,7 +13,7 @@ namespace Sistema_Subastas.Models
         public decimal precio_salida { get; set; }
 
         public decimal precio_venta {  get; set; }
-        public DateTime? fecha_inicio { get; set; }
+        public DateTime fecha_inicio { get; set; }
         public DateTime fecha_fin {  get; set; }
         public int usuario_id { get; set; }
         public string visualizacion_puja { get; set; }

@@ -1,5 +1,166 @@
 ﻿@{
     ViewData["Title"] = "Editar Artículo";
+    var articulo = ViewBag.Articulo as Sistema_Subastas.Models.articulos;
+    var imagenes = ViewBag.Imagenes as List<Sistema_Subastas.Models.imagenes_articulos> ?? new List<Sistema_Subastas.Models.imagenes_articulos>();
+    var categorias = ViewBag.CategoriasA as List<Sistema_Subastas.Models.categorias>;
+    var categoriaActual = ViewBag.CategoriaActual as int?;
+    
+    // Calcular cuántas imágenes se pueden agregar (máximo 5 en total)
+    int imagenesDisponibles = 5 - imagenes.Count;
+}
+
+<h1>Editar Artículo + Imágenes</h1>
+<hr />
+
+<div class="container">
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <!-- Columna 1: Datos del artículo -->
+            <div class="col-md-6 mt-3">
+                <input type="hidden" name="Id" value="@articulo.Id" />
+                <input type="hidden" name="usuario_id" value="@articulo.usuario_id" />
+
+                <div class="form-group">
+                    <label>Título</label>
+                    <input class="form-control" name="titulo" value="@articulo.titulo" />
+                </div>
+
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <input class="form-control" name="descripcion" value="@articulo.descripcion" />
+                </div>
+
+                <div class="form-group">
+                    <label>Estado</label>
+                    <input class="form-control" name="estado" value="@articulo.estado" />
+                </div>
+
+                <div class="form-group">
+                    <label>Precio de salida</label>
+                    <input class="form-control" name="precio_salida" value="@articulo.precio_salida" />
+                </div>
+
+                <div class="form-group">
+                    <label>Precio de venta</label>
+                    <input class="form-control" name="precio_venta" value="@articulo.precio_venta" />
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha inicio</label>
+                    <input class="form-control" name="fecha_inicio" type="datetime-local"
+                           value="@(articulo.fecha_inicio != null ? articulo.fecha_inicio.ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+                </div>
+
+                <div class="form-group">
+                    <label>Fecha fin</label>
+                    <input class="form-control" name="fecha_fin" type="datetime-local" 
+                           value="@(articulo.fecha_fin != null ? articulo.fecha_fin.ToString("yyyy-MM-ddTHH:mm") : DateTime.Now.ToString("yyyy-MM-ddTHH:mm"))" />
+                </div>
+
+                <div class="form-group">
+                    <label>Estado de la subasta</label>
+                    <input class="form-control" name="estado_subasta" value="@articulo.estado_subasta" />
+                </div>
+
+                <div class="form-group">
+                    <label>Vistas de las pujas</label>
+                    <input class="form-control" name="visualizacion_puja" value="@articulo.visualizacion_puja" />
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria">Seleccione una categoría:</label>
+                    <select name="categoria_id" id="categoria" class="form-control" required>
+                        <option value="">Seleccione una opción</option>
+                        @foreach (var categoria in categorias)
+                        {
+                            <option value="@categoria.Id" selected="@(categoriaActual == categoria.Id)">@categoria.nombre</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <!-- Columna 2: Imágenes -->
+            <div class="col-md-6 mt-3">
+                <h4 class="mt-4">Imágenes actuales (@imagenes.Count de 5)</h4>
+                <div class="form-group">
+                    @for (int i = 0; i < imagenes.Count; i++)
+                    {
+                        <div class="mb-3 border p-3" id="imagen-@imagenes[i].id">
+                            <input type="hidden" name="Imagenes[@i].id" value="@imagenes[i].id" />
+                            <input type="hidden" name="Imagenes[@i].articulo_id" value="@imagenes[i].articulo_id" />
+                            <input type="hidden" name="Imagenes[@i].url_imagen" value="@imagenes[i].url_imagen" />
+
+                            <img src="@imagenes[i].url_imagen" alt="Imagen del artículo" width="200"
+                                 onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'" />
+
+                            <div class="mt-2">
+                                <label class="form-label d-block">Cambiar imagen:</label>
+                                <input type="file" name="NuevasImagenes[@i]" class="form-control mb-2" />
+                                
+                                <a href="javascript:void(0)" onclick="eliminarImagen(@imagenes[i].id)" class="btn btn-danger btn-sm">
+                                    Eliminar imagen
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Sección para agregar nuevas imágenes (solo si hay espacio) -->
+                @if (imagenesDisponibles > 0)
+                {
+                    <div class="mt-4">
+                        <h4>Agregar nuevas imágenes (máximo @imagenesDisponibles)</h4>
+                        <p class="text-muted">Puede agregar hasta @imagenesDisponibles imagen(es) más.</p>
+                        
+                        @for (int i = 0; i < imagenesDisponibles; i++)
+                        {
+                            <div class="mb-2">
+                                <input type="file" name="ImagenesAdicionales" class="form-control" />
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="mt-4 alert alert-info">
+                        Ya tiene el máximo de 5 imágenes. Elimine alguna si desea cambiarla.
+                    </div>
+                }
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success mt-3">Actualizar datos</button>
+        <a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function eliminarImagen(imagenId) {
+            if (confirm('¿Está seguro que desea eliminar esta imagen?')) {
+                // Crear formulario para enviar token antiforgery
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '/Articulos/EliminarImagen/' + imagenId;
+                
+                // Clonar el token antiforgery y añadirlo al formulario
+                var token = document.querySelector('input[name="__RequestVerificationToken"]').cloneNode(true);
+                form.appendChild(token);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
+
+
+
+
+
+@* @{
+    ViewData["Title"] = "Editar Artículo";
 
     var articulo = ViewBag.Articulo as Sistema_Subastas.Models.articulos;
     var imagenes = ViewBag.Imagenes as List<Sistema_Subastas.Models.imagenes_articulos> ?? new List<Sistema_Subastas.Models.imagenes_articulos>();
@@ -110,4 +271,4 @@
     </form>
 </div>
 
-<a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a>
+<a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a> *@
