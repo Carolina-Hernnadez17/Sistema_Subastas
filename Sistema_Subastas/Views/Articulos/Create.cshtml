@@ -35,17 +35,17 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="precio_salida" class="control-label"></label>
+                <label asp-for="precio_salida" class="control-label"> Precio de Inicio</label>
                 <input asp-for="precio_salida" class="form-control" required type="number" min="0.01"  step="0.01"   />
                 <span asp-validation-for="precio_salida" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="precio_venta" class="control-label"></label>
+                <label asp-for="precio_venta" class="control-label">Precio de Venta</label>
                 <input asp-for="precio_venta" class="form-control" required type="number" min="0.01"  step="0.01"   />
                 <span asp-validation-for="precio_venta" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="fecha_inicio" class="control-label"></label>
+                <label asp-for="fecha_inicio" class="control-label">Fecha de inicio de la subasta</label>
                 <input asp-for="fecha_inicio" id="fecha_inicio" class="form-control" required type="datetime-local" />
                 <span asp-validation-for="fecha_inicio" class="text-danger"></span>
             </div>
@@ -60,7 +60,7 @@
 
 
             <div class="form-group">
-                <label asp-for="fecha_fin" class="control-label"></label>
+                <label asp-for="fecha_fin" class="control-label">Fecha final de la subasta</label>
                 <input asp-for="fecha_fin" id="fecha_fin" class="form-control" required type="datetime-local" />
                 <span asp-validation-for="fecha_fin" class="text-danger"></span>
             </div>
@@ -106,45 +106,44 @@
     });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var mensaje = '@Html.Raw(TempData["MensajeE"])';
-
-        if (mensaje.trim() !== "" && mensaje !== "null" && mensaje !== "undefined") {
-            document.getElementById('toast-text').textContent = mensaje;
-            document.getElementById('toast-container').style.display = "block";
-
-            var toastElement = document.getElementById('toastMensaje');
-            var toast = new bootstrap.Toast(toastElement);
-            toast.show();
-        }
-    });
-
-        document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
         const fechaInicioInput = document.getElementById("fecha_inicio");
         const fechaFinInput = document.getElementById("fecha_fin");
         const precioSalidaInput = document.getElementById("precio_salida");
         const precioVentaInput = document.getElementById("precio_venta");
 
-        const now = new Date();
-        const todayFormatted = now.toISOString().slice(0, 16); // yyyy-MM-ddTHH:mm
+        function formatoLocalFecha(date) {
+            const offset = date.getTimezoneOffset();
+            const local = new Date(date.getTime() - offset * 60000);
+            return local.toISOString().slice(0, 16);
+        }
 
-        fechaInicioInput.min = todayFormatted;
-        fechaFinInput.min = todayFormatted;
+        const ahora = new Date();
+        fechaInicioInput.min = formatoLocalFecha(ahora);
+        fechaFinInput.min = formatoLocalFecha(new Date(ahora.getTime() + 60000)); // +1 minuto por defecto
 
-        // Validación dinámica de fechas
         fechaInicioInput.addEventListener("change", function () {
-            const fechaInicio = new Date(fechaInicioInput.value);
-            const nuevaMin = new Date(fechaInicio.getTime() + 60 * 1000); // +1 minuto
-            fechaFinInput.min = nuevaMin.toISOString().slice(0, 16);
+            const inicio = new Date(fechaInicioInput.value);
+            if (isNaN(inicio.getTime())) return;
+
+            const nuevaMin = new Date(inicio.getTime() + 60000); // fecha_fin debe ser mayor
+            fechaFinInput.min = formatoLocalFecha(nuevaMin);
         });
 
-        // Validación al enviar formulario
-        const form = document.querySelector("form");
-        form.addEventListener("submit", function (e) {
-            const fechaInicio = new Date(fechaInicioInput.value);
-            const fechaFin = new Date(fechaFinInput.value);
+        document.querySelector("form").addEventListener("submit", function (e) {
+            const ahora = new Date();
+            const inicio = new Date(fechaInicioInput.value);
+            const fin = new Date(fechaFinInput.value);
 
-            if (fechaFin <= fechaInicio) {
+            // ⚠️ Verifica que fecha_inicio no sea menor a la actual
+            if (inicio < ahora) {
+                alert("La fecha de inicio no puede ser menor a la hora actual.");
+                e.preventDefault();
+                return;
+            }
+
+            // ⚠️ Verifica que fecha_fin sea mayor a fecha_inicio
+            if (fin <= inicio) {
                 alert("La fecha de fin debe ser mayor a la fecha de inicio.");
                 e.preventDefault();
                 return;
@@ -166,7 +165,6 @@
             }
         });
 
-        // Bloquear entrada de letras/signos en campos numéricos
         function bloquearNoNumericos(evt) {
             const key = evt.key;
             if (!/[0-9.]|\b/.test(key)) {
@@ -178,4 +176,7 @@
         precioVentaInput.addEventListener("keypress", bloquearNoNumericos);
     });
 </script>
+
+
+
 
