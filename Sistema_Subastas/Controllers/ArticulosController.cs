@@ -82,15 +82,30 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Articulos/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        // GET: Articulos/Edit/5
+        public IActionResult Edit(int id)
         {
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
             if (articulo == null)
-                if (id == null) return NotFound();
+            {
+                return NotFound();
+            }
 
-           
+            var imagenes = _context.imagenes_articulos
+                .Where(i => i.articulo_id == id)
+                .ToList();
 
-            ViewBag.Categorias = _context.categorias.ToList();
+            // Obtener la categoría actual del artículo
+            var articuloCategoria = _context.articulo_categoria
+                .FirstOrDefault(ac => ac.articulo_id == id);
+
+            int? categoriaActual = articuloCategoria?.categoria_id;
+
+            ViewBag.CategoriasA = _context.categorias.ToList();
+            ViewBag.CategoriaActual = categoriaActual;
+            ViewBag.Articulo = articulo;
+            ViewBag.Imagenes = imagenes;
+
             return View(articulo);
         }
 
@@ -190,7 +205,7 @@ namespace Sistema_Subastas.Controllers
                 }
                 await _context.SaveChangesAsync();
                 TempData["MensajeE"] = "Artículo e imágenes actualizados correctamente.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Imagenes_articulos");
             }
             catch (Exception ex)
             {

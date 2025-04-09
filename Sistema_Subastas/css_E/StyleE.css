@@ -42,3 +42,8 @@
     margin-bottom: 50px;
 }
 
+.btn_volver{
+    width:10%;
+    height: 10%;
+    background-color: lightblue;
+}
