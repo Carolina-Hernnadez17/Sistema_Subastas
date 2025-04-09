@@ -93,6 +93,7 @@ namespace Sistema_Subastas.Controllers
             }
 
             var cantidadP = _context.pujas.Count(p => p.articulo_id == id);
+
             if (cantidadP == 0 || cantidadP == null)
             {
                 ViewBag.CantidadP = 0;
@@ -178,7 +179,21 @@ namespace Sistema_Subastas.Controllers
 
 
 
+        [HttpPost("Eliminar/{id}")]
+        [ValidateAntiForgeryToken]
+        public IActionResult Eliminar(int id)
+        {
+            var imagen = _context.imagenes_articulos.FirstOrDefault(i => i.id == id);
+            if (imagen == null)
+            {
+                return NotFound();
+            }
 
+            _context.imagenes_articulos.Remove(imagen);
+            _context.SaveChanges();
+
+            return Ok(); // Código 200
+        }
 
 
         //[HttpPost]

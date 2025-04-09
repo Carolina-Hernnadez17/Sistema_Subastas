@@ -109,35 +109,47 @@ namespace Sistema_Subastas.Controllers
                 .Where(i => i.articulo_id == id)
                 .ToList();
 
+            ViewBag.CategoriasA = _context.categorias.ToList();
+
             ViewBag.Articulo = articulo;
             ViewBag.Imagenes = imagenes;
+            
 
-            return View(articulo); 
+            return View(articulo);
         }
 
 
         // POST: Articulos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(articulos articulo, List<imagenes_articulos> Imagenes, List<IFormFile> NuevasImagenes)
+        public async Task<IActionResult> Edit(articulos articulo, List<imagenes_articulos> Imagenes, List<IFormFile> NuevasImagenes, int categoria_id)
         {
             try
             {
                 _context.Update(articulo);
 
+                // Actualizar categoría
+                var id_cat = _context.articulo_categoria.FirstOrDefault(c => c.articulo_id == articulo.Id);
+                if (id_cat != null)
+                {
+                    id_cat.categoria_id = categoria_id;
+                    _context.Update(id_cat);
+                }
+
+                // Configuración de Cloudinary
                 var account = new Account("daxbwcgw2", "346927586337937", "YqqRBDv2Ha3x_qxjNknM8_sT83Q");
                 var cloudinary = new Cloudinary(account);
 
+                // Actualizar imágenes si hay nuevas
                 for (int i = 0; i < Imagenes.Count; i++)
                 {
                     var imagenDB = await _context.imagenes_articulos.FindAsync(Imagenes[i].id);
 
-                    if (imagenDB != null && i < NuevasImagenes.Count && NuevasImagenes[i] != null)
+                    if (imagenDB != null && i < NuevasImagenes.Count)
                     {
                         var file = NuevasImagenes[i];
-                        if (file.Length > 0)
+                        if (file != null && file.Length > 0)
                         {
                             var uploadParams = new ImageUploadParams()
                             {
@@ -153,12 +165,13 @@ namespace Sistema_Subastas.Controllers
                                 _context.Update(imagenDB);
                             }
                         }
+                        // Si no se sube nada, se conserva la imagen original
                     }
                 }
 
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Artículo e imágenes actualizados correctamente.";
-                return RedirectToAction("Index");
+                return RedirectToAction("Index", "Imagenes_articulos");
             }
             catch (Exception ex)
             {
@@ -166,6 +179,9 @@ namespace Sistema_Subastas.Controllers
                 return View();
             }
         }
+
+
+
 
         // GET: Articulos/Delete/5
         public async Task<IActionResult> Delete(int? id)
