@@ -82,7 +82,7 @@ namespace Sistema_Subastas.Controllers
 
                     _context.notificaciones.Add(notificacion);
 
-                    await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
+                    //await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
                 }
             }
 
@@ -112,8 +112,50 @@ namespace Sistema_Subastas.Controllers
 
                     _context.notificaciones.Add(notificacion);
 
-                    await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
+                   // await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
                 }
+            }
+            // Subastas vendidas 
+            var subastasVendidas = _context.articulos
+                .Where(a => a.estado_subasta == "Vendido")
+                .ToList();
+
+            foreach (var subasta in subastasVendidas)
+            {
+                var pujas = _context.pujas
+                .Where(a => a.articulo_id == subasta.Id)
+                .ToList();
+
+                foreach (var puj in pujas)
+                {
+                    if(puj.estado_pujas == "Ganador")
+                    {
+                        string mensaje = $"📢 Tu subasta {subasta.titulo} ha sido vendida  el ganador es el cod " +
+                            $"de usuario: {puj.usuario_id} y el monto final es de: {puj.monto}, fecha de subasta finalizada: {subasta.fecha_fin:dd/MM/yyyy}.";
+
+                        // Verificar si ya se envió esta notificación
+                        bool yaExiste = _context.notificaciones.Any(n =>
+                            n.usuario_id == subasta.usuario_id &&
+                            n.mensaje == mensaje);
+
+                        if (!yaExiste)
+                        {
+                            var notificacion = new notificaciones
+                            {
+                                usuario_id = subasta.usuario_id,
+                                mensaje = mensaje,
+                                leido = false,
+                                fecha = DateTime.Now
+                            };
+
+                            _context.notificaciones.Add(notificacion);
+
+                            // await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
+                        }
+                    }
+
+                }
+
             }
 
             await _context.SaveChangesAsync();

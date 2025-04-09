@@ -78,7 +78,7 @@ namespace Sistema_Subastas.Controllers
                     await _hubContext.Clients.All.SendAsync("RecibirNotificacion", articulo.usuario_id, notificacion.mensaje);
                 }
 
-                return View(pujas);
+                return RedirectToAction("Index", "Home");
             }
 
             return View(pujas);
