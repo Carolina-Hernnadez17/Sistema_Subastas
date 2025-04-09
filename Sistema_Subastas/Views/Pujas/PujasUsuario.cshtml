@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Mis Pujas";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Artículo</th>
+            <th>Monto</th>
+            <th>Fecha de Puja</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var puja in Model)
+        {
+            <tr>
+                <td>@puja.ArticuloTitulo</td>
+                <td>@puja.Monto</td>
+                <td>@puja.FechaPuja</td>
+                <td>
+                    <button class="btn btn-danger btn-eliminar" data-puja-id="@puja.PujaId">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Obtener el usuario_id del localStorage
+            const usuarioId = localStorage.getItem('usuario_id');
+
+            // Verificar si el usuario está autenticado
+            if (!usuarioId) {
+                alert("No se encontró un usuario autenticado.");
+                return;
+            }
+
+            // Acción para eliminar una puja
+            const eliminarPuja = (pujaId) => {
+                if (confirm("¿Estás seguro de que deseas eliminar esta puja?")) {
+                    fetch(`/Pujas/EliminarPuja?pujaId=${pujaId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ usuario_id: usuarioId }) // Enviar usuario_id si es necesario
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert("Puja eliminada exitosamente.");
+                            location.reload(); // Recargar la página después de eliminar
+                        } else {
+                            alert("Hubo un error al eliminar la puja.");
+                        }
+                    });
+                }
+            };
+
+            // Añadir evento a los botones de eliminar
+            document.querySelectorAll('.btn-eliminar').forEach(button => {
+                button.addEventListener('click', () => {
+                    const pujaId = button.getAttribute('data-puja-id');
+                    eliminarPuja(pujaId);
+                });
+            });
+        });
+    </script>
+}

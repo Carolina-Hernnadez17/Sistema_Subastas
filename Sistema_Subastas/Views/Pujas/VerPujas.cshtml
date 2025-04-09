@@ -1,11 +1,9 @@
 ﻿@using Sistema_Subastas.Models
 @{
     ViewBag.Title = "Detalles del Artículo y Pujas";
-    // Convertir explicitamente los objetos para facilitar la depuración
     var articulo = ViewBag.Articulos as articulos;
     var imagenes = ViewBag.Imagenes as List<imagenes_articulos>;
     var historialPujas = ViewBag.HistorialPujas as List<dynamic>;
-    // ViewBag.UsuarioId lo usamos en el renderizado, pero para la comparación usaremos el valor del localStorage
     int? usuarioIdServer = ViewBag.UsuarioId;
 }
 
@@ -21,7 +19,7 @@
                         @for (int i = 0; i < imagenes.Count; i++)
                         {
                             <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="@imagenes[i].url_imagen" class="d-block w-100 rounded" alt="Imagen @i" style="height:300px; object-fit:cover;">
+                                <img src="@imagenes[i].url_imagen" class="d-block w-100 rounded" alt="Imagen @i" style="height:600px; object-fit:cover;">
                             </div>
                         }
                     </div>
@@ -87,7 +85,6 @@
                     <th>Monto</th>
                     <th>Usuario</th>
                     <th>Fecha</th>
-                    <th>Acción</th>
                 </tr>
             </thead>
             <tbody>
@@ -97,26 +94,7 @@
                         <td>$@puja.Valor</td>
                         <td>@puja.nombre_usuario</td>
                         <td>@puja.Fecha.ToString("g")</td>
-                        <td>
-                            @* Renderizamos el botón de cancelar puja (se oculta por defecto) *@
-                            @if (puja.id_usuario != null)
-                            {
-                                <form asp-action="CancelarPuja" asp-route-id="@puja.id_puja" method="post">
-                                    <button type="submit" class="btn btn-danger btn-sm btn-cancelar"
-                                            data-id-puja="@puja.id_puja"
-                                            data-id-usuario="@puja.id_usuario"
-                                            data-estado-subasta="@articulo.estado_subasta"
-                                            style="display:none;"
-                                            id="btn-cancelar-@puja.id_puja">
-                                        Cancelar
-                                    </button>
-                                </form>
-                            }
-                            else
-                            {
-                                <span class="text-muted">Sin acción</span>
-                            }
-                        </td>
+                        
                     </tr>
                 }
             </tbody>
@@ -128,32 +106,4 @@
     }
 </div>
 
-@section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Obtener el id del usuario desde el localStorage (clave "client_id")
-            var clientIdStr = localStorage.getItem("client_id");
-            console.log("Valor obtenido de localStorage (client_id):", clientIdStr);
-            var usuarioLogueado = parseInt(clientIdStr, 10);
-            console.log("Valor parseado de client_id:", usuarioLogueado);
 
-            // Seleccionar todos los botones de cancelar puja
-            var cancelButtons = document.querySelectorAll(".btn-cancelar");
-            cancelButtons.forEach(function (button) {
-                // Leer data-attributes y convertir a entero
-                var idUsuarioStr = button.getAttribute("data-id-usuario");
-                var idUsuarioBtn = parseInt(idUsuarioStr, 10);
-                var estadoSubasta = button.getAttribute("data-estado-subasta").toLowerCase(); // convertir a minúscula
-
-                console.log("Botón:", { idUsuarioBtn, estadoSubasta });
-
-                // Si el usuario logueado es igual al que hizo la puja y la subasta está activa ("publicado")
-                if (idUsuarioBtn === usuarioLogueado && estadoSubasta === "publicado") {
-                    button.style.display = "inline-block";
-                } else {
-                    button.style.display = "none";
-                }
-            });
-        });
-    </script>
-}
