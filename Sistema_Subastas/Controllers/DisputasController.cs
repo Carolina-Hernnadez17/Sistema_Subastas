@@ -50,8 +50,11 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Disputas/Create
-        public IActionResult Create()
+        public IActionResult Create(int articulo_id, int comprador_id, int vendedor_id)
         {
+            ViewBag.ArticuloId = articulo_id;
+            ViewBag.CompradorId = comprador_id;
+            ViewBag.VendedorId = vendedor_id;
             return View();
         }
 

@@ -13,22 +13,25 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="articulo_id" class="control-label"></label>
-                <input asp-for="articulo_id" class="form-control" />
-                <span asp-validation-for="articulo_id" class="text-danger"></span>
+                <label>Artículo</label>
+                <input class="form-control" value="@ViewBag.ArticuloId" readonly />
+                <input type="hidden" asp-for="articulo_id" value="@ViewBag.ArticuloId" />
             </div>
+
             <div class="form-group">
-                <label asp-for="comprador_id" class="control-label"></label>
-                <input asp-for="comprador_id" class="form-control" />
-                <span asp-validation-for="comprador_id" class="text-danger"></span>
+                <label>Comprador</label>
+                <input class="form-control" value="@ViewBag.CompradorId" readonly />
+                <input type="hidden" asp-for="comprador_id" value="@ViewBag.CompradorId" />
             </div>
+
             <div class="form-group">
-                <label asp-for="vendedor_id" class="control-label"></label>
-                <input asp-for="vendedor_id" class="form-control" />
-                <span asp-validation-for="vendedor_id" class="text-danger"></span>
+                <label>Vendedor</label>
+                <input class="form-control" value="@ViewBag.VendedorId" readonly />
+                <input type="hidden" asp-for="vendedor_id" value="@ViewBag.VendedorId" />
             </div>
+
             <div class="form-group">
-                <label asp-for="motivo" class="control-label"></label>
+                <label asp-for="motivo" class="control-label">Motivo</label>
                 <select asp-for="motivo" class="form-control">
                     <option value="">Seleccione un motivo</option>
                     <option value="Producto no recibido">Producto no recibido</option>
@@ -40,23 +43,13 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="descripcion" class="control-label"></label>
+                <label asp-for="descripcion" class="control-label">Descripcion</label>
                 <input asp-for="descripcion" class="form-control" />
                 <span asp-validation-for="descripcion" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
-                <label asp-for="estado" class="control-label"></label>
-                <select asp-for="estado" class="form-control">
-                    <option value="">Seleccione un estado</option>
-                    <option value="Pendiente">Pendiente</option>
-                    <option value="En revisión">En revisión</option>
-                    <option value="Resuelta">Resuelta</option>
-                </select>
-                <span asp-validation-for="estado" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="fecha" class="control-label"></label>
+                <label asp-for="fecha" class="control-label">Fecha de la disputa</label>
                 <input asp-for="fecha" class="form-control" />
                 <span asp-validation-for="fecha" class="text-danger"></span>
             </div>
@@ -72,5 +65,33 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const fechaInput = document.getElementById("fecha");
+
+            function formatoLocalFecha(date) {
+                const offset = date.getTimezoneOffset();
+                const local = new Date(date.getTime() - offset * 60000);
+                return local.toISOString().slice(0, 16);
+            }
+
+            const ahora = new Date();
+            fechaInput.min = formatoLocalFecha(ahora);
+
+            document.querySelector("form").addEventListener("submit", function (e) {
+                const fechaSeleccionada = new Date(fechaInput.value);
+                const ahora = new Date();
+
+                if (fechaSeleccionada < ahora) {
+                    alert("La fecha y hora no pueden ser menores a la actual.");
+                    e.preventDefault();
+                }
+            });
+        });
+    </script>
 }
+

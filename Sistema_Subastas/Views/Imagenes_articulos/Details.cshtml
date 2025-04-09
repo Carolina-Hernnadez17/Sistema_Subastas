@@ -1,36 +1,4 @@
-﻿@* @model Sistema_Subastas.Models.imagenes_articulos
-
-@{
-    ViewData["Title"] = "Details";
-}
-
-<h1>Details</h1>
-
-<div>
-    <h4>imagenes_articulos</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.articulo_id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.articulo_id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.url_imagen)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.url_imagen)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
- *@
-
-@model List<Sistema_Subastas.Models.imagenes_articulos>
+﻿@model List<Sistema_Subastas.Models.imagenes_articulos>
 
 
 <!DOCTYPE html>
@@ -167,6 +135,15 @@
                                 </svg>
                                 Ver Pujas
                             </a>
+                            <a asp-controller="Disputas"
+                               asp-action="Create"
+                               asp-route-articulo_id="@ViewBag.Articulos.Id"
+                               asp-route-comprador_id="@ViewBag.IdUsuario"
+                               asp-route-vendedor_id="@ViewBag.IdVendedor"
+                               class="btn btn-danger mt-3">
+                                Reportar Problema
+                            </a>
+
 
                             @if (ViewBag.CantidadP == 0)
                             {
@@ -242,25 +219,3 @@
 
 </body>
 </html>
-
-
-
-
-
-@* <h2>Detalles de la Imagen</h2>
-
-<div>
-    <p><strong>Imagen:</strong></p>
-    <img src="@Model.url_imagen" alt="Imagen del artículo" style="width: 300px; height: auto;" />
-    <div>
-        <h1>@ViewBag.Articulos.titulo</h1>
-        <h5>Precio de subasta: </h5>
-        <p>@ViewBag.Articulos.precio_salida</p>
-
-        <h5>Fecha de cierre de subasta:</h5>
-        <p>@ViewBag.Fecha</p>
-        
-    </div>
-</div> *@
-
-@* <a asp-action="Index">Volver a la lista</a> *@

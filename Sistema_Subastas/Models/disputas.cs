@@ -7,12 +7,22 @@ namespace Sistema_Subastas.Models
     {
         [Key]
         public int id { get; set; }
+
         public int articulo_id { get; set; }
+
         public int comprador_id { get; set; }
+
         public int vendedor_id { get; set; }
+
         public string motivo {  get; set; }
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+
         public string descripcion { get; set; }
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+
         public string estado { get; set; }
+        [Required(ErrorMessage = "Este campo es obligatorio")]
+
         public DateTime fecha { get; set; }
     }
 }
