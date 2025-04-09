@@ -1,0 +1,131 @@
+﻿body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.navbar {
+    background-color: #cececef2;
+    border-bottom: 1px solid #d0e2ff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+    padding: 0.75rem 1.5rem;
+}
+
+    .navbar .container-fluid {
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #0056d2;
+    margin-right: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+    .navbar-brand:hover {
+        color: #003f9f;
+    }
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+    .navbar-nav .nav-link {
+        color: #333;
+        padding: 8px 14px;
+        border-radius: 0;
+        font-weight: 500;
+        position: relative;
+        transition: color 0.25s ease;
+    }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            left: 14px;
+            right: 14px;
+            bottom: 6px;
+            height: 2px;
+            background-color: #00c48c;
+            transform: scaleX(0);
+            transform-origin: center;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #0061ff;
+        }
+
+            .navbar-nav .nav-link:hover::after {
+                transform: scaleX(1);
+            }
+
+    .navbar-nav .logout-link::after {
+        background-color: #e63946;
+    }
+
+.ms-auto {
+    margin-left: auto !important;
+}
+
+
+
+.btn-sm {
+    background-color: #0056d2;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+    .btn-sm:hover {
+        background-color: #003f9f;
+    }
+
+
+main {
+    padding-top: 1rem;
+}
+
+footer {
+    background-color: #ffffff;
+    padding: 1.5rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #777;
+    border-top: 1px solid #eaeaea;
+}
+
+    footer a {
+        color: #0061ff;
+    }
+
+        footer a:hover {
+            color: #004ecb;
+            text-decoration: underline;
+        }
+
+.text-dark {
+    color: #222 !important;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+    .navbar-toggler:focus {
+        outline: none;
+        box-shadow: none;
+    }

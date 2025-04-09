@@ -1,0 +1,115 @@
+﻿/* Contenedor en modo grid responsivo */
+.contenedor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    justify-items: center;
+    padding: 1rem;
+}
+
+/* Estilo general de la tarjeta */
+.card {
+    width: 100%;
+    max-width: 300px;
+    height: 480px;
+    margin: 0 auto;
+    display: block;
+    text-decoration: none;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    /* Efecto hover */
+    .card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+
+/* Contenedor de imagen */
+.imgen_p {
+    width: 100%;
+    height: 220px;
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+    /* Imagen de la tarjeta */
+    .imgen_p img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
+
+/* Cuerpo de contenido de la tarjeta */
+.pt-6 {
+    padding: 1rem;
+}
+
+.card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.card li {
+    margin-bottom: 0.5rem;
+}
+
+/* Estilo de título */
+.card h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+/* Estilo para etiquetas y descripciones */
+.card p {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* Precio en negrita */
+.text-precio {
+    margin-right: 4px;
+    color: #111827;
+}
+
+.font-extrabold {
+    font-weight: 800;
+    color: #1f2937;
+}
+
+/* Estilo de inputs y selects */
+input[type="text"],
+select {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    margin-right: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Alertas */
+.alert {
+    margin-top: 1rem;
+}
+
+.item-articulo {
+    transition: all 0.2s ease-in-out;
+}
+
+    .item-articulo.oculto {
+        opacity: 0;
+        transform: scale(0.95);
+        pointer-events: none;
+        position: absolute;
+        visibility: hidden;
+    }
