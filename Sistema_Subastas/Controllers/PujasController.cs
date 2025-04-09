@@ -98,19 +98,16 @@ namespace Sistema_Subastas.Controllers
         // Acción para mostrar el detalle del artículo, imágenes y el historial de pujas
         public IActionResult VerPujas(int id)
         {
-            // Obtener el artículo
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
             if (articulo == null)
             {
                 return NotFound();
             }
 
-            // Cargar imágenes asociadas al artículo (suponiendo que la tabla se llama "imagenes_articulos")
             var imagenes = _context.imagenes_articulos
                            .Where(i => i.articulo_id == id)
                            .ToList();
 
-            // Realizar join entre pujas y usuarios para obtener historial
             var historialPujas = (from p in _context.pujas
                                   join u in _context.usuarios on p.usuario_id equals u.id
                                   where p.articulo_id == id
@@ -118,22 +115,19 @@ namespace Sistema_Subastas.Controllers
                                   select new
                                   {
                                       id_puja = p.Id,
-                                      Valor = p.monto,       // Usamos "Valor" con V mayúscula
-                                      Fecha = p.fecha_puja,       // "Fecha" con F mayúscula
+                                      Valor = p.monto,       
+                                      Fecha = p.fecha_puja,    
                                       id_usuario = p.usuario_id,
                                       nombre_usuario = u.nombre
                                   }).ToList<dynamic>();
 
-            // Obtener el id del usuario logueado desde la sesión (asegúrate de haberlo guardado al iniciar sesión)
             int? usuarioId = HttpContext.Session.GetInt32("usuario_id");
 
-            // Pasar los datos a la vista mediante ViewBag
             ViewBag.Articulos = articulo;
             ViewBag.Imagenes = imagenes;
             ViewBag.HistorialPujas = historialPujas;
             ViewBag.UsuarioId = usuarioId;
-            // También pasamos el estado de la subasta
-            ViewBag.EstadoSubasta = articulo.estado; // o puedes usar otro campo si manejas "activa" / "finalizada"
+            ViewBag.EstadoSubasta = articulo.estado_subasta;
 
             return View();
         }
@@ -144,36 +138,34 @@ namespace Sistema_Subastas.Controllers
         {
             int? usuarioId = HttpContext.Session.GetInt32("usuario_id");
             if (usuarioId == null)
-                return RedirectToAction("Login", "Usuarios"); // O redirigir según tu lógica
+                return RedirectToAction("Login", "Usuarios"); // Redirige si no hay usuario en sesión
 
-            // Buscar la puja a cancelar
+            // Buscar la puja
             var puja = _context.pujas.FirstOrDefault(p => p.Id == id);
             if (puja == null)
                 return NotFound();
 
-            // Verificar que la puja sea del usuario logueado
+            // Validar que la puja pertenece al usuario logueado
             if (puja.usuario_id != usuarioId)
             {
                 TempData["Error"] = "No tienes permiso para cancelar esta puja.";
                 return RedirectToAction("VerPujas", new { id = puja.articulo_id });
             }
 
-            // Verificar que la subasta esté activa (asumiendo que el estado "activa" indica que se puede cancelar)
+            // Validar que la subasta esté activa (estado_subasta == "Publicado")
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == puja.articulo_id);
-            if (articulo == null || articulo.estado != "activa")
+            if (articulo == null || articulo.estado_subasta != "Publicado")
             {
                 TempData["Error"] = "La puja no se puede cancelar porque la subasta ya finalizó.";
                 return RedirectToAction("VerPujas", new { id = puja.articulo_id });
             }
 
-            // Eliminar la puja
             _context.pujas.Remove(puja);
             _context.SaveChanges();
 
             TempData["Exito"] = "Puja cancelada con éxito.";
             return RedirectToAction("VerPujas", new { id = puja.articulo_id });
         }
-
 
         // GET: Pujas
         public async Task<IActionResult> Index()

@@ -1,61 +1,150 @@
 ﻿@using Sistema_Subastas.Models
-
 @{
-    ViewData["Title"] = "Realizar Puja";
-    var articulo = ViewBag.Articulo as articulos;
+    ViewBag.Title = "Detalles del Artículo y Pujas";
+    var articulo = ViewBag.Articulos as articulos;
+    var imagenes = ViewBag.Imagenes as List<imagenes_articulos>;
+    var historialPujas = ViewBag.HistorialPujas as List<dynamic>;
+    int? usuarioIdServer = ViewBag.UsuarioId; // este valor lo pasa el servidor, pero el script usará localStorage
 }
 
-<h2>Realizar Puja</h2>
+<div class="container mt-4">
+    <h2>@articulo.titulo</h2>
 
-@if (articulo != null)
-{
-    <div class="card">
-        <div class="card-body">
-            <h4>@articulo.titulo</h4>
-            <p>@articulo.descripcion</p>
-            <p><strong>Estado:</strong> @articulo.estado</p>
-            <p><strong>Precio de salida:</strong> $@articulo.precio_salida</p>
-            <p><strong>Fecha fin:</strong> @articulo.fecha_fin</p>
-
-            @if (articulo.estado_subasta == "Publicado" && articulo.fecha_fin > DateTime.Now)
+    <div class="row">
+        <div class="col-md-6">
+            @if (imagenes != null && imagenes.Any())
             {
-                <form asp-action="RegistrarPuja" asp-controller="Pujas" method="post" id="pujaForm">
-                    <input type="hidden" name="ArticuloId" value="@articulo.Id" />
-                    <input type="hidden" name="UsuarioId" id="UsuarioId" />
-
-                    <div class="form-group">
-                        <label for="Monto">Monto de la puja</label>
-                        <input type="number" class="form-control" name="Monto" step="0.01" min="0.01" required />
+                <div id="carouselImagenes" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @for (int i = 0; i < imagenes.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@imagenes[i].url_imagen" class="d-block w-100 rounded" alt="Imagen @i" style="height: 300px; object-fit: cover;">
+                            </div>
+                        }
                     </div>
-
-                    <button type="submit" onClick="enviarMensaje()" class="btn btn-success mt-3">Realizar Puja</button>
-                </form>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselImagenes" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselImagenes" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
             }
             else
             {
-                <div class="alert alert-warning mt-3">
-                    Esta subasta ya ha finalizado o no está disponible para pujas.
-                </div>
+                <p class="text-muted">Sin imágenes disponibles.</p>
             }
         </div>
+
+        <div class="col-md-6">
+            <h5>Descripción</h5>
+            <p>@articulo.descripcion</p>
+
+            <h5>Precio de salida:</h5>
+            <p>$@articulo.precio_salida</p>
+
+            <h5>Estado de la subasta:</h5>
+            <p>
+                @if (articulo.estado_subasta == "Publicado")
+                {
+                    <span class="badge bg-success">Activa</span>
+                }
+                else
+                {
+                    <span class="badge bg-danger">Finalizada</span>
+                }
+            </p>
+
+            <h5>Fecha límite:</h5>
+            <p>@articulo.fecha_fin.ToString("dd/MM/yyyy HH:mm")</p>
+        </div>
     </div>
-}
-else
-{
-    <div class="alert alert-danger">No se encontró el artículo.</div>
-}
+
+    <hr />
+
+    @if (TempData["Exito"] != null)
+    {
+        <div class="alert alert-success">@TempData["Exito"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <h4 class="mt-4">Historial de pujas</h4>
+    @if (articulo.visualizacion_puja.ToLower() == "cerrado")
+    {
+        <div class="alert alert-warning">El historial de pujas está cerrado para este artículo.</div>
+    }
+    else if (historialPujas != null && historialPujas.Any())
+    {
+        <table class="table table-bordered mt-3">
+            <thead class="table-success">
+                <tr>
+                    <th>Monto</th>
+                    <th>Usuario</th>
+                    <th>Fecha</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var puja in historialPujas)
+                {
+                    <tr>
+                        <td>$@puja.Valor</td>
+                        <td>@puja.nombre_usuario</td>
+                        <td>@puja.Fecha.ToString("g")</td>
+                        <td>
+                            @* El botón se renderiza solo si la puja es del usuario logueado y la subasta está activa *@
+                            @if (puja.id_usuario == ViewBag.UsuarioId && articulo.estado_subasta == "Publicado")
+                            {
+                                <form asp-action="CancelarPuja" asp-route-id="@puja.id_puja" method="post">
+                                    <button type="submit" class="btn btn-danger btn-sm btn-cancelar"
+                                            data-id-puja="@puja.id_puja"
+                                            data-id-usuario="@puja.id_usuario"
+                                            data-estado-subasta="@articulo.estado_subasta"
+                                            style="display:none;">
+                                        Cancelar
+                                    </button>
+                                </form>
+                            }
+                            else if (puja.id_usuario == ViewBag.UsuarioId && articulo.estado_subasta != "Publicado")
+                            {
+                                <span class="text-muted">Subasta finalizada</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sin acción</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="text-muted">Aún no hay pujas registradas.</p>
+    }
+</div>
 
 @section Scripts {
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            const userId = localStorage.getItem("userId");
+            var usuarioLogueado = parseInt(localStorage.getItem("client_id"), 10);
+            console.log("Usuario logueado (localStorage):", usuarioLogueado);
 
-            if (userId) {
-                document.getElementById("UsuarioId").value = userId;
-            } else {
-                alert("Debes iniciar sesión para pujar.");
-                document.getElementById("pujaForm").style.display = "none";
-            }
+            var cancelButtons = document.querySelectorAll(".btn-cancelar");
+            cancelButtons.forEach(function (button) {
+                var idUsuarioBtn = parseInt(button.getAttribute("data-id-usuario"), 10);
+                var estadoSubasta = button.getAttribute("data-estado-subasta").toLowerCase();
+                if (idUsuarioBtn === usuarioLogueado && estadoSubasta === "publicado") {
+                    button.style.display = "inline-block";
+                } else {
+                    button.style.display = "none";
+                }
+            });
         });
     </script>
 }
