@@ -115,8 +115,8 @@ namespace Sistema_Subastas.Controllers
                                   select new
                                   {
                                       id_puja = p.Id,
-                                      Valor = p.monto,       
-                                      Fecha = p.fecha_puja,    
+                                      Valor = p.monto,        
+                                      Fecha = p.fecha_puja,     
                                       id_usuario = p.usuario_id,
                                       nombre_usuario = u.nombre
                                   }).ToList<dynamic>();
@@ -132,27 +132,23 @@ namespace Sistema_Subastas.Controllers
             return View();
         }
 
-        // Acción para cancelar una puja (POST)
         [HttpPost]
         public IActionResult CancelarPuja(int id)
         {
             int? usuarioId = HttpContext.Session.GetInt32("usuario_id");
             if (usuarioId == null)
-                return RedirectToAction("Login", "Usuarios"); // Redirige si no hay usuario en sesión
+                return RedirectToAction("Login", "Usuarios");
 
-            // Buscar la puja
             var puja = _context.pujas.FirstOrDefault(p => p.Id == id);
             if (puja == null)
                 return NotFound();
 
-            // Validar que la puja pertenece al usuario logueado
             if (puja.usuario_id != usuarioId)
             {
                 TempData["Error"] = "No tienes permiso para cancelar esta puja.";
                 return RedirectToAction("VerPujas", new { id = puja.articulo_id });
             }
 
-            // Validar que la subasta esté activa (estado_subasta == "Publicado")
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == puja.articulo_id);
             if (articulo == null || articulo.estado_subasta != "Publicado")
             {
