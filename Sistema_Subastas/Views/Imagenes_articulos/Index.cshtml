@@ -36,6 +36,16 @@
                 <option value="Usado">Usado</option>
             </select>
         </div>
+
+        @if (TempData["MensajeDisputa"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["MensajeDisputa"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+
         @foreach (var articulo in articulos)
         {
 

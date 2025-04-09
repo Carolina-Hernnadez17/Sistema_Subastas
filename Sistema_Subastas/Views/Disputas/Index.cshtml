@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+
     <a class="btn btn-danger mb-3" asp-action="DescargarReporteDisputas">
         <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
     </a>
@@ -16,42 +16,30 @@
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.articulo_id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.comprador_id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.vendedor_id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.motivo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.descripcion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.fecha)
-            </th>
-            <th></th>
+            <th>Artículo</th>
+            <th>Comprador</th>
+            <th>Vendedor</th>
+            <th>Motivo</th>
+            <th>Descripción</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
         </tr>
     </thead>
+
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.articulo_id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.comprador_id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.vendedor_id)
-            </td>
+                <td>
+                    @ViewBag.Articulos[item.articulo_id] (ID: @item.articulo_id)
+                </td>
+                <td>
+                    @ViewBag.Usuarios[item.comprador_id]
+                </td>
+                <td>
+                    @ViewBag.Usuarios[item.vendedor_id]
+                </td>
+
             <td>
                 @Html.DisplayFor(modelItem => item.motivo)
             </td>
@@ -68,6 +56,13 @@
                 <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+                    <a class="btn btn-sm btn-warning"
+                       asp-controller="Disputas"
+                       asp-action="Create"
+                       asp-route-articulo_id="@item.articulo_id"
+                       asp-route-vendedor_id="@item.vendedor_id">
+                        Crear Disputa
+                    </a>
             </td>
         </tr>
 }

@@ -12,49 +12,69 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" name="articulo_id" value="@ViewBag.ArticuloId" />
+            <input type="hidden" name="vendedor_id" value="@ViewBag.VendedorId" />
+            <input type="hidden" name="comprador_id" value="@ViewBag.CompradorId" />
+
             <div class="form-group">
                 <label>Artículo</label>
-                <input class="form-control" value="@ViewBag.ArticuloId" readonly />
-                <input type="hidden" asp-for="articulo_id" value="@ViewBag.ArticuloId" />
+                <input class="form-control" value="@ViewBag.ArticuloTitulo" disabled />
             </div>
 
             <div class="form-group">
                 <label>Comprador</label>
-                <input class="form-control" value="@ViewBag.CompradorId" readonly />
-                <input type="hidden" asp-for="comprador_id" value="@ViewBag.CompradorId" />
+                <input class="form-control" value="@ViewBag.CompradorNombre" disabled />
             </div>
 
             <div class="form-group">
                 <label>Vendedor</label>
-                <input class="form-control" value="@ViewBag.VendedorId" readonly />
-                <input type="hidden" asp-for="vendedor_id" value="@ViewBag.VendedorId" />
+                <input class="form-control" value="@ViewBag.VendedorNombre" disabled />
             </div>
 
             <div class="form-group">
-                <label asp-for="motivo" class="control-label">Motivo</label>
+                <label asp-for="motivo" class="control-label"></label>
                 <select asp-for="motivo" class="form-control">
                     <option value="">Seleccione un motivo</option>
-                    <option value="Producto no recibido">Producto no recibido</option>
-                    <option value="Producto defectuoso">Producto defectuoso</option>
-                    <option value="Artículo incorrecto">Artículo incorrecto</option>
+                    <option value="No recibido">No recibido</option>
+                    <option value="Diferente al descrito">Diferente al descrito</option>
+                    <option value="Problema con el pago">Problema con el pago</option>
+                    <option value="Conducta fraudulenta">Conducta fraudulenta</option>
                     <option value="Otro">Otro</option>
+
                 </select>
                 <span asp-validation-for="motivo" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="descripcion" class="control-label">Descripcion</label>
+                <label asp-for="descripcion" class="control-label"></label>
                 <input asp-for="descripcion" class="form-control" />
                 <span asp-validation-for="descripcion" class="text-danger"></span>
             </div>
-            
+
             <div class="form-group">
-                <label asp-for="fecha" class="control-label">Fecha de la disputa</label>
-                <input asp-for="fecha" class="form-control" />
+                <label asp-for="fecha" class="control-label"></label>
+                <input asp-for="fecha" class="form-control" id="fecha" />
                 <span asp-validation-for="fecha" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="estado" class="control-label"></label>
+                <select asp-for="estado" class="form-control" required>
+                    <option disabled selected value="">Seleccione un estado</option>
+                    <option value="Abierta">Abierta</option>
+                    <option value="En proceso">En proceso</option>
+                    <option value="Resuelta">Resuelta</option>
+                    <option value="Rechazada">Rechazada</option>
+
+                </select>
+
+                <span asp-validation-for="estado" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-group">
+                <input type="submit" value="Registrar disputa" class="btn btn-primary" />
             </div>
         </form>
     </div>

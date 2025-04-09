@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using iText.IO.Font.Constants;
+using iText.Kernel.Font;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
-using iText.Kernel.Pdf;
-using iText.Layout;
-using iText.Layout.Element;
-using iText.IO.Font.Constants;
-using iText.Kernel.Font;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Paragraph = iText.Layout.Element.Paragraph;
 
 
@@ -28,8 +29,17 @@ namespace Sistema_Subastas.Controllers
         // GET: Disputas
         public async Task<IActionResult> Index()
         {
-            return View(await _context.disputas.ToListAsync());
+            var disputas = await _context.disputas.ToListAsync();
+
+            var articulos = _context.articulos.ToDictionary(a => a.Id, a => a.titulo);
+            var usuarios = _context.usuarios.ToDictionary(u => u.id, u => u.nombre);
+
+            ViewBag.Articulos = articulos;
+            ViewBag.Usuarios = usuarios;
+
+            return View(disputas);
         }
+
 
         // GET: Disputas/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -50,13 +60,25 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Disputas/Create
-        public IActionResult Create(int articulo_id, int comprador_id, int vendedor_id)
+        public IActionResult Create(int articulo_id, int vendedor_id)
         {
+            var compradorId = HttpContext.Session.GetInt32("id_usuario");
+            var nombre = HttpContext.Session.GetString("NombreUser");
+
+            var articulo = _context.articulos.Find(articulo_id);
+            var vendedor = _context.usuarios.Find(vendedor_id);
+
             ViewBag.ArticuloId = articulo_id;
-            ViewBag.CompradorId = comprador_id;
+            ViewBag.ArticuloTitulo = articulo?.titulo ?? "(Sin título)";
+            ViewBag.CompradorId = compradorId ?? 0;
+            ViewBag.CompradorNombre = !string.IsNullOrEmpty(nombre) ? nombre : "Usuario actual";
             ViewBag.VendedorId = vendedor_id;
+            ViewBag.VendedorNombre = vendedor?.nombre ?? "Vendedor";
+
             return View();
         }
+
+
 
         // POST: Disputas/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -69,10 +91,35 @@ namespace Sistema_Subastas.Controllers
             {
                 _context.Add(disputas);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                TempData["MensajeDisputa"] = "La disputa fue registrada correctamente.";
+                return RedirectToAction("Index", "Imagenes_articulos");
             }
+
+            var articulo = await _context.articulos.FindAsync(disputas.articulo_id);
+            var vendedor = await _context.usuarios.FindAsync(disputas.vendedor_id);
+            var nombre = HttpContext.Session.GetString("NombreUser");
+            var compradorId = HttpContext.Session.GetInt32("id_usuario");
+
+            ViewBag.ArticuloId = disputas.articulo_id;
+            ViewBag.ArticuloTitulo = articulo?.titulo ?? "(Sin título)";
+            ViewBag.CompradorId = compradorId ?? 0;
+            ViewBag.CompradorNombre = nombre ?? "Usuario actual";
+            ViewBag.VendedorId = disputas.vendedor_id;
+            ViewBag.VendedorNombre = vendedor?.nombre ?? "Vendedor";
+
+            foreach (var modelState in ModelState)
+            {
+                foreach (var error in modelState.Value.Errors)
+                {
+                    Console.WriteLine($"Error en {modelState.Key}: {error.ErrorMessage}");
+                }
+            }
+
+
             return View(disputas);
         }
+
 
         // GET: Disputas/Edit/5
         public async Task<IActionResult> Edit(int? id)

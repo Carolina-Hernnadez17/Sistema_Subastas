@@ -46,7 +46,6 @@ namespace Sistema_Subastas.Controllers
             await CerrarSubastasFinalizadas();
             DeterminarGanadores();
 
-            // Aquí llamas al método async correctamente
             await CerrarSubastasFinalizadas();
 
             return View();
