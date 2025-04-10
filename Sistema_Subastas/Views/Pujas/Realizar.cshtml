@@ -5,17 +5,19 @@
     var articulo = ViewBag.Articulo as articulos;
 }
 
-<h2>Realizar Puja</h2>
+<h2 class="text-center mb-4">Realizar Puja</h2>
 
 @if (articulo != null)
 {
-    <div class="card">
+    <div class="card shadow-lg rounded-lg">
         <div class="card-body">
-            <h4>@articulo.titulo</h4>
-            <p>@articulo.descripcion</p>
-            <p><strong>Estado:</strong> @articulo.estado</p>
-            <p><strong>Precio de salida:</strong> $@articulo.precio_salida</p>
-            <p><strong>Fecha fin:</strong> @articulo.fecha_fin</p>
+            <h4 class="card-title text-center mb-3">@articulo.titulo</h4>
+            <p class="card-text mb-3">@articulo.descripcion</p>
+            <div class="mb-2">
+                <p><strong>Estado:</strong> @articulo.estado</p>
+                <p><strong>Precio de salida:</strong> $@articulo.precio_salida</p>
+                <p><strong>Fecha fin:</strong> @articulo.fecha_fin.ToString("dd MMM yyyy HH:mm")</p>
+            </div>
 
             @if (articulo.estado_subasta == "Publicado" && articulo.fecha_fin > DateTime.Now)
             {
@@ -23,18 +25,20 @@
                     <input type="hidden" name="ArticuloId" value="@articulo.Id" />
                     <input type="hidden" name="UsuarioId" id="UsuarioId" />
 
-                    <div class="form-group">
-                        <label for="Monto">Monto de la puja</label>
-                        <input type="number" class="form-control" name="Monto" step="0.01" min="0.01" required />
+                    <div class="form-group mb-3">
+                        <label for="Monto">Monto de la Puja</label>
+                        <input type="number" class="form-control" name="Monto" id="Monto" step="0.01" min="0.01" required data-precio="@articulo.precio_salida" placeholder="Ingresa tu monto de puja" />
                     </div>
 
-                    <button type="submit" onClick="enviarMensaje()" class="btn btn-success mt-3">Realizar Puja</button>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary" onclick="return validarPuja()">Realizar Puja</button>
+                    </div>
                 </form>
             }
             else
             {
                 <div class="alert alert-warning mt-3">
-                    Esta subasta ya ha finalizado o no está disponible para pujas.
+                    <strong>Atención:</strong> Esta subasta ya ha finalizado o no está disponible para pujas.
                 </div>
             }
         </div>
@@ -42,7 +46,7 @@
 }
 else
 {
-    <div class="alert alert-danger">No se encontró el artículo.</div>
+    <div class="alert alert-danger text-center mt-4">No se encontró el artículo.</div>
 }
 
 @section Scripts {
@@ -57,5 +61,18 @@ else
                 document.getElementById("pujaForm").style.display = "none";
             }
         });
+
+                function validarPuja() {
+                    const montoInput = document.getElementById("Monto");
+                    const monto = parseFloat(montoInput.value);
+                    const precioSalida = parseFloat(montoInput.dataset.precio);
+
+                    if (isNaN(monto) || monto <= precioSalida) {
+                        alert(`El monto debe ser mayor al precio de salida ($${precioSalida}).`);
+                        return false;
+                    }
+
+                    return true;
+                }
     </script>
 }

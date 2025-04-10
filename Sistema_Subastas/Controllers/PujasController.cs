@@ -134,59 +134,57 @@ namespace Sistema_Subastas.Controllers
         }
 
 
-        // Acción para listar las pujas realizadas por el usuario
-        public async Task<IActionResult> PujasUsuario()
+        public async Task<IActionResult> PujasUsuario(int usuarioId)
         {
-            // Obtener el usuario actual desde las cookies (lo enviamos desde el cliente)
-            var usuarioId = Request.Cookies["usuario_id"];
+            //var usuarioId = Request.Cookies["userId"];
+
+
 
             if (usuarioId == null)
             {
-                return Unauthorized("No se ha encontrado un usuario autenticado.");
+                return RedirectToAction("Login", "Usuarios");
             }
 
-            // Consultar las pujas realizadas por el usuario
+            //var usuarioIdInt = int.Parse(usuarioId);
+
             var pujasUsuario = await _context.pujas
-                .Where(p => p.usuario_id == int.Parse(usuarioId))
+                .Where(p => p.usuario_id == usuarioId)
                 .Join(_context.articulos, p => p.articulo_id, a => a.Id, (p, a) => new
                 {
                     PujaId = p.Id,
                     ArticuloTitulo = a.titulo,
                     Monto = p.monto,
-                    FechaPuja = p.fecha_puja
+                    FechaPuja = p.fecha_puja,
+                    UsuarioId = p.usuario_id
                 })
                 .ToListAsync();
 
-            return View(pujasUsuario);
+            ViewBag.Pujas = pujasUsuario;
+            ViewBag.UsuarioId = usuarioId;
+
+            return View();
         }
 
-        // Acción para eliminar una puja realizada por el usuario
+
+
         [HttpPost]
-        public async Task<IActionResult> EliminarPuja(int pujaId)
+        public async Task<IActionResult> EliminarPuja(int pujaId, int usuarioId)
         {
-            // Obtener el usuario actual desde las cookies (lo enviamos desde el cliente)
-            var usuarioId = Request.Cookies["usuario_id"];
-
-            if (usuarioId == null)
-            {
-                return Unauthorized("No se ha encontrado un usuario autenticado.");
-            }
-
-            // Buscar la puja a eliminar, asegurándose de que pertenece al usuario autenticado
             var puja = await _context.pujas
-                .FirstOrDefaultAsync(p => p.Id == pujaId && p.usuario_id == int.Parse(usuarioId));
+                .FirstOrDefaultAsync(p => p.Id == pujaId && p.usuario_id == usuarioId);
 
             if (puja == null)
             {
                 return NotFound("Puja no encontrada o no pertenece al usuario.");
             }
 
-            // Eliminar la puja
             _context.pujas.Remove(puja);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(PujasUsuario));
         }
+
+
 
         // GET: Pujas
         public async Task<IActionResult> Index()

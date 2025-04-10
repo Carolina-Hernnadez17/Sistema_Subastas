@@ -22,10 +22,11 @@
                         <!-- Enlaces del lado izquierdo -->
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Graficas" asp-action="RelacionPrecioSalidaFinal">Resumen Usuarios</a>
-                        </li>
+                         </li>
+                        @* <li class="nav-item">
+                            <a id="mispujas" class="nav-link text-dark" href="#">Mis pujasl</a>
+                            @* <a class="nav-link text-dark" asp-area="" asp-controller="Pujas" asp-action="PujasUsuario">s</a>
+                            </li> *@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Graficas" asp-action="ArticulosMasPopulares">Resumen Articulos</a>
                         </li>
@@ -93,6 +94,15 @@
                 document.getElementById("perfilLink").href = `/Usuarios/Details/${userId}`;
             } else {
                 document.getElementById("perfilLink").href = "/Usuarios/Login"; // O redirigir a otra página
+            }
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            var userId = localStorage.getItem("userId");
+
+            if (userId) {
+                document.getElementById("mispujas").href = `/Pujas/PujasUsuario/${userId}`;
+            } else {
+                document.getElementById("mispujas").href = "/Usuarios/Login"; // O redirigir a otra página
             }
         });
         document.addEventListener("DOMContentLoaded", function () {
