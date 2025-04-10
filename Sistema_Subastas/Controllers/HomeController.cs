@@ -185,7 +185,7 @@ namespace Sistema_Subastas.Controllers
         public void MarcarSubastasFinalizadas()
         {
             var articulosParaFinalizar = _context.articulos
-                .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin <= DateTime.Now)
+                .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin == DateTime.Now)
                 .ToList();
 
             foreach (var articulo in articulosParaFinalizar)
