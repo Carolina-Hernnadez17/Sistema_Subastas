@@ -91,17 +91,17 @@ namespace Sistema_Subastas.Controllers
             {
                 
                 ViewBag.Fecha = "Subasta Cerrada";
-                ViewBag.Estado = articulo.estado_subasta;
+               
                 
             }
             else
             {
-
-                ViewBag.VerPuja = articulo.visualizacion_puja;
-                ViewBag.Estado = articulo.estado_subasta;
+                      
                 ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
             }
 
+            ViewBag.Estado = articulo.estado_subasta;
+            ViewBag.VerPuja = articulo.visualizacion_puja;
             var cantidadP = _context.pujas.Count(p => p.articulo_id == id);
 
             if (cantidadP == 0 || cantidadP == null)
