@@ -489,8 +489,13 @@ namespace Sistema_Subastas.Controllers
 
                 foreach (var puj in pujas)
                 {
-                    string mensajeCreador = $"📢 Tu subasta {subasta.titulo} ha sido vendida. El ganador es el usuario con código: {puj.usuario_id}, monto final: {puj.monto}, finalizó el {subasta.fecha_fin:dd/MM/yyyy HH:mm}.";
-                    string mensajeGanador = $"📢 Has ganado la subasta {subasta.titulo} (ID: {subasta.Id}), ¡felicidades!";
+                    //string mensajeCreador = $"📢 Tu subasta {subasta.titulo} ha sido vendida. El ganador es el usuario con código: {puj.usuario_id}, monto final: {puj.monto}, finalizó el {subasta.fecha_fin:dd/MM/yyyy HH:mm}.";
+                    //string mensajeGanador = $"📢 Has ganado la subasta {subasta.titulo} (ID: {subasta.Id}), ¡felicidades!";
+                    var ganadorUser = await _context.usuarios.FindAsync(puj.usuario_id);
+
+
+                    string mensajeCreador = $"📢 Tu subasta {subasta.titulo} ha sido vendida. El ganador es el usuario con código: {puj.usuario_id}, nombre: {ganadorUser.nombre}, correo: {ganadorUser.correo} monto final: {puj.monto}, finalizó el {subasta.fecha_fin:dd/MM/yyyy HH:mm}.";
+                    string mensajeGanador = $"📢 Has ganado la subasta {subasta.titulo} (ID: {subasta.Id}), descripción: {subasta.descripcion}, ¡felicidades!";
 
                     // Notificar al creador
                     if (!_context.notificaciones.Any(n => n.usuario_id == subasta.usuario_id && n.mensaje == mensajeCreador))
