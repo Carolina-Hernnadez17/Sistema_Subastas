@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -24,13 +25,11 @@ namespace Sistema_Subastas.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult Login(usuarios usuario)
         {
             try
             {
-                
                 var user = _context.usuarios.FirstOrDefault(u => u.correo == usuario.correo && u.Estado == true);
 
                 if (user == null)
@@ -39,12 +38,17 @@ namespace Sistema_Subastas.Controllers
                     return RedirectToAction("Login");
                 }
 
-                // Comparar contraseñas directamente (sin hash)
-                if (user.contrasena != usuario.contrasena)
+                // Verificar la contraseña hasheada
+                var hasher = new PasswordHasher<usuarios>();
+                var resultado = hasher.VerifyHashedPassword(user, user.contrasena, usuario.contrasena);
+
+                if (resultado != PasswordVerificationResult.Success)
                 {
                     TempData["Mensaje"] = "Correo o contraseña incorrectos.";
                     return RedirectToAction("Login");
                 }
+
+                // Autenticación correcta
                 if (user.TipoUser == false)
                 {
                     HttpContext.Session.SetInt32("id_usuario", user.id);
@@ -53,12 +57,12 @@ namespace Sistema_Subastas.Controllers
                     TempData["UserId"] = user.id;
                     return RedirectToAction("Index", "HomeAdmin");
                 }
+
                 HttpContext.Session.SetInt32("id_usuario", user.id);
                 HttpContext.Session.SetString("NombreUser", user.nombre);
 
                 TempData["UserId"] = user.id;
                 return RedirectToAction("Index", "Home");
-
             }
             catch (Exception ex)
             {
@@ -66,6 +70,48 @@ namespace Sistema_Subastas.Controllers
                 return View();
             }
         }
+
+        //[HttpPost]
+        //public IActionResult Login(usuarios usuario)
+        //{
+        //    try
+        //    {
+
+        //        var user = _context.usuarios.FirstOrDefault(u => u.correo == usuario.correo && u.Estado == true);
+
+        //        if (user == null)
+        //        {
+        //            TempData["Mensaje"] = "Cuenta inexistente o cerrada.";
+        //            return RedirectToAction("Login");
+        //        }
+
+        //        // Comparar contraseñas directamente (sin hash)
+        //        if (user.contrasena != usuario.contrasena)
+        //        {
+        //            TempData["Mensaje"] = "Correo o contraseña incorrectos.";
+        //            return RedirectToAction("Login");
+        //        }
+        //        if (user.TipoUser == false)
+        //        {
+        //            HttpContext.Session.SetInt32("id_usuario", user.id);
+        //            HttpContext.Session.SetString("NombreUser", user.nombre);
+
+        //            TempData["UserId"] = user.id;
+        //            return RedirectToAction("Index", "HomeAdmin");
+        //        }
+        //        HttpContext.Session.SetInt32("id_usuario", user.id);
+        //        HttpContext.Session.SetString("NombreUser", user.nombre);
+
+        //        TempData["UserId"] = user.id;
+        //        return RedirectToAction("Index", "Home");
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ViewBag.Mensaje = "Error al realizar el login: " + ex.Message;
+        //        return View();
+        //    }
+        //}
         public ActionResult CerrarSesion()
         {
             HttpContext.Session.Clear();
@@ -132,10 +178,13 @@ namespace Sistema_Subastas.Controllers
                         return Json(new { success = false, message = "El correo ya existe, ingrese uno nuevo." });
                     }
 
-                    _context.Add(usuarios);
-                    await _context.SaveChangesAsync(); // Guarda los cambios en la BD
+                    // Hashear la contraseña antes de guardarla
+                    var hasher = new PasswordHasher<usuarios>();
+                    usuarios.contrasena = hasher.HashPassword(usuarios, usuarios.contrasena);
 
-                    // Obtener el ID del usuario recién insertado
+                    _context.Add(usuarios);
+                    await _context.SaveChangesAsync();
+
                     int userId = usuarios.id;
 
                     return Json(new { success = true, userId = userId });
@@ -148,6 +197,40 @@ namespace Sistema_Subastas.Controllers
                 return Json(new { success = false, message = "Error al realizar el guardado de datos: " + ex.Message });
             }
         }
+
+
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Create([Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
+        //{
+        //    try
+        //    {
+        //        if (ModelState.IsValid)
+        //        {
+        //            // Verificar si el correo ya existe en la base de datos
+        //            bool correoExiste = await _context.usuarios.AnyAsync(u => u.correo == usuarios.correo);
+        //            if (correoExiste)
+        //            {
+        //                ModelState.AddModelError("correo", "El correo ya existe, ingrese uno nuevo.");
+        //                return Json(new { success = false, message = "El correo ya existe, ingrese uno nuevo." });
+        //            }
+
+        //            _context.Add(usuarios);
+        //            await _context.SaveChangesAsync(); // Guarda los cambios en la BD
+
+        //            // Obtener el ID del usuario recién insertado
+        //            int userId = usuarios.id;
+
+        //            return Json(new { success = true, userId = userId });
+        //        }
+
+        //        return Json(new { success = false, message = "Datos inválidos, revise el formulario." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { success = false, message = "Error al realizar el guardado de datos: " + ex.Message });
+        //    }
+        //}
 
 
 
@@ -206,18 +289,18 @@ namespace Sistema_Subastas.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
         {
-            var user = _context.usuarios.FirstOrDefault(u => u.correo == usuarios.correo && u.Estado == true);
+            //var user = _context.usuarios.FirstOrDefault(u => u.correo == usuarios.correo && u.Estado == true);
 
-            if (user != null)
-            {
-                bool correoExiste = await _context.usuarios.AnyAsync(u => u.correo == usuarios.correo);
-                if (correoExiste)
-                {
-                    ModelState.AddModelError("correo", "El correo ya existe, ingrese uno nuevo.");
-                    return View(usuarios);
-                }
+            //if (user != null)
+            //{
+            //    bool correoExiste = await _context.usuarios.AnyAsync(u => u.correo == usuarios.correo);
+            //    if (correoExiste)
+            //    {
+            //        ModelState.AddModelError("correo", "El correo ya existe, ingrese uno nuevo.");
+            //        return View(usuarios);
+            //    }
 
-            }
+            //}
 
             if (id != usuarios.id)
             {
@@ -405,14 +488,17 @@ namespace Sistema_Subastas.Controllers
                 TempData["Error"] = "Usuario no encontrado.";
                 return View();
             }
-            if (nuevaContrasena.Length < 8)
-            {
-                TempData["Error"] = "La contraseña debe ser mayor o igual a 8 digitos.";
-                return View();
 
+            if (string.IsNullOrWhiteSpace(nuevaContrasena) || nuevaContrasena.Length < 8)
+            {
+                TempData["Error"] = "La contraseña debe tener al menos 8 caracteres.";
+                return View();
             }
-            // Aquí puedes encriptar la contraseña si es necesario
-            usuario.contrasena = nuevaContrasena;
+
+            // Hashear la nueva contraseña antes de guardarla
+            var hasher = new PasswordHasher<usuarios>();
+            usuario.contrasena = hasher.HashPassword(usuario, nuevaContrasena);
+
             await _context.SaveChangesAsync();
 
             TempData["Exito"] = "Contraseña actualizada correctamente.";
@@ -420,6 +506,38 @@ namespace Sistema_Subastas.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+
+        //[HttpPost]
+        //public async Task<IActionResult> CambiarContrasena(string nuevaContrasena)
+        //{
+        //    int? idUsuario = HttpContext.Session.GetInt32("id_usuario");
+        //    if (idUsuario == null)
+        //    {
+        //        return RedirectToAction("IngresarCorreo");
+        //    }
+
+        //    var usuario = await _context.usuarios.FindAsync(idUsuario);
+        //    if (usuario == null)
+        //    {
+        //        TempData["Error"] = "Usuario no encontrado.";
+        //        return View();
+        //    }
+        //    if (nuevaContrasena.Length < 8)
+        //    {
+        //        TempData["Error"] = "La contraseña debe ser mayor o igual a 8 digitos.";
+        //        return View();
+
+        //    }
+        //    // Aquí puedes encriptar la contraseña si es necesario
+        //    usuario.contrasena = nuevaContrasena;
+        //    await _context.SaveChangesAsync();
+
+        //    TempData["Exito"] = "Contraseña actualizada correctamente.";
+        //    HttpContext.Session.Remove("id_usuario");
+
+        //    return RedirectToAction("Index", "Home");
+        //}
 
     }
 }

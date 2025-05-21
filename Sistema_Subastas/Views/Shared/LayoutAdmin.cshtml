@@ -29,6 +29,9 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Details">Privacy</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Agregar Categorias</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="CerrarSesion">Cerrar Sesión</a>
                         </li>
                     </ul>
@@ -47,5 +50,7 @@
             &copy; 2025 - Sistema_Subastas - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

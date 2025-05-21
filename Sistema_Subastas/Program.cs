@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Sistema_Subastas.Models;
+using Sistema_Subastas.Services;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<subastaDbContext>(options =>
 
 
 
+builder.Services.AddScoped<EmailService>();
 
 
 var app = builder.Build();

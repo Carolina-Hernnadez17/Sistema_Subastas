@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
+using Sistema_Subastas.Services;
 using System.Diagnostics;
 
 namespace Sistema_Subastas.Controllers
@@ -11,11 +12,13 @@ namespace Sistema_Subastas.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly subastaDbContext _context;
         private readonly IHubContext<NotificacionHub> _hubContext;
-        public HomeController(ILogger<HomeController> logger, subastaDbContext context, IHubContext<NotificacionHub> hubContext)
+        private readonly EmailService _emailService;
+        public HomeController(ILogger<HomeController> logger, subastaDbContext context, IHubContext<NotificacionHub> hubContext, EmailService emailService)
         {
             _logger = logger;
             _context = context;
             _hubContext = hubContext;
+            _emailService = emailService;
         }
 
         //public IActionResult Index()
@@ -41,14 +44,31 @@ namespace Sistema_Subastas.Controllers
             }
 
             ViewBag.NombreUsuario = nombre;
+            HoraServidor();
 
-            MarcarSubastasFinalizadas();
-            await CerrarSubastasFinalizadas();
-            DeterminarGanadores();
+            var ahora = DateTime.Now;
 
-            await CerrarSubastasFinalizadas();
+            // Verificamos si hay alguna subasta que necesita ser cerrada
+            bool hayPorFinalizar = _context.articulos
+                .Any(a => a.estado_subasta == "Publicado" && a.fecha_fin <= ahora);
+
+            if (hayPorFinalizar)
+            {
+                MarcarSubastasFinalizadas();
+                DeterminarGanadores();
+                await CerrarSubastasFinalizadas();
+            }
+
 
             return View();
+        }
+        public IActionResult HoraServidor()
+        {
+            var horaLocal = DateTime.Now;
+            var horaUtc = DateTime.UtcNow;
+
+            return Content($"⏰ Hora Local del Servidor: {horaLocal:dd/MM/yyyy HH:mm:ss}\n" +
+                           $"🌐 Hora UTC: {horaUtc:dd/MM/yyyy HH:mm:ss}");
         }
 
 
@@ -56,136 +76,27 @@ namespace Sistema_Subastas.Controllers
         {
             return View();
         }
+        //public void MarcarSubastasFinalizadas()
+        //{
+        //    var articulosParaFinalizar = _context.articulos
+        //        .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin <= DateTime.Now)
+        //        .ToList();
 
-        public async Task<IActionResult> CerrarSubastasFinalizadas()
-        {
-            // Subastas finalizadas con pujas
-            var subastasFinalizadas = _context.articulos
-                .Where(a => a.estado_subasta == "Finalizada")
-                .ToList();
+        //    foreach (var articulo in articulosParaFinalizar)
+        //    {
+        //        articulo.estado_subasta = "Finalizada";
+        //    }
 
-            foreach (var subasta in subastasFinalizadas)
-            {
-                string mensaje = $"📢 Tu subasta {subasta.titulo} ha finalizado el {subasta.fecha_fin:dd/MM/yyyy}.";
-
-                // Verificar si ya se envió esta notificación
-                bool yaExiste = _context.notificaciones.Any(n =>
-                    n.usuario_id == subasta.usuario_id &&
-                    n.mensaje == mensaje);
-
-                if (!yaExiste)
-                {
-                    var notificacion = new notificaciones
-                    {
-                        usuario_id = subasta.usuario_id,
-                        mensaje = mensaje,
-                        leido = false,
-                        fecha = DateTime.Now
-                    };
-
-                    _context.notificaciones.Add(notificacion);
-
-                    //await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
-                }
-            }
-
-            // Subastas no vendidas (sin pujas)
-            var subastasNoVendidas = _context.articulos
-                .Where(a => a.estado_subasta == "No vendido")
-                .ToList();
-
-            foreach (var subasta in subastasNoVendidas)
-            {
-                string mensaje = $"📢 Tu subasta {subasta.titulo} ha terminado sin pujas el {subasta.fecha_fin:dd/MM/yyyy}.";
-
-                // Verificar si ya se envió esta notificación
-                bool yaExiste = _context.notificaciones.Any(n =>
-                    n.usuario_id == subasta.usuario_id &&
-                    n.mensaje == mensaje);
-
-                if (!yaExiste)
-                {
-                    var notificacion = new notificaciones
-                    {
-                        usuario_id = subasta.usuario_id,
-                        mensaje = mensaje,
-                        leido = false,
-                        fecha = DateTime.Now
-                    };
-
-                    _context.notificaciones.Add(notificacion);
-
-                   // await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
-                }
-            }
-            // Subastas vendidas 
-            var subastasVendidas = _context.articulos
-                .Where(a => a.estado_subasta == "Vendido")
-                .ToList();
-
-            foreach (var subasta in subastasVendidas)
-            {
-                var pujas = _context.pujas
-                .Where(a => a.articulo_id == subasta.Id)
-                .ToList();
-
-                foreach (var puj in pujas)
-                {
-                    if(puj.estado_pujas == "Ganador")
-                    {
-                        string mensaje = $"📢 Tu subasta {subasta.titulo} ha sido vendida  el ganador es el cod " +
-                            $"de usuario: {puj.usuario_id} y el monto final es de: {puj.monto}, fecha de subasta finalizada: {subasta.fecha_fin:dd/MM/yyyy}.";
-
-                        string mensaje2 = $"📢 Has sido ganador de la subasta {subasta.titulo} felicidades.";
-                        // Verificar si ya se envió esta notificación
-                        bool yaExiste = _context.notificaciones.Any(n =>
-                            n.usuario_id == subasta.usuario_id &&
-                            n.mensaje == mensaje);
-
-                        if (!yaExiste)
-                        {
-                            var notificacion = new notificaciones
-                            {
-                                usuario_id = subasta.usuario_id,
-                                mensaje = mensaje,
-                                leido = false,
-                                fecha = DateTime.Now
-                            };
-                            
-
-                            _context.notificaciones.Add(notificacion);
-
-                            // await _hubContext.Clients.All.SendAsync("RecibirNotificacion", subasta.usuario_id, mensaje);
-                        }
-                        bool yaExiste2 = _context.notificaciones.Any(n =>
-                            n.usuario_id == puj.usuario_id &&
-                            n.mensaje == mensaje2);
-
-                        if (!yaExiste2) {
-
-                            var notificacion2 = new notificaciones
-                            {
-                                usuario_id = puj.usuario_id,
-                                mensaje = mensaje2,
-                                leido = false,
-                                fecha = DateTime.Now
-                            };
-                            _context.notificaciones.Add(notificacion2);
-                        }
-                    }
-
-                }
-
-            }
-
-            await _context.SaveChangesAsync();
-
-            return Ok("Subastas cerradas y notificaciones enviadas.");
-        }
+        //    _context.SaveChanges();
+        //}
         public void MarcarSubastasFinalizadas()
         {
+            var ahora = DateTime.Now;
+            var ahoraRedondeado = new DateTime(ahora.Year, ahora.Month, ahora.Day, ahora.Hour, ahora.Minute, ahora.Second);
+
             var articulosParaFinalizar = _context.articulos
-                .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin == DateTime.Now)
+                .Where(a => a.estado_subasta == "Publicado" &&
+                            a.fecha_fin <= ahoraRedondeado)
                 .ToList();
 
             foreach (var articulo in articulosParaFinalizar)
@@ -231,8 +142,107 @@ namespace Sistema_Subastas.Controllers
             _context.SaveChanges();
         }
 
+        public async Task<IActionResult> CerrarSubastasFinalizadas()
+        {
+            // Subastas no vendidas
+            var subastasNoVendidas = _context.articulos
+                .Where(a => a.estado_subasta == "No vendido")
+                .ToList();
 
+            foreach (var subasta in subastasNoVendidas)
+            {
+                string mensaje = $"📢 Tu subasta {subasta.titulo} ha terminado sin pujas el {subasta.fecha_fin:dd/MM/yyyy HH:mm}.";
 
+                bool yaExiste = _context.notificaciones.Any(n =>
+                    n.usuario_id == subasta.usuario_id && n.mensaje == mensaje);
+
+                if (!yaExiste)
+                {
+                    _context.notificaciones.Add(new notificaciones
+                    {
+                        usuario_id = subasta.usuario_id,
+                        mensaje = mensaje,
+                        leido = false,
+                        fecha = DateTime.Now
+                    });
+
+                    var usuario = await _context.usuarios.FindAsync(subasta.usuario_id);
+                    if (usuario != null)
+                    {
+                        _emailService.EnviarCorreo(
+                            usuario.correo,
+                            "Notificación de subasta sin pujas",
+                            mensaje
+                        );
+                    }
+                }
+            }
+
+            // Subastas vendidas
+            var subastasVendidas = _context.articulos
+                .Where(a => a.estado_subasta == "Vendido")
+                .ToList();
+
+            foreach (var subasta in subastasVendidas)
+            {
+                var pujas = _context.pujas
+                    .Where(p => p.articulo_id == subasta.Id && p.estado_pujas == "Ganador")
+                    .ToList();
+
+                foreach (var puj in pujas)
+                {
+                    string mensajeCreador = $"📢 Tu subasta {subasta.titulo} ha sido vendida. El ganador es el usuario con código: {puj.usuario_id}, monto final: {puj.monto}, finalizó el {subasta.fecha_fin:dd/MM/yyyy HH:mm}.";
+                    string mensajeGanador = $"📢 Has ganado la subasta {subasta.titulo} (ID: {subasta.Id}), ¡felicidades!";
+
+                    // Notificar al creador
+                    if (!_context.notificaciones.Any(n => n.usuario_id == subasta.usuario_id && n.mensaje == mensajeCreador))
+                    {
+                        _context.notificaciones.Add(new notificaciones
+                        {
+                            usuario_id = subasta.usuario_id,
+                            mensaje = mensajeCreador,
+                            leido = false,
+                            fecha = DateTime.Now
+                        });
+
+                        var creador = await _context.usuarios.FindAsync(subasta.usuario_id);
+                        if (creador != null)
+                        {
+                            _emailService.EnviarCorreo(
+                                creador.correo,
+                                "Notificación de subasta vendida",
+                                mensajeCreador
+                            );
+                        }
+                    }
+
+                    // Notificar al ganador
+                    if (!_context.notificaciones.Any(n => n.usuario_id == puj.usuario_id && n.mensaje == mensajeGanador))
+                    {
+                        _context.notificaciones.Add(new notificaciones
+                        {
+                            usuario_id = puj.usuario_id,
+                            mensaje = mensajeGanador,
+                            leido = false,
+                            fecha = DateTime.Now
+                        });
+
+                        var ganador = await _context.usuarios.FindAsync(puj.usuario_id);
+                        if (ganador != null)
+                        {
+                            _emailService.EnviarCorreo(
+                                ganador.correo,
+                                "¡Felicidades! Ganaste la subasta",
+                                mensajeGanador
+                            );
+                        }
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok("Subastas cerradas, notificaciones guardadas y correos enviados.");
+        }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
