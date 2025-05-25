@@ -2,39 +2,68 @@
 
 @{
     ViewData["Title"] = "Historial de Compras";
+
+    var fechaInicio = Context.Request.Query["fechaInicio"];
+    var fechaFin = Context.Request.Query["fechaFin"];
+    var estado = Context.Request.Query["estado"];
 }
 
-<h2>Historial de Compras</h2>
+<div class="container mt-5 text-light">
+    <h2 class="mb-4 text-success">Historial de Compras</h2>
 
-@if (Model != null && Model.Count > 0)
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Descripción</th>
-                <th>Precio Final</th>
-                <th>Fecha de Cierre</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var compra in Model)
-            {
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label class="form-label">Fecha desde</label>
+            <input type="date" name="fechaInicio" class="form-control" value="@fechaInicio" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Fecha hasta</label>
+            <input type="date" name="fechaFin" class="form-control" value="@fechaFin" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Estado</label>
+            <select name="estado" class="form-select">
+                <option value="">Todos</option>
+                <option value="Pendiente" selected="@(estado == "Pendiente" ? "selected" : null)">Pendiente</option>
+                <option value="Pagado" selected="@(estado == "Pagado" ? "selected" : null)">Pagado</option>
+                <option value="Cancelado" selected="@(estado == "Cancelado" ? "selected" : null)">Cancelado</option>
+            </select>
+        </div>
+        <div class="col-md-12 d-flex justify-content-end">
+            <button type="submit" class="btn btn-outline-success">Aplicar filtros</button>
+        </div>
+    </form>
+
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-bordered table-striped table-dark">
+            <thead>
                 <tr>
-                    <td>@compra.Titulo</td>
-                    <td>@compra.Descripcion</td>
-                    <td>$@compra.PrecioFinal</td>
-                    <td>@compra.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@compra.EstadoTransaccion</td>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Precio Final</th>
+                    <th>Fecha de Cierre</th>
+                    <th>Estado</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <div class="alert alert-info">
-        No has ganado ninguna subasta aún.
-    </div>
-}
+            </thead>
+            <tbody>
+                @foreach (var compra in Model)
+                {
+                    <tr>
+                        <td>@compra.Titulo</td>
+                        <td>@compra.Descripcion</td>
+                        <td>$@compra.PrecioFinal</td>
+                        <td>@compra.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@compra.EstadoTransaccion</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            No has ganado ninguna subasta aún.
+        </div>
+    }
+</div>

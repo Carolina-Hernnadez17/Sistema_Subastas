@@ -1,139 +1,123 @@
-﻿
-@model IEnumerable<imagenes_articulos> 
+﻿@model IEnumerable<imagenes_articulos>
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@{
     var articulos = ViewBag.Articulos as List<articulos>;
     var categorias = ViewBag.Categorias as List<categorias>;
     var ca_img = ViewBag.ArticuloCategorias as List<articulo_categoria>;
-    var imagenes = Model as List<imagenes_articulos>;  // Model es la lista de imágenes
+    var imagenes = Model as List<imagenes_articulos>;
 }
 
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title></title>
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-    <link href="~/css/index_articulos_imagenes.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/Views/Shared/_Layout.cshtml">
-
-</head>
-<body>
-    
-    <div class="row g-0">
-        <div class="mb-4">
-            <input type="text" id="searchNombre" placeholder="Buscar por nombre..." class="border p-2 mr-2">
-            <select id="searchCategoria" class="border p-2 mr-2">
-                <option value="">Todas las categorías</option>
-                @foreach(var categoria in categorias){
-                    <option value="@categoria?.Id">@categoria?.nombre</option>
-                }
+<link href="~/css/index_articulos_imagenes.css" rel="stylesheet" />
 
 
-            </select>
-            <select id="searchEstado" class="border p-2">
-                <option value="">Todos los estados</option>
-                <option value="Nuevo">Nuevo</option>
-                <option value="Usado">Usado</option>
-            </select>
-        </div>
+<div class="container mt-4">
 
-        @if (TempData["MensajeDisputa"] != null)
-        {
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                @TempData["MensajeDisputa"]
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        }
+    <div class="mb-4 d-flex flex-wrap align-items-center">
+        <input type="text" id="searchNombre" placeholder="Buscar por nombre..." />
 
-        <div class="contenedor-grid">
-            @foreach (var articulo in articulos)
+        <select id="searchCategoria" class="filtro-select">
+            <option value="">Todas las categorías</option>
+            @foreach (var categoria in categorias)
             {
-                if (articulo.estado_subasta == "Publicado" || articulo.estado_subasta == "No vendido")
-                {
-                    var imagen = imagenes.FirstOrDefault(img => img.articulo_id == articulo.Id);
-                    if (imagen == null) continue;
-
-                    var articuloCategoria = ca_img.FirstOrDefault(ac => ac.articulo_id == articulo.Id);
-                    if (articuloCategoria == null) continue;
-
-                    var categoria = categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
-
-                    <div>
-                        <a href="@Url.Action("Details", "Imagenes_articulos", new { id = imagen.articulo_id })" class="card text-decoration-none">
-                            <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 item-articulo"
-                                 data-estado="@articulo.estado" data-nombre="@articulo.titulo" data-categoria="@categoria?.Id">
-
-                                <div class="imgen_p">
-                                    <img src="@imagen.url_imagen" alt="Imagen del artículo"
-                                         onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'">
-                                </div>
-
-                                <div class="pt-6">
-                                    <ul class="mt-2 items-center gap-4">
-                                        <li><h1 class="text-sm font-medium">@articulo.titulo</h1></li>
-                                        <li><p class="text-sm font-medium text-gray-500">Categoría: @categoria?.nombre</p></li>
-                                        <li><p>Fecha de registro: @articulo.fecha_registro</p></li>
-                                        <li><p class="text-sm font-medium text-gray-500">@ViewBag.Fecha</p></li>
-                                        <li>
-                                            <div class="d-flex">
-                                                <p class="leading-tight text-precio">Precio de salida: </p>
-                                                <p class="font-extrabold leading-tight">$ @articulo.precio_salida</p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                }
+                <option value="@categoria?.Id">@categoria?.nombre</option>
             }
+        </select>
+
+        <select id="searchEstado" class="filtro-select">
+            <option value="">Todos los estados</option>
+            <option value="Nuevo">Nuevo</option>
+            <option value="Usado">Usado</option>
+        </select>
+    </div>
+
+    @if (TempData["MensajeDisputa"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["MensajeDisputa"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+    }
 
-   
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-        <script>
-            document.getElementById('searchNombre').addEventListener('input', filtrarArticulos);
-            document.getElementById('searchCategoria').addEventListener('change', filtrarArticulos);
-            document.getElementById('searchEstado').addEventListener('change', filtrarArticulos);
+    <div class="contenedor-grid">
+        @foreach (var articulo in articulos)
+        {
+            if (articulo.estado_subasta == "Publicado" || articulo.estado_subasta == "No vendido")
+            {
+                var imagen = imagenes.FirstOrDefault(img => img.articulo_id == articulo.Id);
+                if (imagen == null) continue;
 
-            function filtrarArticulos() {
-                const nombre = document.getElementById('searchNombre').value.toLowerCase();
-                const categoria = document.getElementById('searchCategoria').value.toLowerCase();
-                const estado = document.getElementById('searchEstado').value.toLowerCase();
-                const contenedor = document.querySelector('.contenedor-grid');
-                const articulos = Array.from(contenedor.children);
+                var articuloCategoria = ca_img.FirstOrDefault(ac => ac.articulo_id == articulo.Id);
+                if (articuloCategoria == null) continue;
 
-                const coincidentes = [];
-                const noCoincidentes = [];
+                var categoria = categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
 
-                articulos.forEach(wrapper => {
-                    const articulo = wrapper.querySelector('.item-articulo');
-                    const articuloNombre = articulo.getAttribute('data-nombre').toLowerCase();
-                    const articuloCategoria = articulo.getAttribute('data-categoria').toLowerCase();
-                    const articuloEstado = articulo.getAttribute('data-estado').toLowerCase();
+                <div>
+                    <a href="@Url.Action("Details", "Imagenes_articulos", new { id = imagen.articulo_id })" class="card text-decoration-none">
+                        <div class="rounded-lg border p-4 shadow-sm bg-white dark:bg-gray-800 item-articulo"
+                             data-estado="@articulo.estado" data-nombre="@articulo.titulo" data-categoria="@categoria?.Id">
 
-                    const matchNombre = nombre === '' || articuloNombre.includes(nombre);
-                    const matchCategoria = categoria === '' || articuloCategoria === categoria;
-                    const matchEstado = estado === '' || articuloEstado === estado;
+                            <div class="imgen_p">
+                                <img src="@imagen.url_imagen" alt="Imagen del artículo"
+                                     onerror="this.onerror=null; this.src='https://res.cloudinary.com/daxbwcgw2/upload/Subasta/default-art.jpg'">
+                            </div>
 
-                    if (matchNombre && matchCategoria && matchEstado) {
-                        wrapper.style.display = 'block';
-                        coincidentes.push(wrapper);
-                    } else {
-                        wrapper.style.display = 'none';
-                        noCoincidentes.push(wrapper);
-                    }
-                });
-
-                // Limpiamos el contenedor y reorganizamos el DOM
-                contenedor.innerHTML = '';
-                coincidentes.forEach(el => contenedor.appendChild(el));
-                noCoincidentes.forEach(el => contenedor.appendChild(el));
+                            <div class="pt-3">
+                                <ul class="list-unstyled">
+                                    <li><strong>@articulo.titulo</strong></li>
+                                    <li><small>Categoría: @categoria?.nombre</small></li>
+                                    <li><small>Fecha de registro: @articulo.fecha_registro.ToString("dd/MM/yyyy")</small></li>
+                                    <li><strong class="text-precio">Precio de salida: $@articulo.precio_salida</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </a>
+                </div>
             }
-        </script>
+        }
+    </div>
+</div>
 
-</body>
-</html>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
+    <script>
+        document.getElementById('searchNombre').addEventListener('input', filtrarArticulos);
+        document.getElementById('searchCategoria').addEventListener('change', filtrarArticulos);
+        document.getElementById('searchEstado').addEventListener('change', filtrarArticulos);
+
+        function filtrarArticulos() {
+            const nombre = document.getElementById('searchNombre').value.toLowerCase();
+            const categoria = document.getElementById('searchCategoria').value.toLowerCase();
+            const estado = document.getElementById('searchEstado').value.toLowerCase();
+            const contenedor = document.querySelector('.contenedor-grid');
+            const articulos = Array.from(contenedor.children);
+
+            const coincidentes = [];
+            const noCoincidentes = [];
+
+            articulos.forEach(wrapper => {
+                const articulo = wrapper.querySelector('.item-articulo');
+                const articuloNombre = articulo.getAttribute('data-nombre').toLowerCase();
+                const articuloCategoria = articulo.getAttribute('data-categoria').toLowerCase();
+                const articuloEstado = articulo.getAttribute('data-estado').toLowerCase();
+
+                const matchNombre = nombre === '' || articuloNombre.includes(nombre);
+                const matchCategoria = categoria === '' || articuloCategoria === categoria;
+                const matchEstado = estado === '' || articuloEstado === estado;
+
+                if (matchNombre && matchCategoria && matchEstado) {
+                    wrapper.style.display = 'block';
+                    coincidentes.push(wrapper);
+                } else {
+                    wrapper.style.display = 'none';
+                    noCoincidentes.push(wrapper);
+                }
+            });
+
+            contenedor.innerHTML = '';
+            coincidentes.forEach(el => contenedor.appendChild(el));
+            noCoincidentes.forEach(el => contenedor.appendChild(el));
+        }
+    </script>
+}

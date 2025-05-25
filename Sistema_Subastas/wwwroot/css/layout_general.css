@@ -112,7 +112,7 @@ footer {
         color: #0061ff;
     }
 
-        footer a:hover {
+        footer a:hover {    
             color: #004ecb;
             text-decoration: underline;
         }
@@ -128,4 +128,18 @@ footer {
     .navbar-toggler:focus {
         outline: none;
         box-shadow: none;
+    }
+
+html, body {
+    height: 100%;
+}
+
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+    .page-wrapper > .container {
+        flex: 1;
     }

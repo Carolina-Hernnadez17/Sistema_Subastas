@@ -65,9 +65,40 @@ namespace Sistema_Subastas.Controllers
             var compradorId = HttpContext.Session.GetInt32("id_usuario");
             var nombre = HttpContext.Session.GetString("NombreUser");
 
+            if (compradorId == null)
+            {
+                return RedirectToAction("Login", "Usuarios");
+            }
+
             var articulo = _context.articulos.Find(articulo_id);
             var vendedor = _context.usuarios.Find(vendedor_id);
 
+            if (articulo == null || vendedor == null)
+            {
+                TempData["MensajeError"] = "No se pudo cargar la información del artículo o vendedor.";
+                return RedirectToAction("Index", "Imagenes_articulos");
+            }
+
+            // ❗ Validación: verificar si el usuario ganó la subasta
+            var pujaGanadora = _context.pujas
+                .Where(p => p.articulo_id == articulo_id)
+                .OrderByDescending(p => p.monto)
+                .FirstOrDefault();
+
+            if (pujaGanadora == null || pujaGanadora.usuario_id != compradorId)
+            {
+                TempData["MensajeError"] = "Solo puedes presentar una disputa si ganaste la subasta.";
+                return RedirectToAction("Index", "Imagenes_articulos");
+            }
+
+            // ❗ Validación: solo puede presentar disputa dentro de los 3 días posteriores al cierre
+            if (articulo.fecha_fin.AddDays(3) < DateTime.Now)
+            {
+                TempData["MensajeError"] = "Ya no puedes presentar una disputa porque han pasado más de 3 días desde el cierre.";
+                return RedirectToAction("Index", "Imagenes_articulos");
+            }
+
+            // ViewBag para la vista
             ViewBag.ArticuloId = articulo_id;
             ViewBag.ArticuloTitulo = articulo?.titulo ?? "(Sin título)";
             ViewBag.CompradorId = compradorId ?? 0;
@@ -77,6 +108,7 @@ namespace Sistema_Subastas.Controllers
 
             return View();
         }
+
 
 
 
