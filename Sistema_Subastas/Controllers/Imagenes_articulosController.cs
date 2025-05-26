@@ -53,7 +53,16 @@ namespace Sistema_Subastas.Controllers
             var categorias = await _context.categorias.ToListAsync();
             var articuloCategorias = await _context.articulo_categoria.ToListAsync();
 
+
+            
+
+
             var articulo = _context.articulos.FirstOrDefault();
+
+            //Paso la lista de imágenes del artículo a la vista segun el id
+            var imagenes_articulos = _context.imagenes_articulos.Where(m => m.articulo_id == articulo.Id).ToList();
+            ViewBag.ImagenesArticulos = imagenes_articulos;
+
 
             ViewBag.Articulos = articulos;
             ViewBag.ArticuloCategorias = articuloCategorias;

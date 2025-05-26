@@ -1,17 +1,15 @@
 ﻿/* Contenedor en modo grid responsivo */
 .contenedor-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 1.5rem;
-    justify-items: center;
     padding: 1rem;
 }
-
 /* Estilo general de la tarjeta */
 .card {
     width: 100%;
     max-width: 300px;
-    height: 480px;
+    height: 400px;
     margin: 0 auto;
     display: block;
     text-decoration: none;
@@ -96,6 +94,20 @@ select {
     margin-right: 0.5rem;
     margin-bottom: 1rem;
 }
+
+.filtros_Precio {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    margin-left: 0.2rem;
+}
+
+    .filtros_Precio input {
+        min-width: 180px;
+    }
 
 /* Alertas */
 .alert {
