@@ -4,9 +4,13 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1>Registrar Disputa</h1>
 
-<h4>disputas</h4>
+@if (TempData["MensajeError"] != null)
+{
+    <div class="alert alert-danger">@TempData["MensajeError"]</div>
+}
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -41,7 +45,6 @@
                     <option value="Problema con el pago">Problema con el pago</option>
                     <option value="Conducta fraudulenta">Conducta fraudulenta</option>
                     <option value="Otro">Otro</option>
-
                 </select>
                 <span asp-validation-for="motivo" class="text-danger"></span>
             </div>
@@ -66,22 +69,19 @@
                     <option value="En proceso">En proceso</option>
                     <option value="Resuelta">Resuelta</option>
                     <option value="Rechazada">Rechazada</option>
-
                 </select>
-
                 <span asp-validation-for="estado" class="text-danger"></span>
             </div>
 
-
-            <div class="form-group">
+            <div class="form-group mt-3">
                 <input type="submit" value="Registrar disputa" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="mt-3">
+    <a asp-action="Index">Volver al listado</a>
 </div>
 
 @section Scripts {
@@ -114,4 +114,3 @@
         });
     </script>
 }
-

@@ -20,7 +20,6 @@
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-    /* Efecto hover */
     .card:hover {
         transform: scale(1.03);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
@@ -37,7 +36,6 @@
     overflow: hidden;
 }
 
-    /* Imagen de la tarjeta */
     .imgen_p img {
         width: 100%;
         height: 100%;
@@ -46,7 +44,7 @@
         display: block;
     }
 
-/* Cuerpo de contenido de la tarjeta */
+/* Contenido de tarjeta */
 .pt-6 {
     padding: 1rem;
 }
@@ -61,20 +59,17 @@
     margin-bottom: 0.5rem;
 }
 
-/* Estilo de título */
 .card h1 {
     font-size: 1rem;
     font-weight: 600;
     color: #1f2937;
 }
 
-/* Estilo para etiquetas y descripciones */
 .card p {
     font-size: 0.9rem;
     color: #6b7280;
 }
 
-/* Precio en negrita */
 .text-precio {
     margin-right: 4px;
     color: #111827;
@@ -95,25 +90,12 @@ select {
     margin-bottom: 1rem;
 }
 
-.filtros_Precio {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    margin-left: 0.2rem;
-}
-
-    .filtros_Precio input {
-        min-width: 180px;
-    }
-
 /* Alertas */
 .alert {
     margin-top: 1rem;
 }
 
+/* Efecto visual al filtrar */
 .item-articulo {
     transition: all 0.2s ease-in-out;
 }
