@@ -1,0 +1,86 @@
+﻿body {
+    background: url('../css_R/Resources_Login/descarga.jpg') no-repeat center center/cover;
+    backdrop-filter: blur(40px);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FCFCFC;
+}
+
+.register-container {
+    max-width: 800px;
+    background: rgba(25, 25, 25, 0.9);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: white;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.form-control {
+    border-radius: 10px;
+    background: #101010;
+    color: white;
+    border: 1px solid #6f4832;
+    padding: 10px;
+}
+
+.input-group-text {
+    background: #101010;
+    border: 1px solid #6f4832;
+    color: white;
+}
+
+.btn-register {
+    background-color: #6f4832;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+    width: 100%;
+}
+
+.btn-social {
+    background: #6f4832;
+    border: none;
+    color: white;
+    border-radius: 90px;
+    padding: 10px 15px;
+    width: 100%;
+}
+
+.left-image {
+    float: left;
+    margin-right: 20px;
+    max-width: 200px;
+}
+
+a {
+    color: white;
+}
+
+    a:hover {
+        color: black;
+    }
+
+#toastMensaje {
+    background: linear-gradient(135deg, #2a2a2a, #1c1c1c);
+    border-radius: 12px;
+    padding: 12px;
+    opacity: 0.95;
+    transition: opacity 0.3s ease-in-out;
+}
+#toastExito {
+    background: linear-gradient(135deg, #2a2a2a, #1c1c1c);
+    border-radius: 12px;
+    padding: 12px;
+    opacity: 0.95;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.toast.show {
+    opacity: 1 !important;
+}

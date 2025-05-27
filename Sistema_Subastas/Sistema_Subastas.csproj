@@ -7,10 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\css\Loginn.css" />
+    <Content Remove="wwwroot\css\Registroo.css" />
+    <Content Remove="wwwroot\css\Style1.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="css_E\StyleE.css" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\Loginn.css" />
+    <None Include="wwwroot\css\Registroo.css" />
+    <None Include="wwwroot\css\Style1.css" />
     <None Include="wwwroot\css\StyleE.css" />
   </ItemGroup>
 
