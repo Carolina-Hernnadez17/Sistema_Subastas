@@ -111,9 +111,26 @@
                         <td>@item.Articulo.estado_subasta</td>
                         <td>@item.Categoria</td>
                         <td class="text-center">
-                            <a href="@Url.Action("Details", "Imagenes_articulos", new { id = item.Articulo.Id })" class="btn btn-sm btn-outline-primary">
-                                Ver Detalle
-                            </a>
+                            @if (item.Articulo.estado_subasta == "No vendido")
+                            {
+                                <div class="d-flex gap-2 justify-content-center mt-2">
+                                    <form asp-controller="Articulos" asp-action="EliminarArticulo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');">
+                                        <input type="hidden" name="id" value="@item.Articulo.Id" />
+                                        <button type="submit" class="btn btn-danger ">
+                                            Eliminar 
+                                        </button>
+                                    </form>
+
+                                    <button disabled class="btn btn-primary " title="No disponible">
+                                        Republicar 
+                                    </button>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class=" text-dark">Tiene pujas y por ende no se puede eliminar </span>
+                            }
+
                         </td>
                     </tr>
                 }

@@ -45,41 +45,7 @@ namespace Sistema_Subastas.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EliminarArticulo(int id)
-        {
-            var articulo = await _context.articulos.FindAsync(id);
-            if (articulo == null)
-            {
-                return NotFound("Artículo no encontrado.");
-            }
-
-            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
-            if (usuarioId == null || articulo.usuario_id != usuarioId)
-            {
-                return Unauthorized("No tienes permiso para eliminar este artículo.");
-            }
-
-            bool tienePujas = await _context.pujas.AnyAsync(p => p.articulo_id == id);
-            if (tienePujas)
-            {
-                TempData["Error"] = "No se puede eliminar el artículo porque ya tiene pujas registradas.";
-                return RedirectToAction("Index", "Imagenes_articulos");
-            }
-
-            var imagenes = _context.imagenes_articulos.Where(i => i.articulo_id == id);
-            _context.imagenes_articulos.RemoveRange(imagenes);
-
-            var categorias = _context.articulo_categoria.Where(c => c.articulo_id == id);
-            _context.articulo_categoria.RemoveRange(categorias);
-
-            _context.articulos.Remove(articulo);
-
-            await _context.SaveChangesAsync();
-
-            TempData["Success"] = "Artículo eliminado correctamente.";
-            return RedirectToAction("Index", "Imagenes_articulos");
-        }
+        
 
         [HttpGet]
 
@@ -113,6 +79,30 @@ namespace Sistema_Subastas.Controllers
             return View("Historial");
         }
 
+        [HttpPost]
+        public IActionResult EliminarArticulo(int id)
+        {
+            var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
+
+            if (articulo == null)
+            {
+                TempData["Error"] = "El artículo no fue encontrado.";
+                return RedirectToAction("Index", "Imagenes_articulos");
+            }
+
+            var pujas = _context.pujas.Where(p => p.articulo_id == id).ToList();
+            if (pujas.Count > 0)
+            {
+                TempData["Error"] = "El artículo no puede eliminarse porque ya tiene pujas registradas.";
+                return RedirectToAction("Details", new { id = id });
+            }
+
+            _context.articulos.Remove(articulo);
+            _context.SaveChanges();
+
+            TempData["Success"] = "Artículo eliminado correctamente.";
+            return RedirectToAction("Historial","Articulos");
+        }
 
 
 
@@ -326,6 +316,7 @@ namespace Sistema_Subastas.Controllers
             }
         }
 
+        
 
 
         // GET: Articulos/Delete/5

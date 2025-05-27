@@ -73,37 +73,40 @@
     }
 
     <h4 class="mt-4">Historial de pujas</h4>
+
     @if (articulo.visualizacion_puja.ToLower() == "cerrado")
     {
         <div class="alert alert-warning">El historial de pujas está cerrado para este artículo.</div>
     }
     else if (historialPujas != null && historialPujas.Any())
     {
-        <table class="table table-bordered mt-3">
-            <thead class="table-success">
-                <tr>
-                    <th>Monto</th>
-                    <th>Usuario</th>
-                    <th>Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var puja in historialPujas)
-                {
+        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-success">
                     <tr>
-                        <td>$@puja.Valor</td>
-                        <td>@puja.nombre_usuario</td>
-                        <td>@puja.Fecha.ToString("g")</td>
-                        
+                        <th>Monto</th>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var puja in historialPujas)
+                    {
+                        <tr>
+                            <td>$@puja.Valor</td>
+                            <td>@puja.nombre_usuario</td>
+                            <td>@puja.Fecha.ToString("g")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
         <p class="text-muted">Aún no hay pujas registradas.</p>
     }
+
 </div>
 
 

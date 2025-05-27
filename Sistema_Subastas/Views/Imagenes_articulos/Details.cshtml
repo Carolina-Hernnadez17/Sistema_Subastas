@@ -181,15 +181,20 @@
 
 
                             }
-                            @if (ViewBag.usuarioId != null && ViewBag.idVendedor != null && ViewBag.CantidadP != null)
+
+                            @if (ViewBag.usuarioId != null && ViewBag.idVendedor != null && ViewBag.CantidadP != null && ViewBag.EstadoSubasta != null && ViewBag.FechaFin != null)
                             {
                                 int usuarioId = (int)ViewBag.usuarioId;
                                 int idVendedor = (int)ViewBag.idVendedor;
                                 int cantidadP = (int)ViewBag.CantidadP;
+                                string estadoSubasta = ViewBag.EstadoSubasta.ToString().Trim().ToLower();
+                                DateTime fechaFin = (DateTime)ViewBag.FechaFin;
+                                DateTime ahora = DateTime.Now;
 
-                                if (usuarioId == idVendedor && cantidadP == 0)
+                                if (usuarioId == idVendedor && cantidadP == 0 && 
+                                    (estadoSubasta == "No vendido" || ahora > fechaFin))
                                 {
-                                    <div class="flex gap-4 mt-4">
+                                    <div id="botonEliminar" class="flex gap-4 mt-4">
                                         <form asp-controller="Articulos" asp-action="EliminarArticulo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');">
                                             <input type="hidden" name="id" value="@ViewBag.Articulos.Id" />
                                             <button type="submit"
@@ -205,13 +210,8 @@
                                     </div>
                                 }
                             }
-
-
-                            
                         }
 
-
-                        
                     </div>
                     @if (ViewBag.VerPuja.ToString().Trim().Equals("Abierto"))
                     {
@@ -238,6 +238,34 @@
                             </svg>
                             Ver Pujas
                         </a>
+
+                        @if (ViewBag.usuarioId != null && ViewBag.idVendedor != null && ViewBag.CantidadP != null && ViewBag.EstadoSubasta != null && ViewBag.FechaFin != null)
+                            {
+                                int usuarioId = (int)ViewBag.usuarioId;
+                                int idVendedor = (int)ViewBag.idVendedor;
+                                int cantidadP = (int)ViewBag.CantidadP;
+                                string estadoSubasta = ViewBag.EstadoSubasta.ToString().Trim();
+                                DateTime fechaFin = (DateTime)ViewBag.FechaFin;
+                                DateTime ahora = DateTime.Now;
+
+                                if (usuarioId == idVendedor && estadoSubasta == "No vendido")
+                                {
+                                    <div id="botonEliminar" class="flex gap-4 mt-4">
+                                        <form asp-controller="Articulos" asp-action="EliminarArticulo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');">
+                                            <input type="hidden" name="id" value="@ViewBag.Articulos.Id" />
+                                            <button type="submit"
+                                                    class="py-2.5 px-5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
+                                                Eliminar Artículo
+                                            </button>
+                                        </form>
+
+                                        <button disabled
+                                                class="py-2.5 px-5 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed">
+                                            Republicar (no disponible)
+                                        </button>
+                                    </div>
+                                }
+                            }
                     }
                 </div>
                 
@@ -280,7 +308,7 @@
             if (usuarioId && usuarioId === idVendedor) {
                 document.getElementById("editarBtn").style.display = "flex";
                 document.getElementById("btn_puja").style.display = "none";
-                
+                document.getElementById("botonEliminar").style.display = "flex";
                 document.getElementById("boton_reporte").style.display = "none";
 
             }

@@ -24,7 +24,7 @@ namespace Sistema_Subastas.Controllers
         {
             _context = context;
             _emailService = emailService;
-           
+
         }
 
         // GET: Imagenes_articulos
@@ -70,6 +70,8 @@ namespace Sistema_Subastas.Controllers
 
 
         }
+
+        
 
         // GET: Imagenes_articulos/Details/5
         public async Task<IActionResult> Details(int id)
