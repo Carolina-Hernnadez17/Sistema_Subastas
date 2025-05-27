@@ -71,16 +71,20 @@
                     </h1>
 
                     <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
-                    <div class=" d-flex">
+                   @*  <div class=" d-flex">
                         <h5>Vendedor: </h5>
+                        <a href=""></a>
                         <p class="texto">@ViewBag.Vendedor</p>
                         
+                    </div> *@
+
+                    <div class="d-flex mb-5">
+                        <h5>Vendedor: </h5>
+                        <a href="javascript:void(0);" class="texto ms-2" id="vendedorLink" data-vendedor-id="@ViewBag.IdVendedor">
+                            @ViewBag.Vendedor
+                        </a>
                     </div>
 
-                    <div class=" d-flex">
-                        <h5>Precio de salida: </h5>
-                        <p class="precio">$ @ViewBag.Articulos.precio_salida</p>
-                    </div>
 
                     <div class=" mt-4 ">
                         <h5 class="fecha_subasta">Finaliza en: @ViewBag.Fecha</h5>
@@ -271,6 +275,25 @@
                 
             </div>
         </div>
+
+
+        <!-- Modal de valoraciones del vendedor -->
+        <div id="valoracionesModal" class="modal fade" tabindex="-1" aria-labelledby="valoracionesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="valoracionesModalLabel">Valoraciones del vendedor</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body" id="valoracionesContent">
+                        <div class="text-center">
+                            <span class="spinner-border"></span> Cargando valoraciones...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </section>
     
 
@@ -312,6 +335,54 @@
                 document.getElementById("boton_reporte").style.display = "none";
 
             }
+        });
+    </script>
+    <script>
+        document.getElementById('vendedorLink').addEventListener('click', function () {
+            var vendedorId = this.getAttribute('data-vendedor-id');
+            var modal = new bootstrap.Modal(document.getElementById('valoracionesModal'));
+            var content = document.getElementById('valoracionesContent');
+            content.innerHTML = '<div class="text-center"><span class="spinner-border"></span> Cargando valoraciones...</div>';
+
+            fetch('/Usuarios/ObtenerValoraciones?vendedorId=' + vendedorId)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        content.innerHTML = '<div class="alert alert-info">Este vendedor aún no tiene valoraciones.</div>';
+                    } else {
+                        let html = '<ul class="list-group">';
+                        data.forEach(val => {
+                            html += 
+                                 `<article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
+                                    <footer>
+                                       <div class="flex items-center">
+                                         <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
+                                            <img class="mr-2 w-6 h-6 rounded-full"
+                                                  src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
+                                                  alt="${val.nombreUsuario}"> ${val.nombreUsuario}
+                                         </p>
+                                         <p class="text-sm text-gray-600 dark:text-gray-400">
+                                             <time pubdate datetime="${val.fecha ? new Date(val.fecha).toISOString() : ''}"
+                                                   itle="${val.fecha ? new Date(val.fecha).toLocaleDateString() : ''}">
+                                                   ${val.fecha ? new Date(val.fecha).toLocaleDateString() : 'Sin fecha'}
+                                             </time>
+                                         </p>
+                                      </div
+                                      <p class="text-dark"> ${val.comentario}</p>
+                                   </footer>
+                                   
+                              </article>
+                              `;
+                        });
+                        html += '</ul>';
+                        content.innerHTML = html;
+                    }
+                })
+                .catch(() => {
+                    content.innerHTML = '<div class="alert alert-danger">Error al cargar las valoraciones.</div>';
+                });
+
+            modal.show();
         });
     </script>
 

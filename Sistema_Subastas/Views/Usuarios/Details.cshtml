@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    var valoracion = ViewBag.valoraciones as IEnumerable<dynamic>;
 }
 
 <h1>Detalles del perfil</h1>
@@ -12,56 +13,53 @@
     <div class="alert alert-success">@TempData["SeEdito"]</div>
 }
 
-<div>
-    <h4>Información: </h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.apellido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.apellido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.correo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.correo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.telefono)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.telefono)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.direccion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.direccion)
-        </dd>
-@*         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.contrasena)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.contrasena)
-        </dd> *@
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.fecha_registro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.fecha_registro)
-        </dd>
-    </dl>
+<div class="container">
+    <div class="row">
+        <!-- Columna izquierda: Detalle del usuario -->
+        <div class="col-md-6">
+            <h4>Información:</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.nombre)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.nombre)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.apellido)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.apellido)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.correo)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.correo)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.telefono)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.telefono)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.direccion)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.direccion)</dd>
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.fecha_registro)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.fecha_registro)</dd>
+            </dl>
+            <div>
+                <a asp-action="Edit" asp-route-id="@Model?.id">Editar</a> |
+                <a asp-action="Calificar" asp-route-id="@Model?.id">Calificar Usuarios</a>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Valoraciones -->
+        <div class="col-md-6">
+            <h4>Valoraciones</h4>
+            <hr />
+            @if (valoracion != null && valoracion.Any())
+            {
+                <ul class="list-group">
+                    @foreach (var val in valoracion)
+                    {
+                        <li class="list-group-item">
+                            <strong>Puntuación:</strong> @val.puntuacion <br />
+                            <strong>Comentario:</strong> @val.comentario <br />
+                            <strong>Fecha:</strong> @val.fecha.ToString("dd/MM/yyyy")
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="alert alert-info">Este usuario aún no tiene valoraciones.</div>
+            }
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.id">Edit</a> |
-    <a asp-action="Calificar" asp-route-id="@Model?.id">Calificar Usuarios</a> |
-@*     <a asp-action="Index">Back to List</a>
- *@</div>

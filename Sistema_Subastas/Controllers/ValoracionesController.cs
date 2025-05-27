@@ -30,6 +30,10 @@ namespace Sistema_Subastas.Controllers
         // GET: Valoraciones/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
+           
+
+
             if (id == null)
             {
                 return NotFound();

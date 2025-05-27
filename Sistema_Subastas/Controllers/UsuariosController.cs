@@ -152,6 +152,12 @@ namespace Sistema_Subastas.Controllers
                 return NotFound();
             }
 
+            var valorcaiones = _context.valoraciones
+                .Where(v => v.usuario_valorado_id == usuarioId)
+                .ToList();
+
+            ViewBag.valoraciones = valorcaiones;
+
             return View(usuarios);
         }
 
@@ -472,6 +478,7 @@ namespace Sistema_Subastas.Controllers
 
             return View();
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> CambiarContrasena(string nuevaContrasena)
@@ -506,6 +513,29 @@ namespace Sistema_Subastas.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        public IActionResult ObtenerValoraciones(int vendedorId)
+        {
+
+
+            var valoraciones = _context.valoraciones
+               .Where(v => v.usuario_valorado_id == vendedorId)
+               .Select(v => new
+               {
+                   puntuacion = v.puntuacion,
+                   comentario = v.comentario,
+                   fecha = v.fecha,
+                   nombreUsuario = _context.usuarios
+                       .Where(u => u.id == v.usuario_que_valora_id)
+                       .Select(u => u.nombre)
+                       .FirstOrDefault()
+               })
+               .ToList();
+
+            return Json(valoraciones);
+        }
+
 
 
         //[HttpPost]
