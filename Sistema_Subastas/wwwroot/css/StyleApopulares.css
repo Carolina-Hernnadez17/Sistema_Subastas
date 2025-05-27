@@ -1,0 +1,73 @@
+﻿.apopulares-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 10px;
+}
+
+.apopulares-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #1e3a8a;
+    margin-bottom: 2rem;
+}
+
+.apopulares-form {
+    text-align: left;
+    margin-bottom: 2rem;
+}
+
+.apopulares-btn {
+    background-color: #1e40af;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .apopulares-btn:hover {
+        background-color: #1d4ed8;
+    }
+
+.apopulares-section {
+    margin-bottom: 3rem;
+}
+
+.apopulares-subtitle {
+    font-size: 1.2rem;
+    color: #334155;
+    margin-bottom: 1rem;
+}
+
+.apopulares-table-wrapper {
+    overflow-x: auto;
+}
+
+.apopulares-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+}
+
+    .apopulares-table th,
+    .apopulares-table td {
+        padding: 12px;
+        border: 1px solid #e2e8f0;
+        text-align: center;
+    }
+
+    .apopulares-table thead {
+        background-color: #1e3a8a;
+        color: white;
+    }
+
+.apopulares-empty {
+    font-style: italic;
+    color: #64748b;
+    margin-top: 1rem;
+}

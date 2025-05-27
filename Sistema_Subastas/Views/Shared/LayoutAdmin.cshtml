@@ -1,55 +1,37 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Sistema_Subastas</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Sistema_Subastas.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Sistema_Admin</title>
+    <link rel="stylesheet" href="~/css/layoutAdmin.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="HomeAdmin" asp-action="Index">Sistema_Subastas</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="HomeAdmin" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reportes" asp-action="ArticulosMasPopulares">Reporte articulos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Details">Privacy</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Categorias" asp-action="Index">Agregar Categorias</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="CerrarSesion">Cerrar Sesión</a>
-                        </li>
-                    </ul>
+    <div class="navadmin-wrapper">
+        <header>
+            <nav class="navadmin-navbar">
+                <div class="navadmin-container">
+                    <a class="navadmin-brand" asp-controller="HomeAdmin" asp-action="Index">Sistema Subastas</a>
+                    <div class="navadmin-links">
+                        <a class="navadmin-link" asp-controller="HomeAdmin" asp-action="Index">Inicio</a>
+                        <a class="navadmin-link" asp-controller="Reportes" asp-action="ArticulosMasPopulares">Reporte Artículos</a>
+                        <a class="navadmin-link" asp-controller="Categorias" asp-action="Index">Agregar Categorías</a>
+                        <a class="navadmin-link logout" asp-controller="Usuarios" asp-action="CerrarSesion">Cerrar Sesión</a>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+            </nav>
+        </header>
+
+        <main class="navadmin-content">
             @RenderBody()
         </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Sistema_Subastas - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+        <footer class="navadmin-footer">
+            <div class="navadmin-container">
+                &copy; 2025 - Sistema_Subastas Admin
+            </div>
+        </footer>
+    </div>
 
     @RenderSection("Scripts", required: false)
 </body>

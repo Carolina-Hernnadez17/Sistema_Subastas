@@ -1,0 +1,99 @@
+﻿/* Estilos exclusivos para navbar admin */
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9fafb;
+    color: #333;
+    height: 100%;
+}
+
+
+
+.navadmin-navbar {
+    background-color: #cececef2;
+    border-bottom: 1px solid #d0e2ff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+    padding: 0.75rem 1.5rem;
+}
+
+.navadmin-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.navadmin-brand {
+    font-weight: 700;
+    font-size: 1.3rem;
+    color: #0056d2;
+    text-decoration: none;
+    margin-right: 2rem;
+}
+
+    .navadmin-brand:hover {
+        color: #003f9f;
+    }
+
+.navadmin-links {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.navadmin-link {
+    color: #333;
+    padding: 8px 14px;
+    font-weight: 500;
+    position: relative;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    .navadmin-link::after {
+        content: '';
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 6px;
+        height: 2px;
+        background-color: #00c48c;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.3s ease;
+    }
+
+    .navadmin-link:hover {
+        color: #0061ff;
+    }
+
+        .navadmin-link:hover::after {
+            transform: scaleX(1);
+        }
+
+    .navadmin-link.logout::after {
+        background-color: #e63946;
+    }
+
+.navadmin-content {
+    flex: 1;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.navadmin-footer {
+    background-color: #ffffff;
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #777;
+    border-top: 1px solid #eaeaea;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}

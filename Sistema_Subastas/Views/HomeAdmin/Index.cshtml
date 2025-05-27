@@ -1,61 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Home Admin Page";
     Layout = "~/Views/Shared/LayoutAdmin.cshtml";
-
 }
 
-<div class="text-center">
-    <link href="../css_R/Style1.css" rel="stylesheet" />
+<link rel="stylesheet" href="~/css/Style1.css" asp-append-version="true" />
 
-    <h1 class="display-4">Welcome @ViewBag.NombreUsuario</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <a asp-controller="ReporteGrafico" asp-action="Index" class="btn colorCafe">
-        Mostrar Reporte Usuarios por fecha
-    </a>
-    <a asp-controller="ReporteGrafico" asp-action="ReportesUsuarios" class="btn colorCafe">
-        Mostrar Reporte Usuarios Totales
-    </a> 
-
-    <a asp-controller="ReporteGrafico" asp-action="ReportesUsuarios" class="btn colorCafe">
-        Mostrar Reporte Usuarios Totales
-    </a> 
-    
-    <a asp-controller="Graficas" asp-action="ResumenUsuarios" class="btn colorCafe">
-        Mostrar Graficos de  relacion Precio salida y entrada
-    </a> 
-    
-    <a asp-controller="Reportes" asp-action="ArticulosMasPopulares" class="btn colorCafe">
-        Reportes Articulos más populares
-    </a>
-    <a asp-controller="Reportes" asp-action="UsuariosMasActivos" class="btn colorCafe">
-        Reportes Usuarios más activos
-    </a>
-    
-    
-    <a asp-controller="Estadisticas" asp-action="IngresosPorCategoria" class="btn colorCafe">
-        Ver Gráfico de Ingresos por Categoría
-    </a>
-
-    
-    <a asp-controller="ReporteIngresos" asp-action="VerIngresos" class="btn colorCafe">
-        Ver Reporte de Ingresos por Subastas
-    </a>
-
-    <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-articuloId="5" class="btn colorCafe">
-        Ver Gráfico de Pujas (Artículo 5)
-    </a>
-
-    <a asp-controller="Disputas" asp-action="Index" class="btn colorCafe">
-        Ver Reporte de Disputas
-    </a>
-
+<div class="admin-home-container">
+    <h1 class="admin-title">Bienvenido, @ViewBag.NombreUsuario</h1>
     
 
-
-    <a asp-controller="ReporteGrafico" asp-action="Graficos" class="btn colorCafe">
-        Mostrar Grafico de subastas abiertas y cerradas
-    </a>
-    <a asp-controller="ReporteGrafico" asp-action="SubastasPorUsuario" class="btn colorCafe">
-        Mostrar Grafico de subastas activas por usuario
-    </a>
+    <div class="admin-button-grid">
+        <a asp-controller="ReporteGrafico" asp-action="Index">Reporte Usuarios por Fecha</a>
+        <a asp-controller="ReporteGrafico" asp-action="ReportesUsuarios">Reporte Usuarios Totales</a>
+        <a asp-controller="Graficas" asp-action="ResumenUsuarios">Gráfico: Precio salida y entrada</a>
+        <a asp-controller="Reportes" asp-action="ArticulosMasPopulares">Artículos más Populares</a>
+        <a asp-controller="Reportes" asp-action="UsuariosMasActivos">Usuarios más Activos</a>
+        <a asp-controller="Estadisticas" asp-action="IngresosPorCategoria">Gráfico Ingresos por Categoría</a>
+        <a asp-controller="ReporteIngresos" asp-action="VerIngresos">Reporte de Ingresos</a>
+        <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-articuloId="5">Gráfico de Pujas (Artículo 5)</a>
+        <a asp-controller="Disputas" asp-action="Index">Reporte de Disputas</a>
+        <a asp-controller="ReporteGrafico" asp-action="Graficos">Subastas Abiertas y Cerradas</a>
+        <a asp-controller="ReporteGrafico" asp-action="SubastasPorUsuario">Subastas por Usuario</a>
+    </div>
 </div>

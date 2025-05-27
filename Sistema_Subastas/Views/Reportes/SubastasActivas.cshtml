@@ -3,16 +3,22 @@
 
 @{
     ViewData["Title"] = "Subastas Activas";
+    <link rel="stylesheet" href="~/css/SubastasActivas.css" asp-append-version="true" />
+
 }
 
 <div class="container mt-4">
-    
-    <div class="row mb-3">
-        <div class="col-md-8">
+    <div class="row mb-3 align-items-center justify-content-between">
+        <div class="col-md-6">
             <h2>Reporte de Subastas Activas</h2>
         </div>
-
+        <div class="col-md-6 text-end">
+            <a asp-action="DescargarReporteSubastas" class="btn btn-danger">
+                <i class="fas fa-file-pdf"></i> Descargar PDF
+            </a>
+        </div>
     </div>
+
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -22,7 +28,7 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped">
-                            <thead class="table colorc">
+                            <thead>
                                 <tr>
                                     <th>Título de la subasta</th>
                                     <th>Precio inicial</th>
@@ -40,7 +46,7 @@
                                         <td>@subasta.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
                                         <td>@subasta.NumeroPujas</td>
                                         <td>
-                                            <a href="@Url.Action("Details", "Imagenes_articulos", new { id = subasta.id })" >
+                                            <a href="@Url.Action("Details", "Imagenes_articulos", new { id = subasta.id })">
                                                 Ver detalle
                                             </a>
                                         </td>
@@ -58,11 +64,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div class="col-md-6 text-right">
-        <a asp-action="DescargarReporteSubastas" class="btn btn-danger">
-            <i class="fas fa-file-pdf"></i> Descargar PDF
-        </a>
     </div>
 </div>
