@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BootstrapBlazor.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
+using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Sistema_Subastas.Controllers
 {
@@ -43,8 +46,23 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Valoraciones/Create
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
+
+
+            var consulta_vendedor = _context.articulos.Where(a => a.Id == id).FirstOrDefault();
+
+            
+            ViewBag.VendedorValorado = consulta_vendedor.usuario_id;
+
+            int? usuarioId = HttpContext.Session.GetInt32("id_usuario");
+
+            if (usuarioId == null)
+            {
+                return RedirectToAction("Login", "Usuarios");
+            }
+            ViewBag.UsuarioQueValora = usuarioId;
+
             return View();
         }
 
@@ -53,8 +71,12 @@ namespace Sistema_Subastas.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("id,usuario_valorado_id,usuario_que_valora_id,puntuacion,comentario,fceha")] valoraciones valoraciones)
+        public async Task<IActionResult> Create([Bind("id,usuario_valorado_id,usuario_que_valora_id,puntuacion,comentario,fecha")] valoraciones valoraciones)
         {
+
+
+
+
             if (ModelState.IsValid)
             {
                 _context.Add(valoraciones);
