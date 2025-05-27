@@ -45,6 +45,78 @@ namespace Sistema_Subastas.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> EliminarArticulo(int id)
+        {
+            var articulo = await _context.articulos.FindAsync(id);
+            if (articulo == null)
+            {
+                return NotFound("Artículo no encontrado.");
+            }
+
+            var usuarioId = HttpContext.Session.GetInt32("UsuarioId");
+            if (usuarioId == null || articulo.usuario_id != usuarioId)
+            {
+                return Unauthorized("No tienes permiso para eliminar este artículo.");
+            }
+
+            bool tienePujas = await _context.pujas.AnyAsync(p => p.articulo_id == id);
+            if (tienePujas)
+            {
+                TempData["Error"] = "No se puede eliminar el artículo porque ya tiene pujas registradas.";
+                return RedirectToAction("Index", "Imagenes_articulos");
+            }
+
+            var imagenes = _context.imagenes_articulos.Where(i => i.articulo_id == id);
+            _context.imagenes_articulos.RemoveRange(imagenes);
+
+            var categorias = _context.articulo_categoria.Where(c => c.articulo_id == id);
+            _context.articulo_categoria.RemoveRange(categorias);
+
+            _context.articulos.Remove(articulo);
+
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Artículo eliminado correctamente.";
+            return RedirectToAction("Index", "Imagenes_articulos");
+        }
+
+        [HttpGet]
+
+        public IActionResult Historial()
+        {
+            int? usuarioId = HttpContext.Session.GetInt32("id_usuario");
+            if (usuarioId == null)
+                return RedirectToAction("Login", "Usuarios");
+
+            var publicaciones = (from a in _context.articulos
+                                 where a.usuario_id == usuarioId
+                                 join ac in _context.articulo_categoria on a.Id equals ac.articulo_id into acGroup
+                                 from ac in acGroup.DefaultIfEmpty()
+                                 join c in _context.categorias on ac.categoria_id equals c.Id into cGroup
+                                 from c in cGroup.DefaultIfEmpty()
+                                 join ia in _context.imagenes_articulos on a.Id equals ia.articulo_id into iaGroup
+                                 from ia in iaGroup.DefaultIfEmpty()
+                                 group new { a, c, ia } by a.Id into grouped
+                                 select new
+                                 {
+                                     Articulo = grouped.FirstOrDefault().a,
+                                     Categoria = grouped.FirstOrDefault().c != null ? grouped.FirstOrDefault().c.nombre : "Sin categoría",
+                                     ImagenUrl = grouped.FirstOrDefault().ia != null ? grouped.FirstOrDefault().ia.url_imagen : ""
+                                 }).ToList();
+
+            var categorias = _context.categorias.Select(c => c.nombre).ToList();
+
+            ViewData["Publicaciones"] = publicaciones;
+            ViewData["Categorias"] = categorias;
+
+            return View("Historial");
+        }
+
+
+
+
+
         // POST: Articulos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

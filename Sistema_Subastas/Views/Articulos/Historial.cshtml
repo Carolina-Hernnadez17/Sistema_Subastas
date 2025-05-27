@@ -1,0 +1,223 @@
+﻿@{
+    ViewData["Title"] = "Mis Publicaciones";
+    var publicaciones = ViewData["Publicaciones"] as dynamic;
+    var categorias = ViewData["Categorias"] as List<string>;
+}
+
+<!-- Agrega estos estilos y scripts de DataTables desde CDN -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-success">Historial de Publicaciones</h2>
+
+    <!-- FILTROS -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-success text-white">Filtrar publicaciones</div>
+        <div class="card-body">
+            <form id="formFiltros" onsubmit="aplicarFiltros(event)">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label">Título</label>
+                        <input type="text" id="filtroTitulo" class="form-control" placeholder="Título">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Descripción</label>
+                        <input type="text" id="filtroDescripcion" class="form-control" placeholder="Descripción">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Precio Inicial</label>
+                        <input type="number" step="0.01" min="0" id="filtroPrecioInicial" class="form-control" placeholder="Precio Inicial">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Precio Final</label>
+                        <input type="number" step="0.01" min="0" id="filtroPrecioFinal" class="form-control" placeholder="Precio Final">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Inicio (desde)</label>
+                        <input type="date" id="filtroFechaInicio" class="form-control">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Fecha Fin (hasta)</label>
+                        <input type="date" id="filtroFechaFin" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">Estado</label>
+                        <select id="filtroEstado" class="form-select">
+                            <option value="">Todos</option>
+                            <option value="publicado">Publicado</option>
+                            <option value="no vendido">No vendido</option>
+                            <option value="vendido">Vendido</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Categoría</label>
+                        <select id="filtroCategoria" class="form-select">
+                            <option value="">Todas</option>
+                            @foreach (var cat in categorias)
+                            {
+                                <option value="@cat.ToLower()">@cat</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-2 text-end">
+                        <button type="submit" class="btn btn-success w-100">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-responsive">
+        <table id="tablaPublicaciones" class="display table table-bordered align-middle bg-white shadow-sm" style="width:100%">
+            <thead class="table-success text-center">
+                <tr>
+                    <th>Imagen</th>
+                    <th>Título</th>
+                    <th>Descripción</th>
+                    <th>Precio Inicial</th>
+                    <th>Precio Final</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Estado</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in publicaciones)
+                {
+                    <tr>
+                        <td class="text-center">
+                            @if (!string.IsNullOrEmpty(item.ImagenUrl))
+                            {
+                                <img src="@item.ImagenUrl" alt="Imagen" class="img-thumbnail" width="80" height="80" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">Sin imagen</span>
+                            }
+                        </td>
+                        <td>@item.Articulo.titulo</td>
+                        <td>@item.Articulo.descripcion</td>
+                        <td>$@item.Articulo.precio_salida</td>
+                        <td>
+                            @(item.Articulo.precio_venta != null ? $"${item.Articulo.precio_venta:F2}" : "No vendido")
+                        </td>
+                        <td>@item.Articulo.fecha_inicio.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Articulo.fecha_fin.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Articulo.estado_subasta</td>
+                        <td>@item.Categoria</td>
+                        <td class="text-center">
+                            <a href="@Url.Action("Details", "Imagenes_articulos", new { id = item.Articulo.Id })" class="btn btn-sm btn-outline-primary">
+                                Ver Detalle
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div id="noResultados" class="alert alert-warning text-center mt-4" style="display:none;">
+        No se encuentran publicaciones de artículos.
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            window.dataTable = $('#tablaPublicaciones').DataTable({
+                "scrollX": true,
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron registros",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No hay registros disponibles",
+                    "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+        });
+
+                function aplicarFiltros(event) {
+            event.preventDefault();
+
+            var filtroTitulo = $('#filtroTitulo').val().toLowerCase();
+            var filtroDescripcion = $('#filtroDescripcion').val().toLowerCase();
+            var filtroPrecioInicial = parseFloat($('#filtroPrecioInicial').val()) || null;
+            var filtroPrecioFinal = parseFloat($('#filtroPrecioFinal').val()) || null;
+            var filtroFechaInicio = $('#filtroFechaInicio').val();
+            var filtroFechaFin = $('#filtroFechaFin').val();
+            var filtroEstado = $('#filtroEstado').val().toLowerCase();
+            var filtroCategoria = $('#filtroCategoria').val().toLowerCase();
+
+            var tabla = $('#tablaPublicaciones tbody tr');
+            var filasVisibles = 0;
+
+            tabla.each(function () {
+                var fila = $(this);
+
+                var titulo = fila.find('td:eq(1)').text().toLowerCase();
+                var descripcion = fila.find('td:eq(2)').text().toLowerCase();
+                var precioInicialText = fila.find('td:eq(3)').text().replace(/[^0-9.-]+/g, "");
+                var precioInicial = precioInicialText ? parseFloat(precioInicialText) : 0;
+                var precioFinalTexto = fila.find('td:eq(4)').text().toLowerCase();
+                var precioFinal = precioFinalTexto.includes("no vendido") ? null : parseFloat(precioFinalTexto.replace(/[^0-9.-]+/g, ""));
+                var fechaInicioTexto = fila.find('td:eq(5)').text();
+                var fechaFinTexto = fila.find('td:eq(6)').text();
+                var estado = fila.find('td:eq(7)').text().toLowerCase();
+                var categoria = fila.find('td:eq(8)').text().toLowerCase();
+
+                function parseFecha(fechaStr) {
+                    var partes = fechaStr.split("/");
+                    if (partes.length !== 3) return null;
+                    return new Date(parseInt(partes[2], 10), parseInt(partes[1], 10) - 1, parseInt(partes[0], 10));
+                }
+
+                var fechaInicio = parseFecha(fechaInicioTexto);
+                var fechaFin = parseFecha(fechaFinTexto);
+
+                var cumple = true;
+
+                if (filtroTitulo && !titulo.includes(filtroTitulo)) cumple = false;
+                if (filtroDescripcion && !descripcion.includes(filtroDescripcion)) cumple = false;
+
+                if (filtroPrecioInicial !== null && precioInicial < filtroPrecioInicial) cumple = false;
+                if (filtroPrecioFinal !== null && (precioFinal === null || precioFinal > filtroPrecioFinal)) cumple = false;
+
+                if (filtroFechaInicio) {
+                    var filtroFInicio = new Date(filtroFechaInicio);
+                    if (!fechaInicio || fechaInicio < filtroFInicio) cumple = false;
+                }
+                if (filtroFechaFin) {
+                    var filtroFFin = new Date(filtroFechaFin);
+                    if (!fechaFin || fechaFin > filtroFFin) cumple = false;
+                }
+
+                if (filtroEstado && estado !== filtroEstado) cumple = false;
+                if (filtroCategoria && categoria !== filtroCategoria) cumple = false;
+
+                if (cumple) {
+                    fila.show();
+                    filasVisibles++;
+                } else {
+                    fila.hide();
+                }
+            });
+
+            window.dataTable.draw();
+
+            $('#noResultados').toggle(filasVisibles === 0);
+
+            $('#formFiltros')[0].reset();
+        }
+
+    </script>
+}
