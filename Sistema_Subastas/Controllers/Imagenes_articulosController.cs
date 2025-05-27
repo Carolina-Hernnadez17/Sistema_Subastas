@@ -397,11 +397,11 @@ namespace Sistema_Subastas.Controllers
         public void MarcarSubastasFinalizadas()
         {
             var ahora = DateTime.Now;
-            var ahoraRedondeado = new DateTime(ahora.Year, ahora.Month, ahora.Day, ahora.Hour, ahora.Minute, ahora.Second);
+            //var ahoraRedondeado = new DateTime(ahora.Year, ahora.Month, ahora.Day, ahora.Hour, ahora.Minute, ahora.Second);
 
             var articulosParaFinalizar = _context.articulos
                 .Where(a => a.estado_subasta == "Publicado" &&
-                            a.fecha_fin <= ahoraRedondeado)
+                            a.fecha_fin <= ahora)
                 .ToList();
 
             foreach (var articulo in articulosParaFinalizar)
