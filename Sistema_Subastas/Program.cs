@@ -42,27 +42,41 @@ if (!app.Environment.IsDevelopment())
 }
 
 // Múltiples carpetas estáticas
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_E")),
-    RequestPath = "/css_E"
-});
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_E")),
+//    RequestPath = "/css_E"
+//});
 
-app.UseStaticFiles(new StaticFileOptions
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_R")),
+//    RequestPath = "/css_R"
+//});
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_C")),
+//    RequestPath = "/css_C"
+//});
+//app.UseStaticFiles(new StaticFileOptions
+//{
+//    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_C")),
+//    RequestPath = "/css_L"
+//});
+
+string[] cssFolders = { "css_E", "css_R", "css_C", "css_L" };
+foreach (var folder in cssFolders)
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_R")),
-    RequestPath = "/css_R"
-});
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_C")),
-    RequestPath = "/css_C"
-});
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "css_C")),
-    RequestPath = "/css_L"
-});
+    var fullPath = Path.Combine(Directory.GetCurrentDirectory(), folder);
+    if (Directory.Exists(fullPath))
+    {
+        app.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(fullPath),
+            RequestPath = "/" + folder
+        });
+    }
+}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
