@@ -44,24 +44,21 @@ namespace Sistema_Subastas.Controllers
                 await CerrarSubastasFinalizadas();
             }
 
-            var imagenes = await _context.imagenes_articulos
-                                .GroupBy(img => img.articulo_id)
-                                .Select(g => g.First())
-                                .ToListAsync();
+            //var imagenes = await _context.imagenes_articulos
+            //                    .GroupBy(img => img.articulo_id)
+            //                    .Select(g => g.First())
+            //                    .ToListAsync();
 
             var articulos = await _context.articulos.ToListAsync();
             var categorias = await _context.categorias.ToListAsync();
             var articuloCategorias = await _context.articulo_categoria.ToListAsync();
 
 
-            
+            var imagenes = await _context.imagenes_articulos.ToListAsync();
+
 
 
             var articulo = _context.articulos.FirstOrDefault();
-
-            //Paso la lista de imágenes del artículo a la vista segun el id
-            var imagenes_articulos = _context.imagenes_articulos.Where(m => m.articulo_id == articulo.Id).ToList();
-            ViewBag.ImagenesArticulos = imagenes_articulos;
 
 
             ViewBag.Articulos = articulos;
@@ -73,6 +70,7 @@ namespace Sistema_Subastas.Controllers
 
 
         }
+
         // GET: Imagenes_articulos/Details/5
         public async Task<IActionResult> Details(int id)
         {

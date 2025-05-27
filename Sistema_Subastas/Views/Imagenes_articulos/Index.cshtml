@@ -183,10 +183,10 @@
     var categorias = ViewBag.Categorias as List<categorias>;
     var ca_img = ViewBag.ArticuloCategorias as List<articulo_categoria>;
     var imagenes_articulos = Model as List<imagenes_articulos>;
-    
-	var lista_imagenes = ViewBag.ImagenesArticulos as List<imagenes_articulos>;
-    
 
+
+    
+    
 
 } 
 <head>
@@ -230,29 +230,27 @@
     <div class="contenedor-grid">
         @foreach (var articulo in articulos)
         {
-            if (articulo.estado_subasta == "Publicado")
+
+            if (articulo.estado_subasta == "Publicado" )
             {
-                var imagenesArticulo = imagenes_articulos.Where(img => img.articulo_id == articulo.Id).ToList();
+
+				//Consulta para encontrar las imágenes del artículo actual
+                var imagenesArticulo = imagenes_articulos.Where(m => m.articulo_id == articulo.Id).ToList();
+
+
+
                 var carouselId = $"carouselArticulo_{articulo.Id}";
-
-
-
-                @* var imagen = imagenes.FirstOrDefault(img => img.articulo_id == articulo.Id); *@
-                if (lista_imagenes == null) continue;
-
                 var articuloCategoria = ca_img.FirstOrDefault(ac => ac.articulo_id == articulo.Id);
                 if (articuloCategoria == null) continue;
-
                 var categoria = categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
 
                 <div>
-
                     <div class="card text-decoration-none">
                         <div id="@carouselId" class="carousel slide imgen_p" data-bs-ride="carousel">
                             <div class="carousel-inner">
-                                @for (int i = 0; i < lista_imagenes.Count; i++)
+                                @for (int i = 0; i < imagenesArticulo.Count; i++)
                                 {
-                                    var imag = lista_imagenes[i];
+                                    var imag = imagenesArticulo[i];
                                     <div class="carousel-item @(i == 0 ? "active" : "")">
                                         <img src="@imag.url_imagen"
                                              alt="Imagen del artículo"
@@ -260,15 +258,12 @@
                                     </div>
                                 }
                             </div>
-                            @if (lista_imagenes.Count > 1)
-                            {
-                                <button class="carousel-control-prev custom-carousel-btn" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
-                                    <span class="custom-arrow bg-black" aria-hidden="true">&#10094;</span>
-                                </button>
-                                <button class="carousel-control-next custom-carousel-btn" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
-                                    <span class="custom-arrow bg-black" aria-hidden="true">&#10095;</span>
-                                </button>
-                            }
+                            <button class="carousel-control-prev custom-carousel-btn" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
+                                <span class="custom-arrow bg-black" aria-hidden="true">&#10094;</span>
+                            </button>
+                            <button class="carousel-control-next custom-carousel-btn" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
+                                <span class="custom-arrow bg-black" aria-hidden="true">&#10095;</span>
+                            </button>
                         </div>
                         <a href="@Url.Action("Details", "Imagenes_articulos", new { id = articulo.Id })">
                             <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800 item-articulo"
@@ -293,12 +288,11 @@
                             </div>
                         </a>
                     </div>
-
-					
-                    
                 </div>
             }
         }
+
+
     </div>
 </div>
 
