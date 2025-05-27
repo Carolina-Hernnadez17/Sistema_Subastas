@@ -181,6 +181,32 @@
 
 
                             }
+                            @if (ViewBag.usuarioId != null && ViewBag.idVendedor != null && ViewBag.CantidadP != null)
+                            {
+                                int usuarioId = (int)ViewBag.usuarioId;
+                                int idVendedor = (int)ViewBag.idVendedor;
+                                int cantidadP = (int)ViewBag.CantidadP;
+
+                                if (usuarioId == idVendedor && cantidadP == 0)
+                                {
+                                    <div class="flex gap-4 mt-4">
+                                        <form asp-controller="Articulos" asp-action="EliminarArticulo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');">
+                                            <input type="hidden" name="id" value="@ViewBag.Articulos.Id" />
+                                            <button type="submit"
+                                                    class="py-2.5 px-5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
+                                                Eliminar Artículo
+                                            </button>
+                                        </form>
+
+                                        <button disabled
+                                                class="py-2.5 px-5 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed">
+                                            Republicar (no disponible)
+                                        </button>
+                                    </div>
+                                }
+                            }
+
+
                             
                         }
 
