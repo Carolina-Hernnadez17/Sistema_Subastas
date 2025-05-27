@@ -5,6 +5,12 @@
     var imagenes = ViewBag.Imagenes as List<imagenes_articulos>;
     var historialPujas = ViewBag.HistorialPujas as List<dynamic>;
     int? usuarioIdServer = ViewBag.UsuarioId;
+
+    // Ordenar las pujas por fecha descendente (más reciente primero)
+    var pujasOrdenadas = historialPujas?.OrderByDescending(p => p.Fecha).ToList() ?? new List<dynamic>();
+
+    bool tieneMuchasPujas = pujasOrdenadas.Count > 6;
+    string estiloTabla = tieneMuchasPujas ? "max-height: 400px; overflow-y: auto;" : "";
 }
 
 <div class="container mt-4">
@@ -78,9 +84,9 @@
     {
         <div class="alert alert-warning">El historial de pujas está cerrado para este artículo.</div>
     }
-    else if (historialPujas != null && historialPujas.Any())
+    else if (pujasOrdenadas.Any())
     {
-        <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+        <div class="table-responsive" style="@estiloTabla">
             <table class="table table-bordered table-striped table-hover">
                 <thead class="table-success">
                     <tr>
@@ -90,11 +96,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var puja in historialPujas)
+                    @foreach (var puja in pujasOrdenadas)
                     {
+                        string nombreUsuario = puja.nombre_usuario as string ?? "";
+                        string nombreEnmascarado = nombreUsuario.Length > 1
+                        ? nombreUsuario.Substring(0, 1) + new string('*', nombreUsuario.Length - 1)
+                        : nombreUsuario;
+
                         <tr>
                             <td>$@puja.Valor</td>
-                            <td>@puja.nombre_usuario</td>
+                            <td>@nombreEnmascarado</td>
                             <td>@puja.Fecha.ToString("g")</td>
                         </tr>
                     }
@@ -108,5 +119,3 @@
     }
 
 </div>
-
-
