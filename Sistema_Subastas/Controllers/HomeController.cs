@@ -50,11 +50,11 @@ namespace Sistema_Subastas.Controllers
 
             // Verificamos si hay alguna subasta que necesita ser cerrada
             bool hayPorFinalizar = _context.articulos
-                .Any(a => a.estado_subasta == "Publicado" && a.fecha_fin <= ahora);
+                .Any(a => a.estado_subasta == "Finalizada");
 
             if (hayPorFinalizar)
             {
-                MarcarSubastasFinalizadas();
+               // MarcarSubastasFinalizadas();
                 DeterminarGanadores();
                 await CerrarSubastasFinalizadas();
             }
@@ -96,7 +96,7 @@ namespace Sistema_Subastas.Controllers
 
             var articulosParaFinalizar = _context.articulos
                 .Where(a => a.estado_subasta == "Publicado" &&
-                            a.fecha_fin <= ahora)
+                            a.fecha_fin == ahora)
                 .ToList();
 
             foreach (var articulo in articulosParaFinalizar)

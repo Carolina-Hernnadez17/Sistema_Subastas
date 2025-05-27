@@ -35,11 +35,11 @@ namespace Sistema_Subastas.Controllers
 
             // Verificamos si hay alguna subasta que necesita ser cerrada
             bool hayPorFinalizar = _context.articulos
-                .Any(a => a.estado_subasta == "Publicado" && a.fecha_fin <= ahora);
+                .Any(a => a.estado_subasta == "Finalizada");
 
             if (hayPorFinalizar)
             {
-                MarcarSubastasFinalizadas();
+                //MarcarSubastasFinalizadas();
                 DeterminarGanadores();
                 await CerrarSubastasFinalizadas();
             }
@@ -114,10 +114,11 @@ namespace Sistema_Subastas.Controllers
 
             if (fecha_res.Days >= articulo.fecha_fin.Day || fecha_res == TimeSpan.Zero)
             {
-                
+                articulo.estado_subasta = "Finalizada";
+                _context.articulos.Update(articulo);
+                await _context.SaveChangesAsync();
                 ViewBag.Fecha = "Subasta Cerrada";
-               
-                
+
             }
             else
             {
@@ -401,7 +402,7 @@ namespace Sistema_Subastas.Controllers
 
             var articulosParaFinalizar = _context.articulos
                 .Where(a => a.estado_subasta == "Publicado" &&
-                            a.fecha_fin <= ahora)
+                            a.fecha_fin == ahora)
                 .ToList();
 
             foreach (var articulo in articulosParaFinalizar)
