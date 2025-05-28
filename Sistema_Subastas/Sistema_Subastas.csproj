@@ -13,8 +13,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="css_E\StyleE.css" />
-  </ItemGroup>
+  <Content Include="css_E\**\*">
+    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+  </Content>
+  <Content Include="css_R\**\*">
+    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+  </Content>
+  <Content Include="css_C\**\*">
+    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+  </Content>
+  <Content Include="css_L\**\*">
+    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+  </Content>
+</ItemGroup>
+
 
   <ItemGroup>
     <None Include="wwwroot\css\Loginn.css" />

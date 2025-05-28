@@ -64,6 +64,10 @@ if (!app.Environment.IsDevelopment())
 //    RequestPath = "/css_L"
 //});
 
+// Sirve archivos de wwwroot
+app.UseStaticFiles(); 
+
+// Luego sirve carpetas externas
 string[] cssFolders = { "css_E", "css_R", "css_C", "css_L" };
 foreach (var folder in cssFolders)
 {
@@ -78,8 +82,8 @@ foreach (var folder in cssFolders)
     }
 }
 
+
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 
 app.UseRouting();
 
