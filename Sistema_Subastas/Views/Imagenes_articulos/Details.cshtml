@@ -144,6 +144,7 @@
                     Reportar
                 </a>
 
+                @if (ViewBag.CantidadP == 0){
                 <a href="/Articulos/Edit/@ViewBag.Articulos.Id"
                    id="editarBtn"
                    class="btn-detalle azul flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
@@ -155,6 +156,7 @@
                     </svg>
                     Editar Artículo
                 </a>
+                }
             </div>
         </div>
     </div>
@@ -211,7 +213,7 @@
 
         if (usuarioIdNum && idVendedorNum && usuarioIdNum === idVendedorNum) {
             // Es el vendedor
-            if (ViewBag.CantidadP == 0) {
+            if (!tienePujas) {
                 editarBtn?.style.setProperty("display", "flex");
             } else {
                 editarBtn?.style.setProperty("display", "none");
