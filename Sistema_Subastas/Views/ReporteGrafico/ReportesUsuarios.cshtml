@@ -1,4 +1,4 @@
-﻿@model List<Sistema_Subastas.Models.usuarios>
+﻿@* @model List<Sistema_Subastas.Models.usuarios>
 
 @{
     ViewData["Title"] = "Reporte de Usuarios totales";
@@ -8,7 +8,7 @@
 <h2 class="text-center">Reporte de Usuarios Totales Registrados</h2>
 @* <link href="../css_R/Style1.css" rel="stylesheet" />
   <link href="~/css/Graficar.css" rel="stylesheet" />
- *@<link href="~/css/Graficar.css" rel="stylesheet" asp-append-version="true" />
+ <link href="~/css/Graficar.css" rel="stylesheet" asp-append-version="true" />
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 
 
@@ -55,6 +55,61 @@
     </div>
 }
 
+ *@
 
+@model List<Sistema_Subastas.Models.usuarios>
 
+@{
+    ViewData["Title"] = "Reporte de Usuarios totales";
+    Layout = "~/Views/Shared/LayoutAdmin.cshtml";
+}
 
+<h2 class="text-center my-4">Reporte de Usuarios Totales Registrados</h2>
+
+<form asp-action="GenerarReporteUsuarios" method="post" class="text-center mb-4">
+    <button type="submit" class="btn btn-primary btn-lg">
+        <i class="bi bi-bar-chart-line"></i> Mostrar Reporte
+    </button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <div class="container">
+        <form asp-action="GenerarPDFUsuarios" method="post" class="text-end mb-3">
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf-fill"></i> Descargar PDF
+            </button>
+        </form>
+
+        <div class="card shadow">
+            <div class="card-body">
+                <h4 class="card-title mb-4">Usuarios totales registrados:</h4>
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped table-bordered">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Fecha de Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var usuario in Model)
+                            {
+                                <tr>
+                                    <td>@usuario.id</td>
+                                    <td>@usuario.nombre</td>
+                                    <td>@usuario.fecha_registro.ToString("dd/MM/yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <h5 class="text-end mt-4">
+                    <strong>Total de Usuarios Registrados: @Model.Count</strong>
+                </h5>
+            </div>
+        </div>
+    </div>
+}

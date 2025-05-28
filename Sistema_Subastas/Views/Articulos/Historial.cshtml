@@ -127,6 +127,9 @@
                             else
                             {
                                 <span class="text-dark">No se puede eliminar ni republicar porque está en proceso o tiene pujas asociadas</span>
+                                <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-id="@item.Articulo.Id" class="Uperfil-card-link">
+                                    Gráfico de Pujas
+                                </a>
                             }
                         </td>
                     </tr>

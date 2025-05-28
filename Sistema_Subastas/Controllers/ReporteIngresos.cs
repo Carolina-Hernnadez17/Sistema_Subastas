@@ -145,7 +145,7 @@ namespace Sistema_Subastas.Controllers
             var datos = _context.pujas
             .Where(p => p.articulo_id == articuloId)
             .GroupBy(p => p.fecha_puja.Date)
-            .AsEnumerable() // 👈 Esto trae los datos a memoria y permite usar ToString()
+            .AsEnumerable() 
             .Select(g => new
             {
                 Fecha = g.Key.ToString("yyyy-MM-dd"),
