@@ -6,6 +6,7 @@ using iText.Layout.Element;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ using Paragraph = iText.Layout.Element.Paragraph;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class DisputasController : Controller
     {
         private readonly subastaDbContext _context;

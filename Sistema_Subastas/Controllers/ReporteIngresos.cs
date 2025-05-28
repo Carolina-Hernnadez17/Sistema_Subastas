@@ -14,10 +14,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Paragraph = iText.Layout.Element.Paragraph;
 using Newtonsoft.Json;
+using Sistema_Subastas.Atributo;
 
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class ReporteIngresos : Controller
     {
         private readonly subastaDbContext _context;

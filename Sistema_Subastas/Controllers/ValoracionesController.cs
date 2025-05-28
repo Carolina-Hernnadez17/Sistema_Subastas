@@ -7,11 +7,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class ValoracionesController : Controller
     {
         private readonly subastaDbContext _context;

@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 using System.Linq;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class EstadisticasController : Controller
     {
         private readonly subastaDbContext _context;

@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Sistema_Subastas.Atributo;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class HomeAdminController : Controller
     {
         // GET: HomeAdminController
