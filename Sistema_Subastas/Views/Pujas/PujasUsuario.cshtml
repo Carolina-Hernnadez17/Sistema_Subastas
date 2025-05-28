@@ -67,41 +67,32 @@
                                 }
                             </td>
                             <td>
-                                @if (!finalizo)
-                                {
-                                    <button type="button" class="btn-eliminar btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalPuja_@puja.PujaId">
-                                        🗑️ Cancelar Puja
-                                    </button>
+                                <button type="button" class="btn-eliminar" data-bs-toggle="modal" data-bs-target="#modalPuja_@puja.PujaId">
+                                    🗑️ Eliminar
+                                </button>
 
-                                    <!-- Modal de confirmación -->
-                                    <div class="modal fade" id="modalPuja_@puja.PujaId" tabindex="-1" aria-labelledby="modalLabel_@puja.PujaId" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-sm">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title text-danger" id="modalLabel_@puja.PujaId">Cancelar Puja</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                                                </div>
-                                                <div class="modal-body text-center">
-                                                    ¿Estás seguro que deseas cancelar tu puja?
-                                                </div>
-                                                <div class="modal-footer d-flex justify-content-between">
-                                                    <form asp-controller="Pujas" asp-action="EliminarPuja" method="post">
-                                                        <input type="hidden" name="pujaId" value="@puja.PujaId" />
-                                                        <input type="hidden" name="usuarioId" value="@ViewBag.UsuarioId" />
-                                                        <button type="submit" class="btn btn-danger btn-sm">Cancelar mi Puja</button>
-                                                    </form>
-                                                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Volver</button>
-                                                </div>
+                                <!-- Modal de confirmación -->
+                                <div class="modal fade" id="modalPuja_@puja.PujaId" tabindex="-1" aria-labelledby="modalLabel_@puja.PujaId" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-danger" id="modalLabel_@puja.PujaId">Cancelar Puja</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                ¿Estás seguro que deseas cancelar tu puja?
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-between">
+                                                <form asp-controller="Pujas" asp-action="EliminarPuja" method="post">
+                                                    <input type="hidden" name="pujaId" value="@puja.PujaId" />
+                                                    <input type="hidden" name="usuarioId" value="@ViewBag.UsuarioId" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">Cancelar mi Puja</button>
+                                                </form>
+                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Volver</button>
                                             </div>
                                         </div>
                                     </div>
-                                }
-                                else
-                                {
-                                    <span class="text-muted" title="No puedes cancelar la puja porque la subasta ha finalizado.">
-                                        No se puede cancelar (subasta finalizada)
-                                    </span>
-                                }
+                                </div>
                             </td>
                         </tr>
                     }
