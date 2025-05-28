@@ -116,10 +116,17 @@ namespace Sistema_Subastas.Controllers
 
             if (fecha_res.Days >= articulo.fecha_fin.Day || fecha_res == TimeSpan.Zero)
             {
-                articulo.estado_subasta = "Finalizada";
-                _context.articulos.Update(articulo);
-                await _context.SaveChangesAsync();
-                ViewBag.Fecha = "Subasta Cerrada";
+                if ((fecha_cierre <= fecha_actual) && articulo.estado_subasta == "Publicado")
+                {
+                    articulo.estado_subasta = "Finalizada";
+                    _context.articulos.Update(articulo);
+                    await _context.SaveChangesAsync();
+                    ViewBag.Fecha = "Subasta Cerrada";
+                }
+                //articulo.estado_subasta = "Finalizada";
+                //_context.articulos.Update(articulo);
+                //await _context.SaveChangesAsync();
+                //ViewBag.Fecha = "Subasta Cerrada";
 
             }
             else
@@ -459,6 +466,7 @@ namespace Sistema_Subastas.Controllers
 
             foreach (var subasta in subastasNoVendidas)
             {
+               // DateTime fecha_cierre = Convert.ToDateTime(subasta.fecha_fin);
                 string mensaje = $"📢 Tu subasta {subasta.titulo} ha terminado sin pujas el {subasta.fecha_fin:dd/MM/yyyy HH:mm}.";
 
                 bool yaExiste = _context.notificaciones.Any(n =>
