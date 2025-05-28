@@ -47,35 +47,38 @@ namespace Sistema_Subastas.Controllers
             ViewBag.Articulo = articulo;
             ViewBag.Historial = historial;
 
+            var pujaMayor = _context.pujas
+                .Where(p => p.articulo_id == articulo.Id)
+                .OrderByDescending(p => p.monto)
+                .ThenBy(p => p.fecha_puja)
+                .FirstOrDefault();
+            if (pujaMayor != null)
+            {
+                articulo.precio_venta = pujaMayor.monto;
+                _context.SaveChanges();
+            }
+
+
             return View();
         }
 
         // Acción para registrar la puja
         [HttpPost]
-        public IActionResult RegistrarPuja(int ArticuloId, int UsuarioId, decimal Monto)
+        public IActionResult RegistrarPuja(int ArticuloId, decimal Monto)
         {
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == ArticuloId);
-            var usuario = _context.usuarios.FirstOrDefault(u => u.id == UsuarioId);
+            int? usuarioIdNullable = HttpContext.Session.GetInt32("id_usuario");
 
-            if (articulo == null || usuario == null)
+            if (articulo == null || usuarioIdNullable == null)
             {
-                return NotFound("El artículo o el usuario no existen.");
+                return RedirectToAction("Login", "Usuarios");
             }
 
-            if (articulo.estado_subasta != "Publicado" || articulo.fecha_fin < DateTime.Now)
-            {
-                return BadRequest("La subasta ya ha finalizado o no está disponible.");
-            }
-
-            if (Monto <= articulo.precio_salida)
-            {
-                return BadRequest("El monto de la puja debe ser mayor al precio de salida.");
-            }
-
+            int usuarioId = usuarioIdNullable.Value;
             var puja = new pujas
             {
                 articulo_id = ArticuloId,
-                usuario_id = UsuarioId,
+                usuario_id = usuarioId,
                 monto = Monto,
                 fecha_puja = DateTime.Now
             };
@@ -86,6 +89,17 @@ namespace Sistema_Subastas.Controllers
                 leido = false,
                 fecha = DateTime.Now
             };
+
+            var pujaMayor =  _context.pujas
+                .Where(p => p.articulo_id == articulo.Id)
+                .OrderByDescending(p => p.monto)
+                .ThenBy(p => p.fecha_puja)
+                .FirstOrDefault();
+            if (pujaMayor != null)
+            {
+                articulo.precio_venta = pujaMayor.monto;
+                _context.SaveChanges();
+            }
 
             _context.pujas.Add(puja);
             _context.notificaciones.Add(notificacion);

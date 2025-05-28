@@ -36,14 +36,14 @@
 
             <div class="form-group">
                 <label asp-for="precio_salida" class="control-label"> Precio de Inicio</label>
-                <input asp-for="precio_salida" class="form-control" required type="number" min="0.01"  step="0.01"   />
+                <input asp-for="precio_salida" id="precio_salida" class="form-control" required type="number" min="0.01" step="0.01" />
                 <span asp-validation-for="precio_salida" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="precio_venta" class="control-label">Precio de Venta</label>
-                <input asp-for="precio_venta" class="form-control" required type="number" min="0.01"  step="0.01"   />
+                <input asp-for="precio_venta" id="precio_venta" class="form-control" type="hidden" min="0.01" step="0.01" />
                 <span asp-validation-for="precio_venta" class="text-danger"></span>
             </div>
+            
             <div class="form-group">
                 <label asp-for="fecha_inicio" class="control-label">Fecha de inicio de la subasta</label>
                 <input asp-for="fecha_inicio" id="fecha_inicio" class="form-control" required type="datetime-local" />
@@ -103,6 +103,20 @@
         if (usuarioId) {
             document.getElementById("userId").value = usuarioId;
         }
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const precioSalidaInput = document.getElementById("precio_salida");
+        const precioVentaInput = document.getElementById("precio_venta");
+
+        // Inicializa precio_venta con el valor actual de precio_salida
+        precioVentaInput.value = precioSalidaInput.value;
+
+        // Sincroniza precio_venta cada vez que cambia precio_salida
+        precioSalidaInput.addEventListener("input", function () {
+            precioVentaInput.value = precioSalidaInput.value;
+        });
     });
 </script>
 <script>

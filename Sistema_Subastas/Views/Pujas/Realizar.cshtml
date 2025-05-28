@@ -15,7 +15,7 @@
             <p class="card-text mb-3">@articulo.descripcion</p>
             <div class="mb-2">
                 <p><strong>Estado:</strong> @articulo.estado</p>
-                <p><strong>Precio de salida:</strong> $@articulo.precio_salida</p>
+                <p><strong>Precio de salida:</strong> $@articulo.precio_venta</p>
                 <p><strong>Fecha fin:</strong> @articulo.fecha_fin.ToString("dd MMM yyyy HH:mm")</p>
             </div>
 
@@ -23,11 +23,11 @@
             {
                 <form asp-action="RegistrarPuja" asp-controller="Pujas" method="post" id="pujaForm">
                     <input type="hidden" name="ArticuloId" value="@articulo.Id" />
-                    <input type="hidden" name="UsuarioId" id="UsuarioId" />
+                    @* <input type="hidden" name="UsuarioId" id="UsuarioId" /> *@
 
                     <div class="form-group mb-3">
                         <label for="Monto">Monto de la Puja</label>
-                        <input type="number" class="form-control" name="Monto" id="Monto" step="0.01" min="0.01" required data-precio="@articulo.precio_salida" placeholder="Ingresa tu monto de puja" />
+                        <input type="number" class="form-control" name="Monto" id="Monto" step="0.01" min="0.01" required data-precio="@articulo.precio_venta" placeholder="Ingresa tu monto de puja" />
                     </div>
 
                     <div class="text-center">
@@ -50,6 +50,10 @@ else
 }
 
 @section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const userId = localStorage.getItem("userId");
@@ -65,14 +69,30 @@ else
                 function validarPuja() {
                     const montoInput = document.getElementById("Monto");
                     const monto = parseFloat(montoInput.value);
-                    const precioSalida = parseFloat(montoInput.dataset.precio);
+                    const precioVenta = parseFloat(montoInput.dataset.precio);
 
-                    if (isNaN(monto) || monto <= precioSalida) {
-                        alert(`El monto debe ser mayor al precio de salida ($${precioSalida}).`);
+                    if (isNaN(monto) || monto <= precioVenta) {
+                        alert(`El monto debe ser mayor al precio de salida ($${precioVenta}).`);
                         return false;
                     }
 
                     return true;
                 }
     </script>
+    <script>
+             $(document).ready(function () {
+        @if (TempData["Error"] != null)
+            {
+                        <text>
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Oops...',
+                                    text: '@TempData["Error"]',
+                                    confirmButtonColor: '#d33'
+                                });
+                        </text>
+            }
+            });
+    </script>
+
 }
