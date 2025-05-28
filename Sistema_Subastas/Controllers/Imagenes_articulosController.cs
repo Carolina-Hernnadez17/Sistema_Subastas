@@ -30,7 +30,7 @@ namespace Sistema_Subastas.Controllers
         // GET: Imagenes_articulos
         public async Task<IActionResult> Index()
         {
-
+            var nombre = HttpContext.Session.GetString("NombreUser");
             var ahora = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
             // Verificamos si hay alguna subasta que necesita ser cerrada
@@ -75,7 +75,7 @@ namespace Sistema_Subastas.Controllers
                 articulo.precio_venta = pujaMayor.monto;
                 _context.SaveChanges();
             }
-
+            ViewBag.NombreUsuario = nombre;
             return View(imagenes);
 
 

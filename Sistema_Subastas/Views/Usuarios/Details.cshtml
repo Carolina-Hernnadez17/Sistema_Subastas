@@ -70,10 +70,10 @@
             <a asp-controller="ReporteIngresos" asp-action="VerIngresos" class="Uperfil-card-link">
                 Reporte de Ingresos
             </a>
-            <a asp-controller="ReporteIngresos" asp-action="SubastasActivas" class="Uperfil-card-link">
+            <a asp-controller="Reportes" asp-action="SubastasActivas" class="Uperfil-card-link">
                 Reporte de Subastas Activas
             </a>
-            <a asp-controller="ReporteIngresos" asp-action="SubastasCerradas" class="Uperfil-card-link">
+            <a asp-controller="Reportes" asp-action="SubastaCerrada" class="Uperfil-card-link">
                 Reporte de Subastas Cerradas y Adjudicadas
             </a>
         </div>
@@ -83,12 +83,12 @@
         <h3>Sección de Gráficos</h3>
         <div class="Uperfil-cards-container">
             <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-articuloId="5" class="Uperfil-card-link">
-                Gráfico de Pujas (Artículo 5)
+                Gráfico de Pujas
             </a>
-            <a asp-controller="ReporteIngresos" asp-action="GraficoArticulosPopulares" class="Uperfil-card-link">
+            <a asp-controller="Graficas" asp-action="ArticulosMasPopulares" class="Uperfil-card-link">
                 Gráfico de Artículos Más Populares
             </a>
-            <a asp-controller="ReporteIngresos" asp-action="GraficoDistribucionCategorias" class="Uperfil-card-link">
+            <a asp-controller="Graficas" asp-action="DistribucionCategorias" class="Uperfil-card-link">
                 Gráfico de Distribución de Categorías de Artículos
             </a>
         </div>
