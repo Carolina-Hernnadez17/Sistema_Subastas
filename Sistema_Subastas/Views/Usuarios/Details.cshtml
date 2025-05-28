@@ -73,7 +73,7 @@
             <a asp-controller="Reportes" asp-action="SubastasActivas" class="Uperfil-card-link">
                 Reporte de Subastas Activas
             </a>
-            <a asp-controller="Reportes" asp-action="SubastaCerrada" class="Uperfil-card-link">
+            <a asp-controller="Reportes" asp-action="SubastaCerrada" asp-route-id="@Model?.id" class="Uperfil-card-link">
                 Reporte de Subastas Cerradas y Adjudicadas
             </a>
         </div>

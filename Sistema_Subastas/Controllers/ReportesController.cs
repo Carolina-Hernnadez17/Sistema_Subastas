@@ -23,6 +23,8 @@ using iTextSharp.text.pdf;
 using PdfFont = iText.Kernel.Font.PdfFont;
 using PdfDocument = iText.Kernel.Pdf.PdfDocument;
 using PdfWriter = iText.Kernel.Pdf.PdfWriter;
+using iText.IO.Font.Constants;
+using iText.Kernel.Font;
 
 namespace Sistema_Subastas.Controllers
 {
@@ -375,41 +377,54 @@ namespace Sistema_Subastas.Controllers
             }
         }
 
-        public IActionResult SubastaCerrada()
+        public IActionResult SubastaCerrada(int id)
         {
-            var subastas = _context.usuarios
-                .Select(u => new
+            var subastas = _context.articulos
+                .Where(a => a.usuario_id == id && a.estado_subasta == "Vendido")
+                .Select(a => new
                 {
-                    Nombre = u.nombre + " " + u.apellido,
-                    ArticulosVendidos = _context.articulos.Count(a => a.usuario_id == u.id && a.estado_subasta == "Vendido"),
-                    PujasRealizadas = _context.pujas.Count(p => p.usuario_id == u.id),
-                    TotalGastado = _context.pujas.Where(p => p.usuario_id == u.id).Sum(p => (decimal?)p.monto) ?? 0
+                    Titulo = a.titulo,
+                    PrecioVenta = a.precio_venta,
+                    FechaCierre = a.fecha_fin,
+                    NumeroPujas = _context.pujas.Count(p => p.articulo_id == a.Id)
                 })
-                .Where(s => s.ArticulosVendidos > 0)
                 .ToList();
 
-            ViewBag.Subastas = subastas;
-            return View();
+            ViewBag.TotalPrecioPujas = subastas.Sum(s => s.PrecioVenta);
+            ViewBag.CantidadArticulos = subastas.Count;
+
+            return View(subastas); // Pasa solo la lista como Model
         }
 
-        public IActionResult DescargarReporteSubastasCerrada()
+
+        public IActionResult DescargarReporteSubastasCerrada(int id)
         {
-            var subastas = _context.usuarios
-                .Select(u => new
+            var usuario = _context.usuarios.FirstOrDefault(u => u.id == id);
+            if (usuario == null)
+            {
+                
+                return RedirectToAction("SubastaCerrada", new { id });
+            }
+
+            var subastas = _context.articulos
+                .Where(a => a.usuario_id == id && a.estado_subasta == "Vendido")
+                .Select(a => new
                 {
-                    Nombre = u.nombre + " " + u.apellido,
-                    ArticulosVendidos = _context.articulos.Count(a => a.usuario_id == u.id && a.estado_subasta == "Vendido"),
-                    PujasRealizadas = _context.pujas.Count(p => p.usuario_id == u.id),
-                    TotalGastado = _context.pujas.Where(p => p.usuario_id == u.id).Sum(p => (decimal?)p.monto) ?? 0
+                    Titulo = a.titulo,
+                    PrecioVenta = a.precio_venta,
+                    FechaCierre = a.fecha_fin,
+                    NumeroPujas = _context.pujas.Count(p => p.articulo_id == a.Id)
                 })
-                .Where(s => s.ArticulosVendidos > 0)
                 .ToList();
 
             if (!subastas.Any())
             {
-                TempData["Mensaje"] = "No hay subastas cerradas y adjudicadas.";
-                return RedirectToAction("SubastasCerradas");
+                TempData["Mensaje"] = "No hay subastas cerradas y adjudicadas para este usuario.";
+                return RedirectToAction("SubastaCerrada", new { id });
             }
+
+            var totalPrecioPujas = subastas.Sum(s => s.PrecioVenta);
+            var cantidadArticulos = subastas.Count;
 
             using (MemoryStream ms = new MemoryStream())
             {
@@ -417,32 +432,50 @@ namespace Sistema_Subastas.Controllers
                 PdfDocument pdf = new PdfDocument(writer);
                 Document document = new Document(pdf);
 
+                // Fuente negrita (Helvetica-Bold)
+                PdfFont fontBold = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+                PdfFont fontNormal = PdfFontFactory.CreateFont(StandardFonts.HELVETICA);
+
                 document.Add(new Paragraph("Reporte de Subastas Cerradas y Adjudicadas")
+                    .SetFont(fontBold)
                     .SetFontSize(18)
                     .SetTextAlignment(iText.Layout.Properties.TextAlignment.CENTER));
 
-                document.Add(new Paragraph("\n"));
+                document.Add(new Paragraph($"\nUsuario: {usuario.nombre} {usuario.apellido}").SetFont(fontNormal));
+                document.Add(new Paragraph($"Fecha del reporte: {DateTime.Now:yyyy-MM-dd}\n").SetFont(fontNormal));
 
+                // Tabla con los detalles de cada subasta
                 Table table = new Table(4);
-                table.AddHeaderCell("Nombre del Usuario");
-                table.AddHeaderCell("Artículos Vendidos");
-                table.AddHeaderCell("Pujas Realizadas");
-                table.AddHeaderCell("Total Gastado en Pujas");
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Título del Artículo").SetFont(fontBold)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Precio de Venta").SetFont(fontBold)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Fecha de Cierre").SetFont(fontBold)));
+                table.AddHeaderCell(new Cell().Add(new Paragraph("Nº de Pujas").SetFont(fontBold)));
 
-                foreach (var subasta in subastas)
+                foreach (var s in subastas)
                 {
-                    table.AddCell(subasta.Nombre);
-                    table.AddCell(subasta.ArticulosVendidos.ToString());
-                    table.AddCell(subasta.PujasRealizadas.ToString());
-                    table.AddCell(subasta.TotalGastado > 0 ? subasta.TotalGastado.ToString("C") : "N/A");
+                    table.AddCell(new Cell().Add(new Paragraph(s.Titulo).SetFont(fontNormal)));
+                    table.AddCell(new Cell().Add(new Paragraph(s.PrecioVenta.ToString("C")).SetFont(fontNormal)));
+                    table.AddCell(new Cell().Add(new Paragraph(s.FechaCierre.ToString("yyyy-MM-dd")).SetFont(fontNormal)));
+                    table.AddCell(new Cell().Add(new Paragraph(s.NumeroPujas.ToString()).SetFont(fontNormal)));
                 }
 
                 document.Add(table);
+
+                // Resumen
+                document.Add(new Paragraph("\nResumen")
+                    .SetFont(fontBold)
+                    .SetFontSize(14)
+                    .SetMarginTop(20));
+
+                document.Add(new Paragraph($"Total recaudado: {totalPrecioPujas.ToString("C")}").SetFont(fontNormal));
+                document.Add(new Paragraph($"Cantidad de artículos vendidos: {cantidadArticulos}").SetFont(fontNormal));
+
                 document.Close();
 
                 return File(ms.ToArray(), "application/pdf", "Reporte_Subastas_Cerradas.pdf");
             }
         }
+
     }
 }
 

@@ -2,10 +2,55 @@
 
 @{
     ViewData["Title"] = "Reporte de Subastas Cerradas y Adjudicadas";
+    var total = ViewBag.TotalPrecioPujas;
+    var cantidad = ViewBag.CantidadArticulos;
+    var id = Context.Session.GetInt32("id_usuario");
 }
 
+<style>
+    body {
+        background-color: #f5f3f0;
+    }
+
+    .header-title {
+        color: #5e3d27;
+        font-weight: bold;
+    }
+
+    .table-custom {
+        border-color: #a68b6b;
+    }
+
+        .table-custom th {
+            background-color: #8b5e3c;
+            color: white;
+        }
+
+        .table-custom td {
+            background-color: #fdf8f3;
+        }
+
+    .summary {
+        background-color: #e8d6c3;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #c0a98f;
+    }
+
+    .btn-cafe {
+        background-color: #8b5e3c;
+        border-color: #8b5e3c;
+        color: white;
+    }
+
+        .btn-cafe:hover {
+            background-color: #754b30;
+            border-color: #754b30;
+        }
+</style>
+
 <div class="container mt-4">
-    <h2>@ViewData["Title"]</h2>
+    <h2 class="header-title mb-4">@ViewData["Title"]</h2>
 
     @if (Model == null || !Model.Any())
     {
@@ -15,30 +60,33 @@
     }
     else
     {
-        <table class="table table-bordered table-striped">
+        <table class="table table-bordered table-striped table-custom">
             <thead>
                 <tr>
-                    <th>Nombre de Usuario</th>
-                    <th>Número de Artículos Publicados</th>
+                    <th>Título del artículo</th>
+                    <th>Precio Venta</th>
+                    <th>Fecha cierre</th>
                     <th>Número de Pujas Realizadas</th>
-                    <th>Total Gastado en Pujas</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@item.NombreUsuario</td>
-                        <td>@item.NumeroArticulos</td>
+                        <td>@item.Titulo</td>
+                        <td>@item.PrecioVenta.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</td>
+                        <td>@item.FechaCierre.ToString("yyyy-MM-dd")</td>
                         <td>@item.NumeroPujas</td>
-                        <td>@item.TotalGastadoEnPujas.ToString("C")</td>
                     </tr>
                 }
             </tbody>
         </table>
 
-        <div class="mt-4">
-            <a href="@Url.Action("ExportarReporte", "Reportes")" class="btn btn-primary">
+        <div class="summary mt-4">
+            <p><strong>Total Recaudado:</strong> @(total != null ? ((decimal)total).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-US")) : "N/A")</p>
+            <p><strong>Cantidad de Artículos Vendidos:</strong> @(cantidad != null ? cantidad.ToString() : "N/A")</p>
+
+            <a href="@Url.Action("DescargarReporteSubastasCerrada", "Reportes", new { id = id })" class="btn btn-cafe mt-2">
                 Exportar a PDF
             </a>
         </div>
