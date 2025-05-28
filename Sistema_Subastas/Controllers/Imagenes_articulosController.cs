@@ -81,7 +81,7 @@ namespace Sistema_Subastas.Controllers
 
         }
 
-        
+
 
         // GET: Imagenes_articulos/Details/5
         public async Task<IActionResult> Details(int id)
@@ -91,73 +91,47 @@ namespace Sistema_Subastas.Controllers
                 return NotFound();
             }
 
-
-
             var imagenes_articulos = _context.imagenes_articulos.Where(m => m.articulo_id == id).ToList();
 
-
-            
             var articuloCategoria = _context.articulo_categoria.FirstOrDefault(ac => ac.articulo_id == id);
             var categoria = _context.categorias.FirstOrDefault(c => c.Id == articuloCategoria.categoria_id);
             ViewBag.CategoriaNombre = categoria.nombre;
 
-
-           
             var datos_vendedor = _context.articulos.FirstOrDefault(a => a.Id == id);
             var vendedor = _context.usuarios.FirstOrDefault(u => u.id == datos_vendedor.usuario_id);
 
             ViewBag.Vendedor = vendedor.nombre;
             ViewBag.IdVendedor = vendedor.id;
-            //Muestra los articulos
+
             var articulo = _context.articulos.FirstOrDefault(a => a.Id == id);
             ViewBag.Articulos = articulo;
 
-           
-
-            DateTime fecha_cierre = Convert.ToDateTime(articulo.fecha_fin);
+            DateTime fecha_cierre = articulo.fecha_fin;
             DateTime fecha_actual = DateTime.UtcNow;
 
-            TimeSpan fecha_res = fecha_cierre - fecha_actual  ;
+            TimeSpan tiempoRestante = fecha_cierre - fecha_actual;
 
-            if (fecha_res < TimeSpan.Zero)
+            if (tiempoRestante <= TimeSpan.Zero)
             {
-                fecha_res = TimeSpan.Zero;
-            }
-
-            if (fecha_res.Days >= articulo.fecha_fin.Day || fecha_res == TimeSpan.Zero)
-            {
-                if ((fecha_cierre <= fecha_actual) && articulo.estado_subasta == "Publicado")
+                if (articulo.estado_subasta == "Publicado")
                 {
                     articulo.estado_subasta = "Finalizada";
                     _context.articulos.Update(articulo);
                     await _context.SaveChangesAsync();
-                    ViewBag.Fecha = "Subasta Cerrada";
                 }
-                //articulo.estado_subasta = "Finalizada";
-                //_context.articulos.Update(articulo);
-                //await _context.SaveChangesAsync();
-                //ViewBag.Fecha = "Subasta Cerrada";
 
+                ViewBag.Fecha = "Subasta Cerrada";
             }
             else
             {
-                      
-                ViewBag.Fecha = $"{fecha_res.Days} días {fecha_res.Hours} horas {fecha_res.Minutes} minutos {fecha_res.Seconds} segundos";
+                ViewBag.Fecha = $"{tiempoRestante.Days} días {tiempoRestante.Hours} horas {tiempoRestante.Minutes} minutos {tiempoRestante.Seconds} segundos";
             }
 
             ViewBag.Estado = articulo.estado_subasta;
             ViewBag.VerPuja = articulo.visualizacion_puja;
+
             var cantidadP = _context.pujas.Count(p => p.articulo_id == id);
-
-            if (cantidadP == 0 || cantidadP == null)
-            {
-                ViewBag.CantidadP = 0;
-            }
-            else if (cantidadP > 0)
-            {
-                ViewBag.CantidadP = cantidadP;
-            }
-
+            ViewBag.CantidadP = cantidadP;
 
             if (imagenes_articulos == null)
             {
@@ -169,6 +143,7 @@ namespace Sistema_Subastas.Controllers
                 .OrderByDescending(p => p.monto)
                 .ThenBy(p => p.fecha_puja)
                 .FirstOrDefault();
+
             if (pujaMayor != null)
             {
                 articulo.precio_venta = pujaMayor.monto;
@@ -177,7 +152,8 @@ namespace Sistema_Subastas.Controllers
 
             return View(imagenes_articulos);
         }
-      
+
+
 
         // GET: Imagenes_articulos/Create
         public IActionResult Create(int articulo_id)
