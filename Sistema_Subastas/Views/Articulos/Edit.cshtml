@@ -31,19 +31,23 @@
                     <label>Descripción</label>
                     <input class="form-control" name="descripcion" value="@articulo.descripcion" />
                 </div>
-
                 <div class="form-group">
                     <label>Estado</label>
-                    <input class="form-control" name="estado" value="@articulo.estado" />
+                    <select class="form-control" name="estado">
+                        @foreach (var estado in new[] { "Nuevo", "Usado", "Con detalles" })
+                        {
+                            <option value="@estado" selected="@(Model.estado == estado ? "selected" : null)">
+                                @estado
+                            </option>
+                        }
+                    </select>
                 </div>
-
                 <div class="form-group">
                     <label>Precio de salida</label>
-                    <input class="form-control" name="precio_salida" value="@articulo.precio_salida" />
+                    <input class="form-control" type="hidden" name="precio_salida" value="@articulo.precio_salida" />
                 </div>
 
                 <div class="form-group">
-                    <label>Precio de venta</label>
                     <input class="form-control" name="precio_venta" value="@articulo.precio_venta" />
                 </div>
 
@@ -61,12 +65,18 @@
 
                 <div class="form-group">
                     <label>Estado de la subasta</label>
-                    <input class="form-control" name="estado_subasta" value="@articulo.estado_subasta" />
+                    <input class="form-control" name="estado_subasta" value="Publicado" readonly />
                 </div>
-
                 <div class="form-group">
                     <label>Vistas de las pujas</label>
-                    <input class="form-control" name="visualizacion_puja" value="@articulo.visualizacion_puja" />
+                    <select class="form-control" name="visualizacion_puja">
+                        @foreach (var vista in new[] { "Abierto", "Cerrado" })
+                        {
+                            <option value="@vista" selected="@(Model.visualizacion_puja == vista ? "selected" : null)">
+                                @vista
+                            </option>
+                        }
+                    </select>
                 </div>
 
                 <div class="form-group">
@@ -132,7 +142,7 @@
         </div>
 
         <button type="submit" class="btn btn-success mt-3">Actualizar datos</button>
-        <a asp-action="Index" class="btn btn-outline-dark mt-3">Volver</a>
+        <a asp-action="Index" asp-controller="Imagenes_articulos" class="btn btn-outline-dark mt-3">Volver a home</a>
     </form>
 </div>
 
