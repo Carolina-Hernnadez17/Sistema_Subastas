@@ -94,7 +94,7 @@ namespace Sistema_Subastas.Controllers
                 document.Add(titleTable);
 
                 // Fecha y dirección
-                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy}")
                     .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
                 document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
                     .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
@@ -209,7 +209,7 @@ namespace Sistema_Subastas.Controllers
                     .Add(new Paragraph("Buy-Things").SetFont(boldFont).SetFontSize(20)));
                 document.Add(titleTable);
 
-                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy}")
                     .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
                 document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
                     .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
@@ -255,7 +255,7 @@ namespace Sistema_Subastas.Controllers
 
         public async Task<IActionResult> SubastasActivas()
         {
-            var fechaActual = DateTime.Now;
+            var fechaActual = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
             var subastasActivas = await _context.articulos
                 .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin > fechaActual)
@@ -270,13 +270,14 @@ namespace Sistema_Subastas.Controllers
                 .OrderBy(a => a.FechaCierre)
                 .ToListAsync();
 
+
             return View(subastasActivas);
         }
 
         // GET: 
         public IActionResult DescargarReporteSubastas()
         {
-            var fechaActual = DateTime.Now;
+            var fechaActual = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
             var subastasActivas = _context.articulos
                 .Where(a => a.estado_subasta == "Publicado" && a.fecha_fin > fechaActual)
@@ -321,7 +322,7 @@ namespace Sistema_Subastas.Controllers
                 document.Add(titleTable);
 
                 // Información general
-                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy}")
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetFontSize(12));
                 document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
@@ -336,7 +337,7 @@ namespace Sistema_Subastas.Controllers
                     .SetFont(boldFont)
                     .SetFontSize(14));
 
-                document.Add(new Paragraph("Fecha de generación: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm"))
+                document.Add(new Paragraph("Fecha de generación: " + TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador").ToString("dd/MM/yyyy HH:mm"))
                     .SetFontSize(10));
 
                 document.Add(new Paragraph(" "));

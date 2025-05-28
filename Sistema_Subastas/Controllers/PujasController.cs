@@ -79,14 +79,14 @@ namespace Sistema_Subastas.Controllers
                 articulo_id = ArticuloId,
                 usuario_id = usuarioId,
                 monto = Monto,
-                fecha_puja = DateTime.Now
+                fecha_puja = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador")
             };
             var notificacion = new notificaciones
             {
                 usuario_id = articulo.usuario_id,
                 mensaje = $"📢 Nueva puja de ${puja.monto} en tu subasta: {articulo.titulo}",
                 leido = false,
-                fecha = DateTime.Now
+                fecha = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador")
             };
 
             var pujaMayor = _context.pujas
@@ -181,11 +181,11 @@ namespace Sistema_Subastas.Controllers
             {
                 if (estado == "Activa")
                 {
-                    query = query.Where(p => p.FechaFin >= DateTime.Now);
+                    query = query.Where(p => p.FechaFin >= TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"));
                 }
                 else if (estado == "Finalizada")
                 {
-                    query = query.Where(p => p.FechaFin < DateTime.Now);
+                    query = query.Where(p => p.FechaFin < TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"));
                 }
             }
 

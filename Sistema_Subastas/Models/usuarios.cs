@@ -43,7 +43,7 @@ namespace Sistema_Subastas.Models
         public string contrasena { get; set; }
 
         [Display(Name = "Fecha de registro")]
-        public DateTime fecha_registro { get; set; } = DateTime.Now;
+        public DateTime fecha_registro { get; set; } = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
         public bool Estado { get; set; } = true;
 

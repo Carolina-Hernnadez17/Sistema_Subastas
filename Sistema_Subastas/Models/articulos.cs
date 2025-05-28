@@ -21,6 +21,6 @@ namespace Sistema_Subastas.Models
         public string visualizacion_puja { get; set; }
 
         public string estado_subasta { get; set; } = "Publicado";
-        public DateTime fecha_registro { get; set; } = DateTime.Now;
+        public DateTime fecha_registro { get; set; } = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
     }
 }

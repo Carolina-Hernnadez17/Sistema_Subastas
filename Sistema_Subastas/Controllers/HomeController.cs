@@ -46,7 +46,7 @@ namespace Sistema_Subastas.Controllers
             ViewBag.NombreUsuario = nombre;
             HoraServidor();
 
-            var ahora = DateTime.Now;
+            var ahora = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
             //// Verificamos si hay alguna subasta que necesita ser cerrada
             //bool hayPorFinalizar = _context.articulos
@@ -64,8 +64,8 @@ namespace Sistema_Subastas.Controllers
         }
         public IActionResult HoraServidor()
         {
-            var horaLocal = DateTime.Now;
-            var horaUtc = DateTime.UtcNow;
+            var horaLocal = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
+            var horaUtc = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
             return Content($"⏰ Hora Local del Servidor: {horaLocal:dd/MM/yyyy HH:mm:ss}\n" +
                            $"🌐 Hora UTC: {horaUtc:dd/MM/yyyy HH:mm:ss}");

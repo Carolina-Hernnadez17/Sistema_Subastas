@@ -328,7 +328,7 @@ namespace Sistema_Subastas.Controllers
         // Parte de notificaciones, cierre de subastas y ganadores
         public void MarcarSubastasFinalizadas()
         {
-            var ahora = DateTime.UtcNow;
+            var ahora = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
             //var ahoraRedondeado = new DateTime(ahora.Year, ahora.Month, ahora.Day, ahora.Hour, ahora.Minute, ahora.Second);
 
             var articulosParaFinalizar = _context.articulos
@@ -401,7 +401,7 @@ namespace Sistema_Subastas.Controllers
                         usuario_id = subasta.usuario_id,
                         mensaje = mensaje,
                         leido = false,
-                        fecha = DateTime.UtcNow
+                        fecha = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador")
                     });
 
                     var usuario = await _context.usuarios.FindAsync(subasta.usuario_id);
@@ -445,7 +445,7 @@ namespace Sistema_Subastas.Controllers
                             usuario_id = subasta.usuario_id,
                             mensaje = mensajeCreador,
                             leido = false,
-                            fecha = DateTime.UtcNow
+                            fecha = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador")
                         });
 
                         var creador = await _context.usuarios.FindAsync(subasta.usuario_id);
@@ -467,7 +467,7 @@ namespace Sistema_Subastas.Controllers
                             usuario_id = puj.usuario_id,
                             mensaje = mensajeGanador,
                             leido = false,
-                            fecha = DateTime.UtcNow
+                            fecha = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador")
                         });
 
                         var ganador = await _context.usuarios.FindAsync(puj.usuario_id);

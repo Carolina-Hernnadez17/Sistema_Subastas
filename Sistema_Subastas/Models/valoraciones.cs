@@ -11,6 +11,6 @@ namespace Sistema_Subastas.Models
         public int usuario_que_valora_id{ get; set; }
         public int puntuacion { get; set; }
         public string comentario { get; set; }
-        public DateTime fecha { get; set; } = DateTime.Now;
+        public DateTime fecha { get; set; } = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
     }
 }

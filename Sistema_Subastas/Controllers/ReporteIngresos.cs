@@ -113,7 +113,7 @@ namespace Sistema_Subastas.Controllers
                 document.Add(new Paragraph("Reporte de Ingresos por Subastas")
                     .SetFontSize(16));
 
-                document.Add(new Paragraph("Fecha de generación: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm")));
+                document.Add(new Paragraph("Fecha de generación: " + TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador").ToString("dd/MM/yyyy HH:mm")));
 
                 document.Add(new Paragraph("\n"));
 

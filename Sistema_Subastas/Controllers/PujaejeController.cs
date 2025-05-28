@@ -69,7 +69,7 @@ namespace Sistema_Subastas.Controllers
                         usuario_id = articulo.usuario_id,
                         mensaje = $"📢 Nueva puja de ${pujas.monto} en tu subasta: {articulo.titulo}",
                         leido = false,
-                        fecha = DateTime.Now
+                        fecha = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador")
                     };
                     _context.notificaciones.Add(notificacion);
                     await _context.SaveChangesAsync();

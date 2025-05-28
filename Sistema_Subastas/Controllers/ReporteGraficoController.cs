@@ -84,7 +84,7 @@ namespace Sistema_Subastas.Controllers
                 document.Add(titleTable);
 
                 // Información general
-                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy}")
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetFontSize(12));
                 document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
@@ -124,7 +124,7 @@ namespace Sistema_Subastas.Controllers
 
                 document.Close();
 
-                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string timestamp = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador").ToString("yyyyMMdd_HHmmss");
                 return File(ms.ToArray(), "application/pdf", $"Reporte_Usuarios_{timestamp}.pdf");
             }
         }
@@ -184,7 +184,7 @@ namespace Sistema_Subastas.Controllers
                 document.Add(titleTable);
 
                 // Información general
-                document.Add(new Paragraph($"Fecha de generación: {DateTime.Now:dd/MM/yyyy}")
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy}")
                     .SetTextAlignment(TextAlignment.CENTER)
                     .SetFontSize(12));
                 document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
@@ -233,7 +233,7 @@ namespace Sistema_Subastas.Controllers
 
                 document.Close();
 
-                string timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                string timestamp = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador").ToString("yyyyMMdd_HHmmss");
                 return File(ms.ToArray(), "application/pdf", $"Reporte_Usuarios_{timestamp}.pdf");
             }
         }

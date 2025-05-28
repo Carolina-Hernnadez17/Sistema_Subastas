@@ -92,7 +92,7 @@ namespace Sistema_Subastas.Controllers
             }
 
             // ❗ Validación: solo puede presentar disputa dentro de los 3 días posteriores al cierre
-            if (articulo.fecha_fin.AddDays(3) < DateTime.Now)
+            if (articulo.fecha_fin.AddDays(3) < TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"))
             {
                 TempData["MensajeError"] = "Ya no puedes presentar una disputa porque han pasado más de 3 días desde el cierre.";
                 return RedirectToAction("Index", "Imagenes_articulos");
@@ -259,7 +259,7 @@ namespace Sistema_Subastas.Controllers
                 .SetFont(boldFont));
 
 
-                document.Add(new Paragraph("Fecha de generación: " + DateTime.Now.ToString("dd/MM/yyyy HH:mm")));
+                document.Add(new Paragraph("Fecha de generación: " + TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador").ToString("dd/MM/yyyy HH:mm")));
 
                 document.Add(new Paragraph("\n"));
 
