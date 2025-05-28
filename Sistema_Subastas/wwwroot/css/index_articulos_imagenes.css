@@ -1,10 +1,50 @@
-﻿/* Contenedor en modo grid responsivo */
-.contenedor-grid {
+﻿.contenedor-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 1.5rem;
     padding: 1rem;
+    justify-content: center; /* Centrar grid cuando haya pocas cards */
 }
+
+/* Ajuste para pantallas pequeñas */
+@media (max-width: 768px) {
+    .contenedor-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+
+    .card {
+        max-width: 100%; /* Que la card ocupe el 100% del grid cell */
+        height: auto; /* Que la altura sea automática para que no se corten contenidos */
+    }
+
+    .imgen_p {
+        height: 160px; /* Ajustar altura imagen en móvil para que sea más compacta */
+    }
+}
+
+/* Ajuste para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .contenedor-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 3fr));
+        gap: 0.8rem;
+        padding: 0.5rem;
+    }
+
+    .imgen_p {
+        height: 130px;
+    }
+
+    .card h1 {
+        font-size: 0.9rem;
+    }
+
+    .card p {
+        font-size: 0.8rem;
+    }
+}
+
 /* Estilo general de la tarjeta */
 .card {
     width: 100%;
