@@ -115,7 +115,7 @@ namespace Sistema_Subastas.Controllers
            
 
             DateTime fecha_cierre = Convert.ToDateTime(articulo.fecha_fin);
-            DateTime fecha_actual = DateTime.Now;
+            DateTime fecha_actual = DateTime.UtcNow;
 
             TimeSpan fecha_res = fecha_cierre - fecha_actual  ;
 
@@ -261,81 +261,6 @@ namespace Sistema_Subastas.Controllers
             return Ok(); // Código 200
         }
 
-
-        //[HttpPost]
-        //public async Task<ActionResult> Create(imagenes_articulos img_articulos, IFormFile file)
-        //{
-        //    try
-        //    {
-        //        string rutaImagen = null;
-
-        //        if (file != null && file.Length > 0)
-        //        {
-        //            var account = new Account(
-        //                "daxbwcgw2",
-        //                "346927586337937",
-        //                "YqqRBDv2Ha3x_qxjNknM8_sT83Q"
-        //            );
-
-        //            var cloudinary = new Cloudinary(account);
-        //            var uploadParams = new ImageUploadParams()
-        //            {
-        //                File = new FileDescription(file.FileName, file.OpenReadStream()),
-        //                Folder = "Subasta"
-        //            };
-
-        //            var uploadResult = await Task.Run(() => cloudinary.Upload(uploadParams));
-        //            rutaImagen = uploadResult.SecureUrl.ToString();
-        //        }
-
-        //        img_articulos.url_imagen = rutaImagen;
-
-        //        using (var conn = conexion)
-        //        {
-        //            string query = "INSERT INTO imagenes_articulos (articulo_id,url_imagen)" +
-        //                           " VALUES (@articulo_id,@url_imagen)";
-        //            MySqlCommand cmd = new MySqlCommand(query, conn);
-        //            cmd.Parameters.AddWithValue("@articulo_id", img_articulos.articulo_id);
-        //            cmd.Parameters.AddWithValue("@url_imagen", img_articulos.url_imagen);
-
-
-        //            int result = cmd.ExecuteNonQuery();
-
-        //            if (result > 0)
-        //            {
-        //                TempData["SuccessMessage"] = "Obra agregada exitosamente";
-        //                return RedirectToAction("Index");
-        //            }
-        //            else
-        //            {
-        //                ViewBag.ErrorMessage = "No se pudo agregar .";
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ViewBag.Error = "Error al agregar obra: " + ex.Message;
-        //    }
-
-        //    return View(img_articulos);
-        //}
-
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("id,articulo_id,url_imagen")] imagenes_articulos imagenes_articulos, IFormFile file)
-        //{
-
-        //    
-        //    if (ModelState.IsValid)
-        //    {
-
-        //        _context.Add(imagenes_articulos);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(imagenes_articulos);
-        //}
-
         // GET: Imagenes_articulos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -427,7 +352,7 @@ namespace Sistema_Subastas.Controllers
         // Parte de notificaciones, cierre de subastas y ganadores
         public void MarcarSubastasFinalizadas()
         {
-            var ahora = DateTime.Now;
+            var ahora = DateTime.UtcNow;
             //var ahoraRedondeado = new DateTime(ahora.Year, ahora.Month, ahora.Day, ahora.Hour, ahora.Minute, ahora.Second);
 
             var articulosParaFinalizar = _context.articulos
@@ -500,7 +425,7 @@ namespace Sistema_Subastas.Controllers
                         usuario_id = subasta.usuario_id,
                         mensaje = mensaje,
                         leido = false,
-                        fecha = DateTime.Now
+                        fecha = DateTime.UtcNow
                     });
 
                     var usuario = await _context.usuarios.FindAsync(subasta.usuario_id);
@@ -544,7 +469,7 @@ namespace Sistema_Subastas.Controllers
                             usuario_id = subasta.usuario_id,
                             mensaje = mensajeCreador,
                             leido = false,
-                            fecha = DateTime.Now
+                            fecha = DateTime.UtcNow
                         });
 
                         var creador = await _context.usuarios.FindAsync(subasta.usuario_id);
@@ -566,7 +491,7 @@ namespace Sistema_Subastas.Controllers
                             usuario_id = puj.usuario_id,
                             mensaje = mensajeGanador,
                             leido = false,
-                            fecha = DateTime.Now
+                            fecha = DateTime.UtcNow
                         });
 
                         var ganador = await _context.usuarios.FindAsync(puj.usuario_id);
