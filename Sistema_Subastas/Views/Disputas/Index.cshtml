@@ -1,71 +1,61 @@
 ﻿@model IEnumerable<Sistema_Subastas.Models.disputas>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Disputas";
     Layout = "~/Views/Shared/LayoutAdmin.cshtml";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <h2 class="text-center mb-4" style="color: #6f4832;">Listado de Disputas</h2>
 
-<p>
+    <div class="text-end mb-3">
+        <a class="btn btn-outline-danger" asp-action="DescargarReporteDisputas">
+            <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
+        </a>
+    </div>
 
-    <a class="btn btn-danger mb-3" asp-action="DescargarReporteDisputas">
-        <i class="bi bi-file-earmark-pdf"></i> Descargar PDF
-    </a>
-
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Artículo</th>
-            <th>Comprador</th>
-            <th>Vendedor</th>
-            <th>Motivo</th>
-            <th>Descripción</th>
-            <th>Estado</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-                <td>
-                    @ViewBag.Articulos[item.articulo_id] (ID: @item.articulo_id)
-                </td>
-                <td>
-                    @ViewBag.Usuarios[item.comprador_id]
-                </td>
-                <td>
-                    @ViewBag.Usuarios[item.vendedor_id]
-                </td>
-
-            <td>
-                @Html.DisplayFor(modelItem => item.motivo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.descripcion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.estado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.fecha)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
-                    <a class="btn btn-sm btn-warning"
-                       asp-controller="Disputas"
-                       asp-action="Create"
-                       asp-route-articulo_id="@item.articulo_id"
-                       asp-route-vendedor_id="@item.vendedor_id">
-                        Crear Disputa
-                    </a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div style="max-height: 450px; overflow-y: auto;">
+        <table class="table table-bordered table-hover">
+            <thead style="background-color: #6f4832; color: white;">
+                <tr>
+                    <th>Artículo</th>
+                    <th>Comprador</th>
+                    <th>Vendedor</th>
+                    <th>Motivo</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@ViewBag.Articulos[item.articulo_id] (ID: @item.articulo_id)</td>
+                        <td>@ViewBag.Usuarios[item.comprador_id]</td>
+                        <td>@ViewBag.Usuarios[item.vendedor_id]</td>
+                        <td>@item.motivo</td>
+                        <td>@item.descripcion</td>
+                        <td>@item.estado</td>
+                        <td>@item.fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a class="btn btn-sm btn-info text-white" asp-action="Edit" asp-route-id="@item.id">Editar</a>
+                                <a class="btn btn-sm btn-secondary" asp-action="Details" asp-route-id="@item.id">Detalles</a>
+                                <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@item.id">Eliminar</a>
+                                <a class="btn btn-sm btn-warning"
+                                   asp-controller="Disputas"
+                                   asp-action="Create"
+                                   asp-route-articulo_id="@item.articulo_id"
+                                   asp-route-vendedor_id="@item.vendedor_id">
+                                    Crear Disputa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

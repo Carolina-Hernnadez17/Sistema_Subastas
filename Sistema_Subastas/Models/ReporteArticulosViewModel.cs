@@ -2,16 +2,12 @@
 {
     public class ReporteArticulosViewModel
     {
-        public List<Articulo> ReportePorPujas { get; set; }
-        public List<Articulo> ReportePorVistas { get; set; }
+        public string Titulo { get; set; }
+        public int NumeroPujas { get; set; }
+        public decimal PrecioSalida { get; set; }
+        public DateTime FechaInicio { get; set; }
+        public DateTime FechaFin { get; set; }
     }
 
-    public class Articulo
-    {
-        public string TituloObra { get; set; }
-        public string NombreArtista { get; set; }
-        public int CantidadPujas { get; set; }
-        public decimal MontoMaximoPuja { get; set; }
-        public DateTime FechaUltimaPuja { get; set; }
-    }
+
 }

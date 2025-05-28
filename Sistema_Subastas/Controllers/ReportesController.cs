@@ -26,6 +26,7 @@ using PdfWriter = iText.Kernel.Pdf.PdfWriter;
 using Sistema_Subastas.Atributo;
 using iText.IO.Font.Constants;
 using iText.Kernel.Font;
+using Rotativa;
 
 namespace Sistema_Subastas.Controllers
 {
@@ -42,17 +43,116 @@ namespace Sistema_Subastas.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult ArticulosMasPopulares()
+        public IActionResult ArticulosPopulares()
         {
-            // Lógica para obtener datos
-            var viewModel = new ReporteArticulosViewModel
-            {
-                ReportePorPujas = ObtenerReportePorPujas(), // Debe ser una lista de Articulo
-                ReportePorVistas = ObtenerReportePorVistas()  // Debe ser una lista de Articulo
-            };
+            var modelo = _context.articulos
+                .Select(a => new ReporteArticulosViewModel
+                {
+                    Titulo = a.titulo,
+                    // Contar las pujas relacionadas con el artículo
+                    NumeroPujas = _context.pujas.Count(p => p.articulo_id == a.Id),
+                    PrecioSalida = a.precio_salida,
+                    FechaInicio = a.fecha_inicio,
+                    FechaFin = a.fecha_fin
+                })
+                .OrderByDescending(x => x.NumeroPujas)
+                .ToList();
 
-            return View(viewModel);
+            return View(modelo);
         }
+
+
+
+        public IActionResult DescargarArticulosPopulares()
+        {
+            var articulosPopulares = _context.articulos
+                .Join(_context.articulo_categoria, a => a.Id, ac => ac.articulo_id, (a, ac) => new { a, ac })
+                .Join(_context.categorias, ac => ac.ac.categoria_id, c => c.Id, (ac, c) => new { ac.a, Categoria = c.nombre })
+                .GroupJoin(_context.pujas, a => a.a.Id, p => p.articulo_id, (a, pujas) => new { a.a, a.Categoria, Pujas = pujas })
+                .Select(g => new
+                {
+                    g.a.titulo,
+                    g.Categoria,
+                    NumeroDePujas = g.Pujas.Count(),
+                    PrecioMaximo = g.Pujas.Any() ? g.Pujas.Max(p => p.monto) : 0,
+                    g.a.fecha_fin
+                })
+                .OrderByDescending(a => a.NumeroDePujas)
+                .ToList();
+
+            using (var memoryStream = new MemoryStream())
+            {
+                var writer = new PdfWriter(memoryStream);
+                var pdf = new PdfDocument(writer);
+                var document = new Document(pdf);
+
+                // Colores y fuentes
+                Color headerColor = new DeviceRgb(111, 72, 50); // Café
+                Color textColor = new DeviceRgb(255, 255, 255); // Blanco
+                PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
+
+                // Logo
+                string logoPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "logo.png");
+                if (System.IO.File.Exists(logoPath))
+                {
+                    Image img = new Image(ImageDataFactory.Create(logoPath)).ScaleToFit(100, 100);
+                    document.Add(img.SetHorizontalAlignment(HorizontalAlignment.CENTER));
+                }
+
+                // Título principal
+                var titleTable = new Table(1).UseAllAvailableWidth();
+                titleTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things").SetFont(boldFont).SetFontSize(20)));
+                document.Add(titleTable);
+
+                // Fecha y ubicación
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy}")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("\n"));
+
+                // Encabezado sección
+                document.Add(new Paragraph("Artículos Más Populares")
+                    .SetFont(boldFont).SetFontSize(16).SetTextAlignment(TextAlignment.CENTER));
+                document.Add(new Paragraph("\n"));
+
+                // Tabla de datos
+                var table = new Table(5).UseAllAvailableWidth();
+                string[] headers = { "Artículo", "Categoría", "Pujas", "Precio Máximo", "Fecha Límite" };
+                foreach (var header in headers)
+                {
+                    table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                        .Add(new Paragraph(header).SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
+                }
+
+                foreach (var item in articulosPopulares)
+                {
+                    table.AddCell(new Cell().Add(new Paragraph(item.titulo).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.Categoria).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.NumeroDePujas.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.PrecioMaximo.ToString("C")).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(item.fecha_fin.ToString("dd/MM/yyyy HH:mm")).SetTextAlignment(TextAlignment.CENTER)));
+                }
+
+                document.Add(table);
+                document.Add(new Paragraph("\n"));
+
+                // Footer
+                Table footerTable = new Table(1).UseAllAvailableWidth();
+                footerTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things@email.com | (+503) 2490 8943 | El Salvador")));
+                document.Add(footerTable);
+
+                document.Close();
+                return File(memoryStream.ToArray(), "application/pdf", "Reporte_Articulos_Populares.pdf");
+            }
+        }
+
+
+
 
         public IActionResult DescargarReportePdf()
         {
@@ -145,17 +245,6 @@ namespace Sistema_Subastas.Controllers
         }
 
 
-        private List<Articulo> ObtenerReportePorPujas()
-        {
-            // Obtener datos de la base de datos o cualquier fuente
-            return new List<Articulo>(); // Debería devolver una lista de objetos Articulo
-        }
-
-        private List<Articulo> ObtenerReportePorVistas()
-        {
-            // Obtener datos de la base de datos o cualquier fuente
-            return new List<Articulo>(); // Debería devolver una lista de objetos Articulo
-        }
 
 
         public async Task<IActionResult> UsuariosMasActivos()

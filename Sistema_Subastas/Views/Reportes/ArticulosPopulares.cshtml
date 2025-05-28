@@ -1,0 +1,42 @@
+﻿@model List<Sistema_Subastas.Models.ReporteArticulosViewModel>
+
+@{
+    ViewBag.Title = "Artículos más populares";
+    Layout = "~/Views/Shared/LayoutAdmin.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-center" style="color:#6f4832;">Artículos más populares</h2>
+
+    <div class="text-end mb-3">
+        <a class="btn btn-outline-primary" href="@Url.Action("DescargarArticulosPopulares", "Reportes")">
+            Descargar PDF
+        </a>
+    </div>
+
+    <div style="max-height: 400px; overflow-y: auto;">
+        <table class="table table-bordered table-striped">
+            <thead style="background-color: #6f4832; color: white;">
+                <tr>
+                    <th>Título</th>
+                    <th>N.º de Pujas</th>
+                    <th>Precio de Salida</th>
+                    <th>Fecha de Inicio</th>
+                    <th>Fecha de Fin</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Titulo</td>
+                        <td>@item.NumeroPujas</td>
+                        <td>@item.PrecioSalida.ToString("C")</td>
+                        <td>@item.FechaInicio.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@item.FechaFin.ToString("dd/MM/yyyy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

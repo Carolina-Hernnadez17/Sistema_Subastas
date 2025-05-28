@@ -1,8 +1,12 @@
 ﻿using iText.IO.Font.Constants;
+using iText.IO.Image;
+using iText.Kernel.Colors;
 using iText.Kernel.Font;
 using iText.Kernel.Pdf;
 using iText.Layout;
 using iText.Layout.Element;
+using iText.Layout.Properties;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +27,12 @@ namespace Sistema_Subastas.Controllers
     public class DisputasController : Controller
     {
         private readonly subastaDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public DisputasController(subastaDbContext context)
+        public DisputasController(subastaDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Disputas
@@ -247,7 +253,7 @@ namespace Sistema_Subastas.Controllers
 
         public async Task<IActionResult> DescargarReporteDisputas()
         {
-        var disputas = await _context.disputas.ToListAsync();
+            var disputas = await _context.disputas.ToListAsync();
 
             using (var ms = new MemoryStream())
             {
@@ -255,42 +261,73 @@ namespace Sistema_Subastas.Controllers
                 var pdf = new PdfDocument(writer);
                 var document = new Document(pdf);
 
+                // Estilos
+                Color headerColor = new DeviceRgb(111, 72, 50); // Café
+                Color textColor = new DeviceRgb(255, 255, 255); // Blanco
                 PdfFont boldFont = PdfFontFactory.CreateFont(StandardFonts.HELVETICA_BOLD);
 
-                document.Add(new Paragraph("Reporte de Disputas Registradas")
-                .SetFontSize(16)
-                .SetFont(boldFont));
+                // Logo
+                string logoPath = Path.Combine(_webHostEnvironment.WebRootPath, "img", "logo.png");
+                if (System.IO.File.Exists(logoPath))
+                {
+                    Image img = new Image(ImageDataFactory.Create(logoPath)).ScaleToFit(100, 100);
+                    document.Add(img.SetHorizontalAlignment(HorizontalAlignment.CENTER));
+                }
 
+                // Encabezado principal
+                var titleTable = new Table(1).UseAllAvailableWidth();
+                titleTable.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things").SetFont(boldFont).SetFontSize(20)));
+                document.Add(titleTable);
 
-                document.Add(new Paragraph("Fecha de generación: " + TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador").ToString("dd/MM/yyyy HH:mm")));
-
+                // Fecha y dirección
+                document.Add(new Paragraph($"Fecha de generación: {TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"):dd/MM/yyyy HH:mm}")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
+                document.Add(new Paragraph("Dirección: Santa Ana | Tu mejor opción en subastas")
+                    .SetTextAlignment(TextAlignment.CENTER).SetFontSize(12));
                 document.Add(new Paragraph("\n"));
 
-                var table = new Table(6);
+                // Título del reporte
+                document.Add(new Paragraph("Disputas Registradas")
+                    .SetFont(boldFont).SetFontSize(16).SetTextAlignment(TextAlignment.CENTER));
+                document.Add(new Paragraph("\n"));
 
-                table.AddHeaderCell("Artículo ID");
-                table.AddHeaderCell("Comprador");
-                table.AddHeaderCell("Vendedor");
-                table.AddHeaderCell("Motivo");
-                table.AddHeaderCell("Estado");
-                table.AddHeaderCell("Fecha");
+                // Tabla
+                var table = new Table(6).UseAllAvailableWidth();
+                string[] headers = { "Artículo ID", "Comprador", "Vendedor", "Motivo", "Estado", "Fecha" };
+                foreach (var header in headers)
+                {
+                    table.AddHeaderCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                        .Add(new Paragraph(header).SetFont(boldFont).SetTextAlignment(TextAlignment.CENTER)));
+                }
 
                 foreach (var d in disputas)
                 {
-                    table.AddCell(d.articulo_id.ToString());
-                    table.AddCell(d.comprador_id.ToString());
-                    table.AddCell(d.vendedor_id.ToString());
-                    table.AddCell(d.motivo ?? "N/A");
-                    table.AddCell(d.estado ?? "N/A");
-                    table.AddCell(d.fecha.ToString("dd/MM/yyyy HH:mm"));
+                    table.AddCell(new Cell().Add(new Paragraph(d.articulo_id.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(d.comprador_id.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(d.vendedor_id.ToString()).SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(d.motivo ?? "N/A").SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(d.estado ?? "N/A").SetTextAlignment(TextAlignment.CENTER)));
+                    table.AddCell(new Cell().Add(new Paragraph(d.fecha.ToString("dd/MM/yyyy HH:mm")).SetTextAlignment(TextAlignment.CENTER)));
                 }
 
                 document.Add(table);
+                document.Add(new Paragraph("\n"));
+
+                // Footer
+                var footer = new Table(1).UseAllAvailableWidth();
+                footer.AddCell(new Cell().SetBackgroundColor(headerColor).SetFontColor(textColor)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .Add(new Paragraph("Buy-Things@email.com | (+503) 2490 8943 | El Salvador")));
+                document.Add(footer);
+
                 document.Close();
 
                 return File(ms.ToArray(), "application/pdf", "Reporte_Disputas.pdf");
             }
         }
+
 
 
     }
