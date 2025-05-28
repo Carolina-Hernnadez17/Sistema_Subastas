@@ -4,70 +4,68 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edita tus datos de usuario</h1>
-<link href="~/css/Style1.css" rel="stylesheet" />
+<h1 class="Uedit-title">Edita tus datos de usuario</h1>
 
-<!-- Agregar Intl-Tel-Input -->
+<!-- Intl-Tel-Input CSS y JS (puedes mover a layout o bundle si quieres) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
+<link rel="stylesheet" href="/css/Uedit.css" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
-<h4>Ingresa tus nuevos datos: </h4>
+
+<h4 class="Uedit-subtitle">Ingresa tus nuevos datos:</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" id="editForm">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="id" />
 
-            <div class="form-group">
-                <label asp-for="nombre" class="control-label"></label>
-                <input asp-for="nombre" class="form-control" />
-                <span asp-validation-for="nombre" class="text-danger"></span>
-            </div>
+<div class="Uedit-container">
+    <form asp-action="Edit" id="editForm" class="Uedit-form">
+        <input type="hidden" asp-for="id" />
 
-            <div class="form-group">
-                <label asp-for="apellido" class="control-label"></label>
-                <input asp-for="apellido" class="form-control" />
-                <span asp-validation-for="apellido" class="text-danger"></span>
-            </div>
+        <div class="Uedit-group">
+            <label asp-for="nombre" class="Uedit-label"></label>
+            <input asp-for="nombre" class="Uedit-input" />
+            <span asp-validation-for="nombre" class="Uedit-error"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="correo" class="control-label"></label>
-                <input asp-for="correo" class="form-control" />
-                <span asp-validation-for="correo" class="text-danger"></span>
-            </div>
+        <div class="Uedit-group">
+            <label asp-for="apellido" class="Uedit-label"></label>
+            <input asp-for="apellido" class="Uedit-input" />
+            <span asp-validation-for="apellido" class="Uedit-error"></span>
+        </div>
 
-            <!-- Campo de Teléfono con Banderas y Formato -->
-            <div class="form-group">
-                <label asp-for="telefono" class="control-label"></label>
-                <input id="telefono" class="form-control" type="tel" value="@Model.telefono" />
-                <input type="hidden" asp-for="telefono" id="telefonoHidden" />
-                <span asp-validation-for="telefono" class="text-danger"></span>
-            </div>
+        <div class="Uedit-group">
+            <label asp-for="correo" class="Uedit-label"></label>
+            <input asp-for="correo" class="Uedit-input" />
+            <span asp-validation-for="correo" class="Uedit-error"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="direccion" class="control-label"></label>
-                <input asp-for="direccion" class="form-control" />
-                <span asp-validation-for="direccion" class="text-danger"></span>
-            </div>
+        <div class="Uedit-group">
+            <label asp-for="telefono" class="Uedit-label"></label>
+            <input id="telefono" type="tel" class="Uedit-input" value="@Model.telefono" />
+            <input type="hidden" asp-for="telefono" id="telefonoHidden" />
+            <span asp-validation-for="telefono" class="Uedit-error"></span>
+        </div>
 
-            <div class="form-group">
-                <input asp-for="contrasena" class="form-control" style="visibility: hidden;  />
-                <span asp-validation-for="contrasena" class="text-danger"></span>
-            </div>
-            <div class="form-group ">
-                @* <label asp-for="fecha_registro" class="control-label" ></label> *@
-                <input asp-for="fecha_registro" class="form-control" style="visibility: hidden;  />
-                <span asp-validation-for="fecha_registro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Guardar" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+        <div class="Uedit-group">
+            <label asp-for="direccion" class="Uedit-label"></label>
+            <input asp-for="direccion" class="Uedit-input" />
+            <span asp-validation-for="direccion" class="Uedit-error"></span>
+        </div>
+
+        <div class="Uedit-group" style="display:none;">
+            <input asp-for="contrasena" />
+            <span asp-validation-for="contrasena"></span>
+        </div>
+
+        <div class="Uedit-group" style="display:none;">
+            <input asp-for="fecha_registro" />
+            <span asp-validation-for="fecha_registro"></span>
+        </div>
+
+        <div class="Uedit-group">
+            <button type="submit" class="Uedit-button">Guardar</button>
+        </div>
+    </form>
 </div>
 
-<div>
-    @* <a asp-action="Index">Back to List</a> *@
+<div class="Uedit-backlink">
     <a asp-action="Details">Volver a mi perfil</a>
 </div>
 
@@ -75,10 +73,6 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-    <!-- Agregar Intl-Tel-Input -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/css/intlTelInput.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/intlTelInput.min.js"></script>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -94,14 +88,12 @@
                 utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js"
             });
 
-            // Validar antes de enviar
             form.addEventListener("submit", function (event) {
-                var numeroValido = iti.isValidNumber();
-                if (!numeroValido) {
+                if (!iti.isValidNumber()) {
                     alert("Por favor, ingrese un número de teléfono válido.");
-                    event.preventDefault(); // Evita que el formulario se envíe si el número es inválido
+                    event.preventDefault();
                 } else {
-                    telefonoHidden.value = iti.getNumber(); // Guarda el número formateado si es válido
+                    telefonoHidden.value = iti.getNumber();
                 }
             });
         });

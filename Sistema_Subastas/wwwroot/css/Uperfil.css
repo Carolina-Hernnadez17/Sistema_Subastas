@@ -1,0 +1,192 @@
+﻿/* Contenedor general: ancho completo, sin centrar */
+.Uperfil-container {
+    max-width: 100%;
+    padding: 2rem 1rem;
+    font-family: Arial, sans-serif;
+    color: #222;
+}
+
+/* Título principal */
+.Uperfil-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    color: #6f4832;
+}
+
+/* Alertas */
+.Uperfil-alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 5px;
+    padding: 0.8rem 1rem;
+    margin-bottom: 1rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Uperfil-alert-info {
+    background-color: #cce5ff;
+    color: #004085;
+    border-radius: 5px;
+    padding: 0.8rem 1rem;
+    margin-top: 1rem;
+}
+
+/* Layout en columnas centradas */
+.Uperfil-row {
+    display: flex;
+    gap: 2rem;
+    justify-content: center; /* CENTRAR columnas */
+    flex-wrap: wrap;
+}
+
+/* Columnas con anchura mayor y centradas */
+.Uperfil-col-left,
+.Uperfil-col-right {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    box-sizing: border-box;
+    max-width: 480px; /* ancho máximo para columnas */
+    width: 100%; /* para que responsive funcione */
+}
+
+/* Para columna derecha con scroll */
+.Uperfil-col-right {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Scroll para valoraciones */
+.Uperfil-valoraciones-scroll {
+    max-height: 400px; /* altura fija para scroll */
+    overflow-y: auto;
+    padding-right: 0.5rem; /* espacio para scroll */
+}
+
+/* Definiciones de lista de descripción */
+.Uperfil-dl dt {
+    font-weight: bold;
+    margin-top: 1rem;
+    color: #6f4832;
+}
+
+.Uperfil-dl dd {
+    margin-left: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Links */
+.Uperfil-links {
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+.Uperfil-link {
+    text-decoration: none;
+    color: #6f4832;
+    font-weight: 600;
+}
+
+    .Uperfil-link:hover {
+        text-decoration: underline;
+    }
+
+/* Lista valoraciones */
+.Uperfil-list-group {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.Uperfil-list-group-item {
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 4px rgba(0,0,0,0.05);
+    font-size: 0.95rem;
+}
+
+/* Sección general para reportes y gráficos */
+.Uperfil-reports-section,
+.Uperfil-graphs-section {
+    margin-top: 3rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    .Uperfil-reports-section h3,
+    .Uperfil-graphs-section h3 {
+        color: #6f4832;
+        margin-bottom: 1rem;
+        font-weight: 700;
+        border-bottom: 2px solid #6f4832;
+        padding-bottom: 0.3rem;
+    }
+
+/* Contenedor flexible para cards */
+.Uperfil-cards-container {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    justify-content: start;
+}
+
+/* Cards estilo botón */
+.Uperfil-card-link {
+    background-color: #6f4832;
+    color: white;
+    padding: 1rem 1.4rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(111, 72, 50, 0.4);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    flex: 1 1 220px;
+    text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+}
+
+    .Uperfil-card-link:hover,
+    .Uperfil-card-link:focus {
+        color: black;
+        background-color: #aa9285;
+        box-shadow: 0 5px 15px rgba(80, 53, 30, 0.7);
+        outline: none;
+    }
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .Uperfil-row {
+        flex-direction: column;
+        align-items: center; /* centrar columnas en móvil */
+    }
+
+    .Uperfil-col-left,
+    .Uperfil-col-right {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    /* Scroll para valoraciones menor */
+    .Uperfil-valoraciones-scroll {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 600px) {
+    .Uperfil-cards-container {
+        justify-content: center;
+    }
+
+    .Uperfil-card-link {
+        flex: 1 1 100%;
+        max-width: 320px;
+    }
+}

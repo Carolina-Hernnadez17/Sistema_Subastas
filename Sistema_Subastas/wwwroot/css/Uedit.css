@@ -1,0 +1,104 @@
+﻿.Uedit-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(111,72,50,0.2);
+    font-family: Arial, sans-serif;
+    color: #222;
+}
+
+.Uedit-title {
+    text-align: center;
+    color: #6f4832;
+    font-size: 2rem;
+    margin-top: 1rem;
+}
+
+.Uedit-subtitle {
+    color: #6f4832;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.Uedit-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.Uedit-group {
+    margin-bottom: 1.3rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.Uedit-label {
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #6f4832;
+}
+
+.Uedit-input {
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+    outline: none;
+}
+
+    .Uedit-input:focus {
+        border-color: #6f4832;
+        box-shadow: 0 0 5px rgba(111,72,50,0.5);
+    }
+
+.Uedit-error {
+    color: #b00020;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+.Uedit-button {
+    background-color: #6f4832;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    padding: 0.8rem 0;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .Uedit-button:hover,
+    .Uedit-button:focus {
+        background-color: #50351e;
+        box-shadow: 0 0 10px rgba(80,53,30,0.7);
+        outline: none;
+    }
+
+.Uedit-backlink {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+    .Uedit-backlink a {
+        color: #6f4832;
+        font-weight: 600;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+        .Uedit-backlink a:hover {
+            text-decoration: underline;
+        }
+
+/* Responsive */
+@media (max-width: 600px) {
+    .Uedit-container {
+        margin: 1rem;
+        padding: 1rem;
+    }
+}

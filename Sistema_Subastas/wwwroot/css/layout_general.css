@@ -143,3 +143,24 @@ html, body {
     .page-wrapper > .container {
         flex: 1;
     }
+/* Ajustes para el dropdown en navbar */
+
+.navbar .nav-item.d-flex .btn-link {
+    font-size: 1rem;
+    color: #000; /* o el color de texto que uses en navbar */
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+    .navbar .nav-item.d-flex .btn-link:hover,
+    .navbar .nav-item.d-flex .btn-link:focus {
+        text-decoration: underline;
+        color: #333; /* color hover, ajusta según tu paleta */
+    }
+
+/* Opcional: cambiar tamaño del dropdown y alineación */
+.navbar .dropdown-menu {
+    min-width: 200px;
+}

@@ -62,7 +62,7 @@ namespace Sistema_Subastas.Controllers
                 HttpContext.Session.SetString("NombreUser", user.nombre);
 
                 TempData["UserId"] = user.id;
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "Imagenes_articulos");
             }
             catch (Exception ex)
             {

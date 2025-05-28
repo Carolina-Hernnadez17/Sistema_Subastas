@@ -5,61 +5,93 @@
     var valoracion = ViewBag.valoraciones as IEnumerable<dynamic>;
 }
 
-<h1>Detalles del perfil</h1>
-<link href="~/css/Style1.css" rel="stylesheet" />
+<h1 class="Uperfil-title">Detalles del perfil</h1>
+<link href="~/css/Uperfil.css" rel="stylesheet" />
 
 @if (@TempData["SeEdito"] != null)
 {
-    <div class="alert alert-success">@TempData["SeEdito"]</div>
+    <div class="Uperfil-alert-success">@TempData["SeEdito"]</div>
 }
 
-<div class="container">
-    <div class="row">
+<div class="Uperfil-container">
+    <div class="Uperfil-row">
         <!-- Columna izquierda: Detalle del usuario -->
-        <div class="col-md-6">
+        <div class="Uperfil-col Uperfil-col-left">
             <h4>Información:</h4>
             <hr />
-            <dl class="row">
-                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.nombre)</dt>
-                <dd class="col-sm-8">@Html.DisplayFor(model => model.nombre)</dd>
-                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.apellido)</dt>
-                <dd class="col-sm-8">@Html.DisplayFor(model => model.apellido)</dd>
-                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.correo)</dt>
-                <dd class="col-sm-8">@Html.DisplayFor(model => model.correo)</dd>
-                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.telefono)</dt>
-                <dd class="col-sm-8">@Html.DisplayFor(model => model.telefono)</dd>
-                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.direccion)</dt>
-                <dd class="col-sm-8">@Html.DisplayFor(model => model.direccion)</dd>
-                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.fecha_registro)</dt>
-                <dd class="col-sm-8">@Html.DisplayFor(model => model.fecha_registro)</dd>
+            <dl class="Uperfil-dl">
+                <dt>@Html.DisplayNameFor(model => model.nombre)</dt>
+                <dd>@Html.DisplayFor(model => model.nombre)</dd>
+                <dt>@Html.DisplayNameFor(model => model.apellido)</dt>
+                <dd>@Html.DisplayFor(model => model.apellido)</dd>
+                <dt>@Html.DisplayNameFor(model => model.correo)</dt>
+                <dd>@Html.DisplayFor(model => model.correo)</dd>
+                <dt>@Html.DisplayNameFor(model => model.telefono)</dt>
+                <dd>@Html.DisplayFor(model => model.telefono)</dd>
+                <dt>@Html.DisplayNameFor(model => model.direccion)</dt>
+                <dd>@Html.DisplayFor(model => model.direccion)</dd>
+                <dt>@Html.DisplayNameFor(model => model.fecha_registro)</dt>
+                <dd>@Html.DisplayFor(model => model.fecha_registro)</dd>
             </dl>
-            <div>
-                <a asp-action="Edit" asp-route-id="@Model?.id">Editar</a> |
-                <a asp-action="Calificar" asp-route-id="@Model?.id">Calificar Usuarios</a>
+            <div class="Uperfil-links">
+                <a asp-action="Edit" asp-route-id="@Model?.id" class="Uperfil-link">Editar</a> |
             </div>
         </div>
 
         <!-- Columna derecha: Valoraciones -->
-        <div class="col-md-6">
+        <!-- Columna derecha: Valoraciones -->
+        <div class="Uperfil-col Uperfil-col-right">
             <h4>Valoraciones</h4>
             <hr />
-            @if (valoracion != null && valoracion.Any())
-            {
-                <ul class="list-group">
-                    @foreach (var val in valoracion)
-                    {
-                        <li class="list-group-item">
-                            <strong>Puntuación:</strong> @val.puntuacion <br />
-                            <strong>Comentario:</strong> @val.comentario <br />
-                            <strong>Fecha:</strong> @val.fecha.ToString("dd/MM/yyyy")
-                        </li>
-                    }
-                </ul>
-            }
-            else
-            {
-                <div class="alert alert-info">Este usuario aún no tiene valoraciones.</div>
-            }
+            <div class="Uperfil-valoraciones-scroll">
+                @if (valoracion != null && valoracion.Any())
+                {
+                    <ul class="Uperfil-list-group">
+                        @foreach (var val in valoracion)
+                        {
+                            <li class="Uperfil-list-group-item">
+                                <strong>Puntuación:</strong> @val.puntuacion <br />
+                                <strong>Comentario:</strong> @val.comentario <br />
+                                <strong>Fecha:</strong> @val.fecha.ToString("dd/MM/yyyy")
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="Uperfil-alert-info">Este usuario aún no tiene valoraciones.</div>
+                }
+            </div>
         </div>
     </div>
+    <div class="Uperfil-reports-section">
+        <h3>Reportes</h3>
+        <div class="Uperfil-cards-container">
+            <a asp-controller="ReporteIngresos" asp-action="VerIngresos" class="Uperfil-card-link">
+                Reporte de Ingresos
+            </a>
+            <a asp-controller="ReporteIngresos" asp-action="SubastasActivas" class="Uperfil-card-link">
+                Reporte de Subastas Activas
+            </a>
+            <a asp-controller="ReporteIngresos" asp-action="SubastasCerradas" class="Uperfil-card-link">
+                Reporte de Subastas Cerradas y Adjudicadas
+            </a>
+        </div>
+    </div>
+
+    <div class="Uperfil-graphs-section">
+        <h3>Sección de Gráficos</h3>
+        <div class="Uperfil-cards-container">
+            <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-articuloId="5" class="Uperfil-card-link">
+                Gráfico de Pujas (Artículo 5)
+            </a>
+            <a asp-controller="ReporteIngresos" asp-action="GraficoArticulosPopulares" class="Uperfil-card-link">
+                Gráfico de Artículos Más Populares
+            </a>
+            <a asp-controller="ReporteIngresos" asp-action="GraficoDistribucionCategorias" class="Uperfil-card-link">
+                Gráfico de Distribución de Categorías de Artículos
+            </a>
+        </div>
+    </div>
+
 </div>
