@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -90,7 +89,7 @@ namespace Sistema_Subastas.Controllers
                 fecha = DateTime.Now
             };
 
-            var pujaMayor =  _context.pujas
+            var pujaMayor = _context.pujas
                 .Where(p => p.articulo_id == articulo.Id)
                 .OrderByDescending(p => p.monto)
                 .ThenBy(p => p.fecha_puja)
@@ -130,8 +129,8 @@ namespace Sistema_Subastas.Controllers
                                   select new
                                   {
                                       id_puja = p.Id,
-                                      Valor = p.monto,        
-                                      Fecha = p.fecha_puja,     
+                                      Valor = p.monto,
+                                      Fecha = p.fecha_puja,
                                       id_usuario = p.usuario_id,
                                       nombre_usuario = u.nombre
                                   }).ToList<dynamic>();
@@ -148,20 +147,13 @@ namespace Sistema_Subastas.Controllers
         }
 
 
-        public async Task<IActionResult> PujasUsuario(int usuarioId)
+        public async Task<IActionResult> PujasUsuario(string desde, string hasta, string estado)
         {
-            //var usuarioId = Request.Cookies["userId"];
-
-
-
+            int? usuarioId = HttpContext.Session.GetInt32("id_usuario");
             if (usuarioId == null)
-            {
                 return RedirectToAction("Login", "Usuarios");
-            }
 
-            //var usuarioIdInt = int.Parse(usuarioId);
-
-            var pujasUsuario = await _context.pujas
+            var query = _context.pujas
                 .Where(p => p.usuario_id == usuarioId)
                 .Join(_context.articulos, p => p.articulo_id, a => a.Id, (p, a) => new
                 {
@@ -169,13 +161,38 @@ namespace Sistema_Subastas.Controllers
                     ArticuloTitulo = a.titulo,
                     Monto = p.monto,
                     FechaPuja = p.fecha_puja,
-                    UsuarioId = p.usuario_id
-                })
-                .ToListAsync();
+                    UsuarioId = p.usuario_id,
+                    FechaFin = a.fecha_fin,
+                    EstadoSubasta = a.estado_subasta
+                }).AsQueryable();
 
+            // Filtro por fecha
+            if (!string.IsNullOrEmpty(desde) && DateTime.TryParse(desde, out DateTime desdeDate))
+            {
+                query = query.Where(p => p.FechaPuja >= desdeDate);
+            }
+            if (!string.IsNullOrEmpty(hasta) && DateTime.TryParse(hasta, out DateTime hastaDate))
+            {
+                query = query.Where(p => p.FechaPuja <= hastaDate);
+            }
+
+            // Filtro por estado
+            if (!string.IsNullOrEmpty(estado))
+            {
+                if (estado == "Activa")
+                {
+                    query = query.Where(p => p.FechaFin >= DateTime.Now);
+                }
+                else if (estado == "Finalizada")
+                {
+                    query = query.Where(p => p.FechaFin < DateTime.Now);
+                }
+            }
+
+
+            var pujasUsuario = await query.ToListAsync();
             ViewBag.Pujas = pujasUsuario;
             ViewBag.UsuarioId = usuarioId;
-
             return View();
         }
 
@@ -195,6 +212,7 @@ namespace Sistema_Subastas.Controllers
             _context.pujas.Remove(puja);
             await _context.SaveChangesAsync();
 
+            TempData["PujaCancelada"] = "¡Tu puja fue cancelada exitosamente!";
             return RedirectToAction(nameof(PujasUsuario));
         }
 

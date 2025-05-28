@@ -163,6 +163,7 @@
                 {
                     <a href="/Articulos/Edit/@ViewBag.Articulos.Id"
                        id="editarBtn"
+                       
                        class="btn-detalle azul flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
                        role="button">
                         <svg class="w-5 h-5 -ms-2 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -214,17 +215,34 @@
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function () {
-            let usuarioId = localStorage.getItem("userId");
-            const idVendedor = "@ViewBag.IdVendedor";
+                let usuarioId = localStorage.getItem("userId");
+        const idVendedor = "@ViewBag.IdVendedor";
+        const tienePujas = '@(ViewBag.TienePujas ?? false)'.toLowerCase() === 'true';
 
-            if (usuarioId && usuarioId === idVendedor) {
-                document.getElementById("editarBtn")?.style.setProperty("display", "flex");
-                document.getElementById("btn_puja")?.style.setProperty("display", "none");
-                document.getElementById("botonEliminar")?.style.setProperty("display", "flex");
-                document.getElementById("boton_reporte")?.style.setProperty("display", "none");
+        const usuarioIdNum = usuarioId ? Number(usuarioId) : null;
+        const idVendedorNum = idVendedor ? Number(idVendedor) : null;
+
+        const editarBtn = document.getElementById("editarBtn");
+
+        if (usuarioIdNum && idVendedorNum && usuarioIdNum === idVendedorNum && !tienePujas) {
+            editarBtn?.style.setProperty("display", "flex");
+        } else {
+            editarBtn?.style.setProperty("display", "none");
+        }
+
+            // Los otros botones: Ver Pujas, Reportar, Realizar Oferta deben estar siempre visibles
+            // Si algún botón específico de vendedor existe, ocúltalo aquí (ejemplo con botonEliminar)
+            const botonEliminar = document.getElementById("botonEliminar");
+            if (botonEliminar) {
+                if (usuarioIdNum === idVendedorNum) {
+                    botonEliminar.style.display = "flex";
+                } else {
+                    botonEliminar.style.display = "none";
+                }
             }
         });
+
+
 
         document.getElementById('vendedorLink').addEventListener('click', function () {
             const vendedorId = this.getAttribute('data-vendedor-id');

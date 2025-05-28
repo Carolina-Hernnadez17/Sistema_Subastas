@@ -1,55 +1,129 @@
 ﻿@{
     ViewData["Title"] = "Mis Pujas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var pujas = ViewBag.Pujas as IEnumerable<dynamic>;
 }
 
-<h1>@ViewData["Title"]</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/PujasUsuario.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+}
 
+<div class="pujas-wrapper container">
+    <h2 class="mb-4">Mis Pujas Realizadas</h2>
 
-<div id="pujas-table" style="display:none;">
-    @if (ViewBag.Pujas != null && ViewBag.Pujas.Count > 0)
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <label class="form-label">Desde</label>
+            <input type="date" name="desde" value="@Context.Request.Query["desde"]" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Hasta</label>
+            <input type="date" name="hasta" value="@Context.Request.Query["hasta"]" class="form-control" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Estado de Subasta</label>
+            <select name="estado" class="form-select">
+                <option value="">Todas</option>
+                <option value="Activa" selected="@(Context.Request.Query["estado"] == "Activa")">Activa</option>
+                <option value="Finalizada" selected="@(Context.Request.Query["estado"] == "Finalizada")">Finalizada</option>
+            </select>
+        </div>
+        <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </form>
+
+    @if (pujas != null && pujas.Any())
     {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Artículo</th>
-                    <th>Monto</th>
-                    <th>Fecha de Puja</th>
-                    <th>Acción</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var puja in ViewBag.Pujas)
-                {
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
                     <tr>
-                        <td>@puja.ArticuloTitulo</td>
-                        <td>@puja.Monto</td>
-                        <td>@puja.FechaPuja</td>
-                        <td>
-                            <form action="@Url.Action("EliminarPuja", "Pujas")" method="post">
-                                <input type="hidden" name="pujaId" value="@puja.PujaId" />
-                                <input type="hidden" name="usuarioId" value="@puja.UsuarioId" />
-                                <button type="submit" class="btn btn-danger">Eliminar</button>
-                            </form>
-                        </td>
+                        <th>Título del Artículo</th>
+                        <th>Monto Ofrecido</th>
+                        <th>Fecha de Puja</th>
+                        <th>Estado de Subasta</th>
+                        <th>Acciones</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var puja in pujas)
+                    {
+                        var finalizo = (DateTime)puja.FechaFin < DateTime.Now;
+
+                        <tr>
+                            <td>@puja.ArticuloTitulo</td>
+                            <td>$@puja.Monto</td>
+                            <td>@puja.FechaPuja.ToString("dd/MM/yyyy hh:mm tt")</td>
+                            <td>
+                                @if (finalizo)
+                                {
+                                    <span class="badge bg-secondary">Finalizada</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Activa</span>
+                                }
+                            </td>
+                            <td>
+                                <button type="button" class="btn-eliminar" data-bs-toggle="modal" data-bs-target="#modalPuja_@puja.PujaId">
+                                    🗑️ Eliminar
+                                </button>
+
+                                <!-- Modal de confirmación -->
+                                <div class="modal fade" id="modalPuja_@puja.PujaId" tabindex="-1" aria-labelledby="modalLabel_@puja.PujaId" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered modal-sm">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-danger" id="modalLabel_@puja.PujaId">Cancelar Puja</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                            </div>
+                                            <div class="modal-body text-center">
+                                                ¿Estás seguro que deseas cancelar tu puja?
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-between">
+                                                <form asp-controller="Pujas" asp-action="EliminarPuja" method="post">
+                                                    <input type="hidden" name="pujaId" value="@puja.PujaId" />
+                                                    <input type="hidden" name="usuarioId" value="@ViewBag.UsuarioId" />
+                                                    <button type="submit" class="btn btn-danger btn-sm">Cancelar mi Puja</button>
+                                                </form>
+                                                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Volver</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
     else
     {
-        <p>No has realizado ninguna puja aún.</p>
+        <div class="alert alert-info text-center">
+            No has realizado ninguna puja hasta el momento.
+        </div>
     }
 </div>
 
-<script>
-    // Obtener userId del localStorage y asignarlo al input oculto
-    document.addEventListener("DOMContentLoaded", function () {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-            document.getElementById("userId").value = userId;
-        } else {
-            alert("No se encontró el ID de usuario. Inicia sesión nuevamente.");
-        }
-    });
-</script>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const mensaje = '@TempData["PujaCancelada"]';
+            if (mensaje) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Puja cancelada!',
+                    text: mensaje,
+                    confirmButtonColor: '#2563eb',
+                    confirmButtonText: 'Entendido'
+                });
+            }
+        });
+    </script>
+}
