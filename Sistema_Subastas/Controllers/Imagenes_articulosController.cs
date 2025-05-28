@@ -65,6 +65,16 @@ namespace Sistema_Subastas.Controllers
             ViewBag.ArticuloCategorias = articuloCategorias;
             ViewBag.Categorias = categorias;
 
+            var pujaMayor = _context.pujas
+                .Where(p => p.articulo_id == articulo.Id)
+                .OrderByDescending(p => p.monto)
+                .ThenBy(p => p.fecha_puja)
+                .FirstOrDefault();
+            if (pujaMayor != null)
+            {
+                articulo.precio_venta = pujaMayor.monto;
+                _context.SaveChanges();
+            }
 
             return View(imagenes);
 
@@ -152,6 +162,17 @@ namespace Sistema_Subastas.Controllers
             if (imagenes_articulos == null)
             {
                 return NotFound();
+            }
+
+            var pujaMayor = _context.pujas
+                .Where(p => p.articulo_id == articulo.Id)
+                .OrderByDescending(p => p.monto)
+                .ThenBy(p => p.fecha_puja)
+                .FirstOrDefault();
+            if (pujaMayor != null)
+            {
+                articulo.precio_venta = pujaMayor.monto;
+                _context.SaveChanges();
             }
 
             return View(imagenes_articulos);
