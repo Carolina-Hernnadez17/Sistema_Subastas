@@ -95,6 +95,6 @@ app.MapHub<NotificacionHub>("/notificacionHub");
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Usuarios}/{action=Login}/{id?}");
+    pattern: "{controller=Imagenes_articulos}/{action=Index}/{id?}");
 
 app.Run();

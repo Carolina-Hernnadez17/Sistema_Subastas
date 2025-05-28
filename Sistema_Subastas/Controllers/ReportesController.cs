@@ -23,11 +23,14 @@ using iTextSharp.text.pdf;
 using PdfFont = iText.Kernel.Font.PdfFont;
 using PdfDocument = iText.Kernel.Pdf.PdfDocument;
 using PdfWriter = iText.Kernel.Pdf.PdfWriter;
+using Sistema_Subastas.Atributo;
 using iText.IO.Font.Constants;
 using iText.Kernel.Font;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class ReportesController : Controller
     {
         private readonly subastaDbContext _context;

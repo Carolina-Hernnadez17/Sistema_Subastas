@@ -10,9 +10,12 @@ using iText.Kernel.Font;
 using Newtonsoft.Json;
 using iText.Kernel.Colors;
 using iText.Layout.Borders;
+using Sistema_Subastas.Atributo;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class ReporteGraficoController : Controller
     {
         private readonly subastaDbContext _context;

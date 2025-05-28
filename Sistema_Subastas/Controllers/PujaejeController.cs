@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class PujaejeController : Controller
     {
 

@@ -7,11 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MySql.Data.MySqlClient;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 
 namespace Sistema_Subastas.Controllers
 {
+
     public class UsuariosController : Controller
     {
         private readonly subastaDbContext _context;
@@ -112,19 +114,22 @@ namespace Sistema_Subastas.Controllers
         //        return View();
         //    }
         //}
+        [SesionActiva]
         public ActionResult CerrarSesion()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Login", "Usuarios");
+            return RedirectToAction("Index", "Imagenes_articulos");
         }
 
         // GET: Usuarios
+        [SesionActiva]
         public async Task<IActionResult> Index()
         {
             return View(await _context.usuarios.ToListAsync());
         }
 
         //GET: Usuarios/Details/5
+        [SesionActiva]
         public async Task<IActionResult> Details()
         {
             int? usuarioId = HttpContext.Session.GetInt32("id_usuario");
@@ -273,6 +278,7 @@ namespace Sistema_Subastas.Controllers
             return RedirectToAction("Index", "Home"); // Redirige después de guardar
         }
         // GET: Usuarios/Edit/5
+        [SesionActiva]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -291,6 +297,7 @@ namespace Sistema_Subastas.Controllers
         // POST: Usuarios/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [SesionActiva]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,nombre,apellido,correo,telefono,direccion,contrasena,fecha_registro,estado")] usuarios usuarios)
@@ -339,6 +346,7 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Usuarios/Delete/5
+        [SesionActiva]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -357,6 +365,7 @@ namespace Sistema_Subastas.Controllers
         }
 
         // POST: Usuarios/Delete/5
+        [SesionActiva]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -513,7 +522,7 @@ namespace Sistema_Subastas.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-
+        [SesionActiva]
         [HttpGet]
         public IActionResult ObtenerValoraciones(int vendedorId)
         {

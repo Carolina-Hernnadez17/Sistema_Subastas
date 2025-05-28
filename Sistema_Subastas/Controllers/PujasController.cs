@@ -7,10 +7,13 @@ using iText.Commons.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class PujasController : Controller
     {
         private readonly subastaDbContext _context;

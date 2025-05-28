@@ -11,6 +11,7 @@ using Sistema_Subastas.Models;
 using MySql.Data.MySqlClient;
 using static iText.StyledXmlParser.Jsoup.Select.Evaluator;
 using Sistema_Subastas.Services;
+using Sistema_Subastas.Atributo;
 
 namespace Sistema_Subastas.Controllers
 {
@@ -156,6 +157,8 @@ namespace Sistema_Subastas.Controllers
 
 
         // GET: Imagenes_articulos/Create
+        [SesionActiva]
+
         public IActionResult Create(int articulo_id)
         {
             var model = new imagenes_articulos { articulo_id = articulo_id };
@@ -163,7 +166,7 @@ namespace Sistema_Subastas.Controllers
         }
 
 
-
+        [SesionActiva]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(int articulo_id, List<IFormFile> files)
@@ -220,7 +223,7 @@ namespace Sistema_Subastas.Controllers
         }
 
 
-
+        [SesionActiva]
         [HttpPost("Eliminar/{id}")]
         [ValidateAntiForgeryToken]
         public IActionResult Eliminar(int id)
@@ -238,6 +241,8 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Imagenes_articulos/Edit/5
+        [SesionActiva]
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -256,6 +261,8 @@ namespace Sistema_Subastas.Controllers
         // POST: Imagenes_articulos/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [SesionActiva]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("id,articulo_id,url_imagen")] imagenes_articulos imagenes_articulos)
@@ -289,6 +296,8 @@ namespace Sistema_Subastas.Controllers
         }
 
         // GET: Imagenes_articulos/Delete/5
+        [SesionActiva]
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -307,6 +316,8 @@ namespace Sistema_Subastas.Controllers
         }
 
         // POST: Imagenes_articulos/Delete/5
+        [SesionActiva]
+
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -321,11 +332,14 @@ namespace Sistema_Subastas.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         private bool imagenes_articulosExists(int id)
         {
             return _context.imagenes_articulos.Any(e => e.id == id);
         }
         // Parte de notificaciones, cierre de subastas y ganadores
+        [SesionActiva]
+
         public void MarcarSubastasFinalizadas()
         {
             var ahora = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");

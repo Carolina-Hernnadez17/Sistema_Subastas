@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    int? usuarioId = Context.Session.GetInt32("id_usuario");
+   
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,51 +30,67 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Imagenes_articulos" asp-action="Index">Home</a>
                             </li>
-                            <li class="nav-item">
-                                <a id="venderLink" class="nav-link text-dark" href="#">Publicar</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Articulos" asp-action="Historial">Mis publicaciones</a>
-                            </li>
+                        
+                            @if (usuarioId != null){
+                                <li class="nav-item">
+                                    <a id="venderLink" class="nav-link text-dark" asp-controller="Articulos" asp-action="Create" >Publicar</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Articulos" asp-action="Historial">Mis publicaciones</a>
+                                </li>
+                            }
+                            else{
+                                <li class="nav-item">
+                                    <a id="venderLink" class="nav-link text-dark" asp-controller="Usuarios" asp-action="Login">Publicar</a>
+                                </li>
+
+                            }
+                            
                             
                         </ul>
 
                         <ul class="navbar-nav ms-auto">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Notificaciones" asp-action="notificacion">Notificaciones</a>
-                            </li>
-                            <li class="nav-item d-flex align-items-center">
-                                <a id="perfilLink" class="nav-link text-dark me-2" href="#">
-                                    Mi perfil
-                                </a>
+                             @if (usuarioId != null){
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Notificaciones" asp-action="notificacion">Notificaciones</a>
+                                </li>
+                                <li class="nav-item d-flex align-items-center">
+                                    <a id="perfilLink" class="nav-link text-dark me-2" href="#">
+                                        Mi perfil
+                                    </a>
 
-                                <div class="dropdown">
-                                    <button class="btn btn-link text-dark p-0 dropdown-toggle" type="button" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <span class="visually-hidden">Menú perfil</span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown" style="min-width: 200px;">
-                                        <li>
-                                            <a asp-controller="Ventas" asp-action="Historial" class="dropdown-item">
-                                                Ver Historial de Ventas
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a asp-controller="Ventas" asp-action="HistorialCompras" class="dropdown-item">
-                                                Ver Historial de Compras
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a asp-controller="Pujas" asp-action="PujasUsuario" class="dropdown-item">
-                                                Ver Mis Pujas
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link text-dark logout-link" asp-area="" asp-controller="Usuarios" asp-action="CerrarSesion">Cerrar Sesión</a>
-                            </li>
+                                    <div class="dropdown">
+                                        <button class="btn btn-link text-dark p-0 dropdown-toggle" type="button" id="perfilDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="visually-hidden">Menú perfil</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown" style="min-width: 200px;">
+                                            <li>
+                                                <a asp-controller="Ventas" asp-action="Historial" class="dropdown-item">
+                                                    Ver Historial de Ventas
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a asp-controller="Ventas" asp-action="HistorialCompras" class="dropdown-item">
+                                                    Ver Historial de Compras
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a asp-controller="Pujas" asp-action="PujasUsuario" class="dropdown-item">
+                                                    Ver Mis Pujas
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark logout-link" asp-area="" asp-controller="Usuarios" asp-action="CerrarSesion">Cerrar Sesión</a>
+                                </li>
+                             }
+                             else{
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark logout-link" asp-area="" asp-controller="Usuarios" asp-action="Login">Iniciar Sesión</a>
+                                </li>
+                             }
                         </ul>
                     </div>
                 </div>

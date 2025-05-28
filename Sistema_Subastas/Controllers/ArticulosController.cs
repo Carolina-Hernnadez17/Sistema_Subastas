@@ -7,9 +7,12 @@ using CloudinaryDotNet;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
+using Sistema_Subastas.Atributo;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class ArticulosController : Controller
     {
         private readonly subastaDbContext _context;

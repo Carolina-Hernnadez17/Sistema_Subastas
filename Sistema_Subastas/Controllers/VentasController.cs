@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
     public class VentasController : Controller
     {
         private readonly subastaDbContext _context;

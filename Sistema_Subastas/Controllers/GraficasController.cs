@@ -4,9 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Sistema_Subastas.Models;
 using Newtonsoft.Json;
 using iText.Commons.Actions.Contexts;
+using Sistema_Subastas.Atributo;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class GraficasController : Controller
     {
         private readonly subastaDbContext _subastaDbContext;

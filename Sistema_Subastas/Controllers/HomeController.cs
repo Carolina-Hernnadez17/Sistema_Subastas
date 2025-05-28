@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Sistema_Subastas.Atributo;
 using Sistema_Subastas.Models;
 using Sistema_Subastas.Services;
 using System.Diagnostics;
 
 namespace Sistema_Subastas.Controllers
 {
+    [SesionActiva]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
