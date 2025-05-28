@@ -1,10 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@* <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Sistema_Admin</title>
-    <link rel="stylesheet" href="~/css/layoutAdmin.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+   <link rel="stylesheet" href="@Url.Content("~/css/layoutAdmin.css")" />
+
 </head>
 <body>
     <div class="navadmin-wrapper">
@@ -32,6 +35,69 @@
             </div>
         </footer>
     </div>
+
+    @RenderSection("Scripts", required: false)
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+</body>
+
+</html>
+ *@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema_Admin</title>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layoutAdmin.css" asp-append-version="true" />
+</head>
+<body>
+    <div class="navadmin-wrapper">
+        <header>
+            <nav class="navadmin-navbar">
+                <div class="navadmin-container">
+                    <a class="navadmin-brand" asp-controller="HomeAdmin" asp-action="Index">Sistema Subastas</a>
+                    <div class="navadmin-links">
+                        <a class="navadmin-link" asp-controller="HomeAdmin" asp-action="Index">Inicio</a>
+                        <a class="navadmin-link" asp-controller="Reportes" asp-action="ArticulosMasPopulares">Reporte Artículos</a>
+                        <a class="navadmin-link" asp-controller="Categorias" asp-action="Index">Agregar Categorías</a>
+                        <a class="navadmin-link logout" asp-controller="Usuarios" asp-action="CerrarSesion">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="navadmin-content">
+            @RenderBody()
+        </main>
+
+        <footer class="navadmin-footer">
+            &copy; 2025 - Sistema_Subastas Admin
+@*             <div class="navadmin-container">
+                &copy; 2025 - Sistema_Subastas Admin
+            </div> *@
+        </footer>
+    </div>
+    <!-- Al final del <body> en LayoutAdmin.cshtml -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- Highcharts scripts -->
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     @RenderSection("Scripts", required: false)
 </body>

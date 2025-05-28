@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     ViewData["Title"] = "Distribución de Subastas";
     Layout = "~/Views/Shared/LayoutAdmin.cshtml";
 }
@@ -13,6 +13,49 @@
 
     <script>
         $(document).ready(function() {
+            var datosGrafica = @Html.Raw(ViewBag.DatosGrafica);
+
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Distribución de Estados de Subastas'
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>{point.y}</b>'
+                },
+                accessibility: {
+                    point: {
+                        valueSuffix: ''
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            format: '<b>{point.name}</b>: {point.y}'
+                        }
+                    }
+                },
+                series: datosGrafica.series
+            });
+        });
+    </script>
+}
+ *@
+@{
+    ViewData["Title"] = "Distribución de Subastas";
+    Layout = "~/Views/Shared/LayoutAdmin.cshtml";
+}
+
+<div id="container" style="height: 400px;"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
             var datosGrafica = @Html.Raw(ViewBag.DatosGrafica);
 
             Highcharts.chart('container', {
