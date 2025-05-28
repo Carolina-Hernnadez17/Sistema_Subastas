@@ -6,6 +6,28 @@
     justify-content: center; /* Centrar grid cuando haya pocas cards */
 }
 
+.custom-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #3d3d3d;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    z-index: 10;
+}
+
+    .custom-arrow:hover {
+        background-color: #b0a49c; /* Un poco más claro al pasar el mouse */
+    }
+
 /* Ajuste para pantallas pequeñas */
 @media (max-width: 768px) {
     .contenedor-grid {
@@ -20,7 +42,15 @@
     }
 
     .imgen_p {
-        height: 160px; /* Ajustar altura imagen en móvil para que sea más compacta */
+        height: 160px !important; /* Ajustar altura imagen en móvil para que sea más compacta */
+    }
+
+    /* Ocultar botones carousel en móvil */
+    .carousel-control-prev.custom-carousel-btn,
+    .carousel-control-next.custom-carousel-btn {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
 }
 
@@ -33,7 +63,7 @@
     }
 
     .imgen_p {
-        height: 130px;
+        height: 130px !important;
     }
 
     .card h1 {
@@ -49,7 +79,6 @@
 .card {
     width: 100%;
     max-width: 300px;
-    height: 400px;
     margin: 0 auto;
     display: block;
     text-decoration: none;
@@ -74,6 +103,7 @@
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    position: relative;
 }
 
     .imgen_p img {
@@ -82,6 +112,7 @@
         object-fit: cover;
         object-position: center;
         display: block;
+        border-radius: 0.75rem 0.75rem 0 0; /* bordes redondeados solo arriba */
     }
 
 /* Contenido de tarjeta */
@@ -122,12 +153,14 @@
 
 /* Estilo de inputs y selects */
 input[type="text"],
+input[type="number"],
 select {
     padding: 0.5rem;
     border-radius: 0.5rem;
     border: 1px solid #ccc;
     margin-right: 0.5rem;
     margin-bottom: 1rem;
+    font-size: 1rem;
 }
 
 /* Alertas */
@@ -147,3 +180,88 @@ select {
         position: absolute;
         visibility: hidden;
     }
+
+/* Carousel */
+
+.carousel-inner {
+    width: 100%;
+    height: 220px; /* misma altura que .imgen_p */
+    overflow: hidden;
+    position: relative; /* para posicionar items */
+}
+
+/* Transición para cambio automático y animación suave */
+.carousel-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transform: translateX(0) scale(0.9);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    pointer-events: none; /* no interactiva si no está visible */
+}
+
+    .carousel-item.active {
+        position: relative;
+        opacity: 1;
+        transform: translateX(0) scale(1);
+        pointer-events: auto; /* interactiva solo la activa */
+    }
+
+/* Responsive alturas carousel */
+@media (max-width: 768px) {
+    .carousel-inner {
+        height: 160px !important;
+    }
+
+    .imgen_p {
+        height: 160px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-inner {
+        height: 130px !important;
+    }
+
+    .imgen_p {
+        height: 130px !important;
+    }
+}
+
+/* Mostrar botones en pantallas grandes */
+@media (min-width: 769px) {
+    .carousel-control-prev.custom-carousel-btn,
+    .carousel-control-next.custom-carousel-btn {
+        display: flex !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        z-index: 20;
+    }
+}
+
+/* Ocultar botones en móvil */
+@media (max-width: 768px) {
+    .carousel-control-prev.custom-carousel-btn,
+    .carousel-control-next.custom-carousel-btn {
+        display: none !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+}
+
+.carousel.slide.imgen_p,
+.carousel-inner,
+.carousel-item {
+    touch-action: pan-y;
+}
+
+
+
+/* Permite scroll vertical y cursor de agarre para swipe */
+.carousel.slide.imgen_p {
+    touch-action: pan-y;
+    cursor: grab;
+}

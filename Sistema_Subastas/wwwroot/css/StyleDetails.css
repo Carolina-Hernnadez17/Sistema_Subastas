@@ -128,6 +128,20 @@ hr.my-6.md\:my-8.border-gray-200.dark\:border-gray-800 {
     color: #4b5563;
 }
 
+/* Ícono dentro del botón Editar Artículo */
+.detalle-botones a#editarBtn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0; /* evitar que el ícono se reduzca */
+    vertical-align: middle;
+}
+
+/* Ajuste para el gap (espaciado) si es necesario */
+.detalle-botones a#editarBtn {
+    gap: 0.4rem; /* mantiene separación entre ícono y texto */
+}
+
+
 /* Botones contenedor */
 .detalle-botones {
     margin-top: 1.5rem;
