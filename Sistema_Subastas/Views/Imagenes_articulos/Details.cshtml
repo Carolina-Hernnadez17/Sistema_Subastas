@@ -15,28 +15,30 @@
     <link href="~/css/StyleDetails.css" rel="stylesheet" />
 }
 
-<section class="detalle-producto-wrapper antialiased md:py-16 dark:bg-gray-900 py-8">
-    <a asp-controller="Imagenes_articulos"
-       asp-action="Index"
-       class="btn_volver flex items-center justify-center text-sm font-medium text-gray-900 focus:outline-none bg-gray-200 rounded-lg border border-gray-300 hover:bg-gray-300
+<a asp-controller="Imagenes_articulos"
+   asp-action="Index"
+   class="btn_volver flex items-center justify-center text-sm font-medium text-gray-900 focus:outline-none bg-gray-200 rounded-lg border border-gray-300 hover:bg-gray-300
               hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
               dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-       role="button">
-        <svg class="w-5 h-5 -ms-2 me-2"
-             aria-hidden="true"
-             xmlns="http://www.w3.org/2000/svg"
-             width="24"
-             height="24"
-             fill="none"
-             viewBox="0 0 24 24">
-            <path stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
-        Volver
-    </a>
+   role="button">
+    <svg class="w-5 h-5 -ms-2 me-2"
+         aria-hidden="true"
+         xmlns="http://www.w3.org/2000/svg"
+         width="24"
+         height="24"
+         fill="none"
+         viewBox="0 0 24 24">
+        <path stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    </svg>
+    Volver
+</a>
+
+<section class="detalle-producto-wrapper antialiased md:py-16 dark:bg-gray-900 py-8">
+    
 
     <div class="detalle-producto-contenido">
         <div id="carouselArticulo" class="detalle-imagen carousel slide mt-lg-5" data-bs-ride="carousel">

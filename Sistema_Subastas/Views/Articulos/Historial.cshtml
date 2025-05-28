@@ -5,13 +5,15 @@
 }
 
 <link rel="stylesheet" href="~/css/HistorialPublicaciones.css" />
+<link href="~/css/colorCafe.css" rel="stylesheet" />
+
 
 <div class="publiUsua-container mt-5">
-    <h2 class="publiUsua-title mb-4 text-success">Historial de Publicaciones</h2>
+    <h2 class="publiUsua-title mb-4 text-cafe">Historial de Publicaciones</h2>
 
     <!-- FILTROS -->
     <div class="publiUsua-card shadow mb-4">
-        <div class="publiUsua-card-header bg-success text-white">Filtrar publicaciones</div>
+        <div class="publiUsua-card-header colorc text-white">Filtrar publicaciones</div>
         <div class="publiUsua-card-body">
             <form id="formFiltros" onsubmit="aplicarFiltros(event)">
                 <div class="publiUsua-row g-3 align-items-end">
@@ -59,7 +61,7 @@
                         </select>
                     </div>
                     <div class="publiUsua-col-md-2 text-end">
-                        <button type="submit" class="publiUsua-btn-success w-100">Buscar</button>
+                        <button type="submit" class="@* publiUsua-btn-success *@ colorc w-100">Buscar</button>
                     </div>
                 </div>
             </form>
@@ -68,7 +70,7 @@
 
     <!-- TABLA -->
     <div class="publiUsua-table-responsive">
-        <table id="tablaPublicaciones" class="publiUsua-table display table-bordered align-middle bg-white shadow-sm" style="width:100%">
+        <table id="tablaPublicaciones" class="publiUsua-table display table-bordered align-middle  bg-white shadow-sm" style="width:100%">
             <thead class="publiUsua-table-success text-center">
                 <tr>
                     <th>Imagen</th>
@@ -126,11 +128,15 @@
                             }
                             else
                             {
-                                <span class="text-dark">No se puede eliminar ni republicar porque está en proceso o tiene pujas asociadas</span>
-                                <a asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-id="@item.Articulo.Id" class="Uperfil-card-link">
-                                    Gráfico de Pujas
-                                </a>
+                                <span class="text-dark">No se puede eliminar ni republicar</span>
                             }
+							<br />
+                            <button class="publiUsua-btn-outline-info">
+                                <a class="text-black" asp-controller="ReporteIngresos" asp-action="GraficoEvolucionPujas" asp-route-articuloId="@item.Articulo.Id">
+                                    Gráfico de Pujas del articulo
+                                </a>
+
+                            </button>
                         </td>
                     </tr>
                 }
