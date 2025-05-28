@@ -522,7 +522,7 @@ namespace Sistema_Subastas.Controllers
 
             return RedirectToAction("Index", "Home");
         }
-        [SesionActiva]
+
         [HttpGet]
         public IActionResult ObtenerValoraciones(int vendedorId)
         {
