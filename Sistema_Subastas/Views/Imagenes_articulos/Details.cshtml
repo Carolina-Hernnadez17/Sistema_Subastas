@@ -1,309 +1,122 @@
 ﻿@model List<Sistema_Subastas.Models.imagenes_articulos>
 
-@* @{
-    Layout = "~/Views/Shared/_LayoutE.cshtml";
-} *@
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <title></title>
-    <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
-    
-   
-    <link rel="stylesheet" href="@Url.Content("~/css_E/StyleE.css")" />
-    
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/StyleE.css" />
+}
 
 
-</head>
-<body>
-    <section class="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
-        <a asp-controller="Imagenes_articulos"
-           asp-action="Index"
-           class="btn_volver flex items-center justify-center  text-sm font-medium text-gray-900 focus:outline-none bg-gray-200 rounded-lg border border-gray-300 hover:bg-gray-300
-                          hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
-                          dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-           role="button">
-            <svg class="w-5 h-5 -ms-2 me-2"
-                 aria-hidden="true"
-                 xmlns="http://www.w3.org/2000/svg"
-                 width="24"
-                 height="24"
-                 fill="none"
-                 viewBox="0 0 24 24">
-                <path stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Volver
-        </a>
-        <div class="max-w-screen-xl px-4 mx-auto 2xl:px-0">
-            
-            <div class="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16 item-subasta">
-                
 
-                <div id="carouselArticulo" class="carousel slide mt-lg-5" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @for (int i = 0; i < Model.Count; i++)
-                        {
-                            var imagen = Model[i];
-                            <div class="carousel-item @(i == 0 ? "active" : "")">
-                                <img src="@imagen.url_imagen" class="d-block w-100 img-zoom" alt="Imagen de @ViewBag.Articulos.titulo" />
-                            </div>
-                        }
+<section class="detalle-producto-wrapper antialiased md:py-16 dark:bg-gray-900 py-8">
+    <a asp-controller="Imagenes_articulos"
+       asp-action="Index"
+       class="btn_volver flex items-center justify-center text-sm font-medium text-gray-900 focus:outline-none bg-gray-200 rounded-lg border border-gray-300 hover:bg-gray-300
+              hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
+              dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+       role="button">
+        <svg class="w-5 h-5 -ms-2 me-2"
+             aria-hidden="true"
+             xmlns="http://www.w3.org/2000/svg"
+             width="24"
+             height="24"
+             fill="none"
+             viewBox="0 0 24 24">
+            <path stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg>
+        Volver
+    </a>
+
+    <div class="detalle-producto-contenido">
+        <div id="carouselArticulo" class="detalle-imagen carousel slide mt-lg-5" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    var imagen = Model[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <img src="@imagen.url_imagen" class="d-block w-100 img-zoom" alt="Imagen de @ViewBag.Articulos.titulo" />
                     </div>
-
-                    <button class="carousel-control-prev custom-carousel-btn " type="button" data-bs-target="#carouselArticulo" data-bs-slide="prev">
-                        <span class="custom-arrow bg-black" aria-hidden="true">&#10094;</span>
-                    </button>
-
-                    <button class="carousel-control-next custom-carousel-btn " type="button" data-bs-target="#carouselArticulo" data-bs-slide="next">
-                        <span class="custom-arrow bg-black" aria-hidden="true">&#10095;</span>
-                    </button>
-                </div>
-
-                <div class="mt-6 sm:mt-8 mt-lg-5">
-                    
-                    <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-dark">
-                        @ViewBag.Articulos.titulo
-                    </h1>
-
-                    <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
-                   @*  <div class=" d-flex">
-                        <h5>Vendedor: </h5>
-                        <a href=""></a>
-                        <p class="texto">@ViewBag.Vendedor</p>
-                        
-                    </div> *@
-
-                    <div class="d-flex mb-5">
-                        <h5>Vendedor: </h5>
-                        <a href="javascript:void(0);" class="texto ms-2" id="vendedorLink" data-vendedor-id="@ViewBag.IdVendedor">
-                            @ViewBag.Vendedor
-                        </a>
-                    </div>
-
-
-                    <div class=" mt-4 ">
-                        <h5 class="fecha_subasta">Finaliza en: @ViewBag.Fecha</h5>
-                        
-                    </div>
-
-
-                    <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
-					<div class=" d-flex">
-                        <h5>Estado del articulo: </h5>
-                        <p class=" texto" fw-bold">@ViewBag.Articulos.estado</p>
-					</div>
-                    <div class=" d-flex">
-                        <h5>Categoria: </h5>
-                        <p class="texto">@ViewBag.CategoriaNombre</p>
-                    </div>
-
-                    <div class="">
-                        <h5>Descripción: </h5>
-                        <p class="texto" >@ViewBag.Articulos.descripcion</p>
-                    </div>
-
-                    
-                    
-
-                    <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
-                    
-
-                    <div class="mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
-                        @if (ViewBag.Estado.ToString().Trim().Equals("Publicado") && !ViewBag.Fecha.ToString().Trim().Equals("Subasta Cerrada"))
-                        {
-                            <a asp-controller="Pujas"
-                               asp-action="Realizar"
-                               asp-route-id="@ViewBag.Articulos.Id"
-                               title=""
-                               id="btn_puja"
-                               class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100
-                                    hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
-                                    dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                               role="button">
-                                <svg class="w-5 h-5 -ms-2 me-2"
-                                     aria-hidden="true"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     width="24"
-                                     height="24"
-                                     fill="none"
-                                     viewBox="0 0 24 24">
-                                    <path stroke="currentColor"
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          stroke-width="2"
-                                          d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
-                                </svg>
-                                Realizar Oferta
-                            </a>
-
-                           
-
-
-                            <a asp-controller="Disputas"
-                               asp-action="Create"
-                               asp-route-articulo_id="@ViewBag.Articulos.Id"
-                               asp-route-vendedor_id="@ViewBag.IdVendedor"
-                               class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100
-                                    hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
-                                    dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                               role="button" id="boton_reporte">
-                                <svg class="w-5 h-5 -ms-2 me-2"
-                                     aria-hidden="true"
-                                     xmlns="http://www.w3.org/2000/svg"
-                                     width="24"
-                                     height="24"
-                                     fill="none"
-                                     viewBox="0 0 24 24">
-                                    <path stroke="currentColor"
-                                          stroke-linecap="round"
-                                          stroke-linejoin="round"
-                                          stroke-width="2"
-                                          d="M12 5v14m7-7H5" />
-                                </svg>
-                                Reportar
-                            </a>
-
-                            @if (ViewBag.CantidadP == 0)
-                            {
-
-                                <div id="editarBtn" style="display: none;">
-                                    <a href="/Articulos/Edit/@ViewBag.Articulos.Id"
-                                       class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">
-                                        <svg class="w-5 h-5 -ms-2 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M16.862 3.487a2.41 2.41 0 0 1 3.41 3.41L6.412 20.758a1.5 1.5 0 0 1-.754.403l-3.003.584.585-3.002a1.5 1.5 0 0 1 .403-.754L16.862 3.487Z" />
-                                        </svg>
-                                        Editar Artículo
-                                    </a>
-                                </div>
-
-
-
-                            }
-
-                            @if (ViewBag.usuarioId != null && ViewBag.idVendedor != null && ViewBag.CantidadP != null && ViewBag.EstadoSubasta != null && ViewBag.FechaFin != null)
-                            {
-                                int usuarioId = (int)ViewBag.usuarioId;
-                                int idVendedor = (int)ViewBag.idVendedor;
-                                int cantidadP = (int)ViewBag.CantidadP;
-                                string estadoSubasta = ViewBag.EstadoSubasta.ToString().Trim().ToLower();
-                                DateTime fechaFin = (DateTime)ViewBag.FechaFin;
-                                DateTime ahora = DateTime.Now;
-
-                                if (usuarioId == idVendedor && cantidadP == 0 && 
-                                    (estadoSubasta == "No vendido" || ahora > fechaFin))
-                                {
-                                    <div id="botonEliminar" class="flex gap-4 mt-4">
-                                        <form asp-controller="Articulos" asp-action="EliminarArticulo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');">
-                                            <input type="hidden" name="id" value="@ViewBag.Articulos.Id" />
-                                            <button type="submit"
-                                                    class="py-2.5 px-5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
-                                                Eliminar Artículo
-                                            </button>
-                                        </form>
-
-                                        <button disabled
-                                                class="py-2.5 px-5 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed">
-                                            Republicar (no disponible)
-                                        </button>
-                                    </div>
-                                }
-                            }
-                        }
-
-                    </div>
-                    @if (ViewBag.VerPuja.ToString().Trim().Equals("Abierto"))
-                    {
-                        <a asp-controller="Pujas"
-                           asp-action="VerPujas"
-                           asp-route-id="@ViewBag.Articulos.Id"
-                           id="ver_puja"
-                           class="flex items-center justify-center py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-gray-200 rounded-lg border border-gray-300 hover:bg-gray-300
-                                hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800
-                                dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                           role="button">
-                            <svg class="w-5 h-5 -ms-2 me-2"
-                                 aria-hidden="true"
-                                 xmlns="http://www.w3.org/2000/svg"
-                                 width="24"
-                                 height="24"
-                                 fill="none"
-                                 viewBox="0 0 24 24">
-                                <path stroke="currentColor"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M3 12l2-2 4 4 6-6 5 5" />
-                            </svg>
-                            Ver Pujas
-                        </a>
-
-                        @if (ViewBag.usuarioId != null && ViewBag.idVendedor != null && ViewBag.CantidadP != null && ViewBag.EstadoSubasta != null && ViewBag.FechaFin != null)
-                            {
-                                int usuarioId = (int)ViewBag.usuarioId;
-                                int idVendedor = (int)ViewBag.idVendedor;
-                                int cantidadP = (int)ViewBag.CantidadP;
-                                string estadoSubasta = ViewBag.EstadoSubasta.ToString().Trim();
-                                DateTime fechaFin = (DateTime)ViewBag.FechaFin;
-                                DateTime ahora = DateTime.Now;
-
-                                if (usuarioId == idVendedor && estadoSubasta == "No vendido")
-                                {
-                                    <div id="botonEliminar" class="flex gap-4 mt-4">
-                                        <form asp-controller="Articulos" asp-action="EliminarArticulo" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este artículo? Esta acción no se puede deshacer.');">
-                                            <input type="hidden" name="id" value="@ViewBag.Articulos.Id" />
-                                            <button type="submit"
-                                                    class="py-2.5 px-5 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg">
-                                                Eliminar Artículo
-                                            </button>
-                                        </form>
-
-                                        <button disabled
-                                                class="py-2.5 px-5 text-sm font-medium text-white bg-gray-400 rounded-lg cursor-not-allowed">
-                                            Republicar (no disponible)
-                                        </button>
-                                    </div>
-                                }
-                            }
-                    }
-                </div>
-                
+                }
             </div>
+
+            <button class="carousel-control-prev custom-carousel-btn" type="button" data-bs-target="#carouselArticulo" data-bs-slide="prev">
+                <span class="custom-arrow bg-black" aria-hidden="true">&#10094;</span>
+            </button>
+
+            <button class="carousel-control-next custom-carousel-btn" type="button" data-bs-target="#carouselArticulo" data-bs-slide="next">
+                <span class="custom-arrow bg-black" aria-hidden="true">&#10095;</span>
+            </button>
         </div>
 
+        <div class="detalle-info mt-6 sm:mt-8 mt-lg-5">
+            <h1 class="detalle-titulo">
+                @ViewBag.Articulos.titulo
+            </h1>
 
-        <!-- Modal de valoraciones del vendedor -->
-        <div id="valoracionesModal" class="modal fade" tabindex="-1" aria-labelledby="valoracionesModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="valoracionesModalLabel">Valoraciones del vendedor</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body" id="valoracionesContent">
-                        <div class="text-center">
-                            <span class="spinner-border"></span> Cargando valoraciones...
-                        </div>
-                    </div>
-                </div>
+            <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+
+            <div class="d-flex mb-5">
+                <h5>Vendedor: </h5>
+                <a href="javascript:void(0);" class="texto ms-2" id="vendedorLink" data-vendedor-id="@ViewBag.IdVendedor">
+                    @ViewBag.Vendedor
+                </a>
+            </div>
+
+            <div class="mt-4">
+                <h5 class="fecha_subasta">Finaliza en: @ViewBag.Fecha</h5>
+            </div>
+
+            <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+
+            <div class="d-flex">
+                <h5>Estado del articulo: </h5>
+                <p class="texto fw-bold">@ViewBag.Articulos.estado</p>
+            </div>
+
+            <div class="d-flex">
+                <h5>Categoria: </h5>
+                <p class="texto">@ViewBag.CategoriaNombre</p>
+            </div>
+
+            <div class="detalle-descripcion mt-4">
+                <h5>Descripción: </h5>
+                <p class="texto">@ViewBag.Articulos.descripcion</p>
+            </div>
+
+            <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
+
+            <div class="detalle-botones mt-6 sm:gap-4 sm:items-center sm:flex sm:mt-8">
+                @* Aquí va tu lógica de botones y formularios *@
             </div>
         </div>
-
-    </section>
-    
-
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    <!-- Modal para zoom -->
-    <div id="imgModal" class="fixed inset-0 z-50 bg-black bg-opacity-80 hidden justify-center items-center">
-        <span id="closeModal" class="absolute top-5 right-5 text-white text-3xl cursor-pointer">&times;</span>
-        <img id="modalImage" class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg" />
     </div>
 
+    <!-- Modal de valoraciones del vendedor -->
+    <div id="valoracionesModal" class="modal fade" tabindex="-1" aria-labelledby="valoracionesModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="valoracionesModalLabel">Valoraciones del vendedor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="valoracionesContent">
+                    <div class="text-center">
+                        <span class="spinner-border"></span> Cargando valoraciones...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script>
         document.querySelectorAll(".img-zoom").forEach(img => {
             const container = img.closest(".carousel-item");
@@ -321,23 +134,19 @@
                 img.style.transform = "scale(1)";
             });
         });
-    </script>
-    <script>
+
         document.addEventListener("DOMContentLoaded", function () {
             let usuarioId = localStorage.getItem("userId");
             const idVendedor = "@ViewBag.IdVendedor";
 
-           
             if (usuarioId && usuarioId === idVendedor) {
-                document.getElementById("editarBtn").style.display = "flex";
-                document.getElementById("btn_puja").style.display = "none";
-                document.getElementById("botonEliminar").style.display = "flex";
-                document.getElementById("boton_reporte").style.display = "none";
-
+                document.getElementById("editarBtn")?.style.setProperty("display", "flex");
+                document.getElementById("btn_puja")?.style.setProperty("display", "none");
+                document.getElementById("botonEliminar")?.style.setProperty("display", "flex");
+                document.getElementById("boton_reporte")?.style.setProperty("display", "none");
             }
         });
-    </script>
-    <script>
+
         document.getElementById('vendedorLink').addEventListener('click', function () {
             const vendedorId = this.getAttribute('data-vendedor-id');
             const modal = new bootstrap.Modal(document.getElementById('valoracionesModal'));
@@ -352,44 +161,44 @@
                         content.innerHTML = '<div class="alert alert-info">Este vendedor aún no tiene valoraciones.</div>';
                     } else {
                         let html = '<ul class="list-group">';
-                                data.forEach(val => {
-            html += `
-                    <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
-                        <footer>
-                            <div class="flex items-center">
-                                <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
-                                    <img class="mr-2 w-6 h-6 rounded-full"
-                                         src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
-                                         alt="${val.nombreUsuario}"> ${val.nombreUsuario}
-                                </p>
-                                <p class="text-sm text-gray-600 dark:text-gray-400">
-                                    <time datetime="${val.fecha ?? ''}" title="${val.fecha ?? 'Sin fecha'}">
-                                        ${val.fecha ?? 'Sin fecha'}
-                                    </time>
-                                </p>
-                            </div>
-                            <div class="flex items-center mt-2">`;
+                        data.forEach(val => {
+                            html += `
+                                <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
+                                    <footer>
+                                        <div class="flex items-center">
+                                            <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
+                                                <img class="mr-2 w-6 h-6 rounded-full"
+                                                     src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
+                                                     alt="${val.nombreUsuario}"> ${val.nombreUsuario}
+                                            </p>
+                                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                <time datetime="${val.fecha ?? ''}" title="${val.fecha ?? 'Sin fecha'}">
+                                                    ${val.fecha ?? 'Sin fecha'}
+                                                </time>
+                                            </p>
+                                        </div>
+                                        <div class="flex items-center mt-2">`;
 
                             for (let i = 1; i <= 5; i++) {
                                 if (i <= val.puntuacion) {
                                     html += `
                                         <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
                                         </svg>`;
                                 } else {
                                     html += `
                                         <svg class="w-5 h-5 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
                                         </svg>`;
                                 }
                             }
 
-                    html += `
-                            </div>
-                                <p class=" text-left text-dark mt-2">${val.comentario}</p>
-                            </footer>
-                        </article>`;
-                     });
+                            html += `
+                                        </div>
+                                        <p class=" text-left text-dark mt-2">${val.comentario}</p>
+                                    </footer>
+                                </article>`;
+                        });
 
                         html += '</ul>';
                         content.innerHTML = html;
@@ -402,8 +211,4 @@
             modal.show();
         });
     </script>
-
-
-
-</body>
-</html>
+}
