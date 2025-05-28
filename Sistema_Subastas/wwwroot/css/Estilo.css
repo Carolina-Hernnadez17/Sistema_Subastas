@@ -63,7 +63,7 @@
 }
 
 
-body {
+/*body {
     background: url('../css_R/Resources_Login/descarga.jpg') no-repeat center center/cover;
     background: linear-gradient(to left, #6f4832, #573b29, #000000);
     backdrop-filter: blur(40px);
@@ -166,18 +166,18 @@ a {
     }
 
 .iti__country-list {
-    background-color: #ffffff; /* Fondo blanco para el desplegable */
-    color: black; /* Texto en negro */
-}
+    background-color: #ffffff;*/ /* Fondo blanco para el desplegable */
+    /*color: black;*/ /* Texto en negro */
+/*}
 
 .iti__country {
-    color: black !important; /* Asegura que los nombres de los países sean negros */
-}
+    color: black !important;*/ /* Asegura que los nombres de los países sean negros */
+/*}
 
     .iti__country:hover,
     .iti__country:focus {
-        background-color: #f0f0f0; /* Cambia el fondo al pasar el mouse */
-    }
+        background-color: #f0f0f0;*/ /* Cambia el fondo al pasar el mouse */
+    /*}
 
 html {
     font-size: 14px;
@@ -242,10 +242,10 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 1rem;
     align-items: start;
-}
+}*/
 
     /* Estilo de los botones tipo card */
-    .admin-button-grid a {
+    /*.admin-button-grid a {
         background-color: #1e40af;
         color: white;
         padding: 1rem;
@@ -260,4 +260,4 @@ body {
         .admin-button-grid a:hover {
             background-color: #1d4ed8;
             transform: translateY(-2px);
-        }
+        }*/
