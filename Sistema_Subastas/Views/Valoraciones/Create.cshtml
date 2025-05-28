@@ -23,38 +23,21 @@
     </style>
 
 </head>
-<h1>Create</h1>
+<h1>Valoraciones</h1>
 
-<h4>valoraciones</h4>
 <hr />
-<div class="row">
-  <div class="col-md-4">
-      <form asp-action="Create">
-          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="row justify-content-center">
+    <div class="col-md-4 p-3">
+        <form asp-action="Create" class="card shadow-sm border-0 p-4 rounded-3">
+            <h2 class="text-primary mb-3 text-center">Nueva Valoración</h2>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" name="usuario_valorado_id" value="@ViewBag.VendedorValorado" />
             <input type="hidden" name="usuario_que_valora_id" value="@ViewBag.UsuarioQueValora" />
 
-
-            @* <div class="form-group">
-                
-
-              <label asp-for="usuario_valorado_id" class="control-label"></label>
-              <input asp-for="usuario_valorado_id" class="form-control" />
-              <span asp-validation-for="usuario_valorado_id" class="text-danger"></span>
-          </div> *@
-          @* <div class="form-group">
-              <label asp-for="usuario_que_valora_id" class="control-label"></label>
-              <input asp-for="usuario_que_valora_id" class="form-control" />
-              <span asp-validation-for="usuario_que_valora_id" class="text-danger"></span>
-          </div> *@
-         @*  <div class="form-group">
-              <label asp-for="puntuacion" class="control-label"></label>
-              <input asp-for="puntuacion" class="form-control" />
-              <span asp-validation-for="puntuacion" class="text-danger"></span>
-          </div> *@
-            <div class="form-group">
+            <div class="form-group text-center">
                 <label class="control-label">Puntuación</label>
-                <div id="rating" class="star-rating">
+                <div id="rating" class="star-rating d-flex justify-content-center mb-2">
                     @for (int i = 1; i <= 5; i++)
                     {
                         <i class="fa-regular fa-star" data-value="@i"></i>
@@ -64,24 +47,41 @@
                 <span asp-validation-for="puntuacion" class="text-danger"></span>
             </div>
 
-          <div class="form-group">
-              <label asp-for="comentario" class="control-label"></label>
-              <input asp-for="comentario" class="form-control" />
-              <span asp-validation-for="comentario" class="text-danger"></span>
-          </div>
-          @* <div class="form-group">
-              <label asp-for="fceha" class="control-label"></label>
-              <input asp-for="fceha" class="form-control" />
-              <span asp-validation-for="fceha" class="text-danger"></span>
-          </div> *@
+            <div class="form-group">
+                <label asp-for="comentario" class="control-label"></label>
+                <input asp-for="comentario" class="form-control" />
+                <span asp-validation-for="comentario" class="text-danger"></span>
+            </div>
+
             <input type="hidden" name="fecha" value="@DateTime.Now" />
 
-          <div class="form-group">
-              <input type="submit" value="Create" class="btn btn-primary" />
-          </div>
-      </form>
-  </div>
+            <div class="form-group mt-3 text-center">
+                <input type="submit" value="Crear Valoración" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+
+    <div class="col-md-4 p-3">
+        <div class="card shadow-sm border-0 p-4 rounded-3 text-center">
+            <h2 class="card-title text-primary mb-3">Sección de Valoraciones</h2>
+
+            <p class="card-text text-muted">
+                Aquí puedes dejar una valoración sobre el vendedor con el que has interactuado. Tu opinión nos ayuda a mejorar la experiencia en nuestra plataforma.
+            </p>
+
+            <ul class="list-unstyled">
+                <li><i class="fa-solid fa-star text-warning"></i> Puntúa del 1 al 5 según tu experiencia.</li>
+                <li><i class="fa-solid fa-comment text-info"></i> Deja un comentario claro y respetuoso.</li>
+                <li><i class="fa-solid fa-check-circle text-success"></i> Solo puedes valorar si has realizado una transacción.</li>
+            </ul>
+
+            <div class="alert alert-info mt-3" role="alert">
+                <strong>Importante:</strong> Las valoraciones son públicas y ayudan a otros usuarios a tomar decisiones.
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <div>
   <a asp-action="Index">Back to List</a>

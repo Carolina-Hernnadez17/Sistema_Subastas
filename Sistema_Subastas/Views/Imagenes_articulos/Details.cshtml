@@ -339,9 +339,10 @@
     </script>
     <script>
         document.getElementById('vendedorLink').addEventListener('click', function () {
-            var vendedorId = this.getAttribute('data-vendedor-id');
-            var modal = new bootstrap.Modal(document.getElementById('valoracionesModal'));
-            var content = document.getElementById('valoracionesContent');
+            const vendedorId = this.getAttribute('data-vendedor-id');
+            const modal = new bootstrap.Modal(document.getElementById('valoracionesModal'));
+            const content = document.getElementById('valoracionesContent');
+
             content.innerHTML = '<div class="text-center"><span class="spinner-border"></span> Cargando valoraciones...</div>';
 
             fetch('/Usuarios/ObtenerValoraciones?vendedorId=' + vendedorId)
@@ -351,29 +352,45 @@
                         content.innerHTML = '<div class="alert alert-info">Este vendedor aún no tiene valoraciones.</div>';
                     } else {
                         let html = '<ul class="list-group">';
-                        data.forEach(val => {
-                            html += 
-                                 `<article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
-                                    <footer>
-                                       <div class="flex items-center">
-                                         <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
-                                            <img class="mr-2 w-6 h-6 rounded-full"
-                                                  src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
-                                                  alt="${val.nombreUsuario}"> ${val.nombreUsuario}
-                                         </p>
-                                         <p class="text-sm text-gray-600 dark:text-gray-400">
-                                             <time pubdate datetime="${val.fecha ? new Date(val.fecha).toISOString() : ''}"
-                                                   itle="${val.fecha ? new Date(val.fecha).toLocaleDateString() : ''}">
-                                                   ${val.fecha ? new Date(val.fecha).toLocaleDateString() : 'Sin fecha'}
-                                             </time>
-                                         </p>
-                                      </div
-                                      <p class="text-dark"> ${val.comentario}</p>
-                                   </footer>
-                                   
-                              </article>
-                              `;
-                        });
+                                data.forEach(val => {
+            html += `
+                    <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
+                        <footer>
+                            <div class="flex items-center">
+                                <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
+                                    <img class="mr-2 w-6 h-6 rounded-full"
+                                         src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
+                                         alt="${val.nombreUsuario}"> ${val.nombreUsuario}
+                                </p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    <time datetime="${val.fecha ?? ''}" title="${val.fecha ?? 'Sin fecha'}">
+                                        ${val.fecha ?? 'Sin fecha'}
+                                    </time>
+                                </p>
+                            </div>
+                            <div class="flex items-center mt-2">`;
+
+                            for (let i = 1; i <= 5; i++) {
+                                if (i <= val.puntuacion) {
+                                    html += `
+                                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
+                                        </svg>`;
+                                } else {
+                                    html += `
+                                        <svg class="w-5 h-5 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
+                                        </svg>`;
+                                }
+                            }
+
+                    html += `
+                            </div>
+                                <p class=" text-left text-dark mt-2">${val.comentario}</p>
+                            </footer>
+                        </article>`;
+                     });
+
                         html += '</ul>';
                         content.innerHTML = html;
                     }

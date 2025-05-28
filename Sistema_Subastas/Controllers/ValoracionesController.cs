@@ -84,7 +84,7 @@ namespace Sistema_Subastas.Controllers
             {
                 _context.Add(valoraciones);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Imagenes_articulos");
             }
             return View(valoraciones);
         }

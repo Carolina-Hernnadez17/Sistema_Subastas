@@ -525,7 +525,7 @@ namespace Sistema_Subastas.Controllers
                {
                    puntuacion = v.puntuacion,
                    comentario = v.comentario,
-                   fecha = v.fecha,
+                   fecha = v.fecha.ToString("D"),
                    nombreUsuario = _context.usuarios
                        .Where(u => u.id == v.usuario_que_valora_id)
                        .Select(u => u.nombre)
