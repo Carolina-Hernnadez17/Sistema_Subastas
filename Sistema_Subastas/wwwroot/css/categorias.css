@@ -1,0 +1,46 @@
+﻿.colorCafe {
+    background-color: #6f4832;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+}
+
+.colorc {
+    color: #6f4832;
+}
+
+.table thead {
+    background-color: #6f4832;
+    color: white;
+}
+
+.btn-pastel-warning {
+    background-color: #f6c98e;
+    color: #6f4832;
+}
+
+.btn-pastel-info {
+    background-color: #a0c4ff;
+    color: #6f4832;
+}
+
+.btn-pastel-danger {
+    background-color: #ffadad;
+    color: #6f4832;
+}
+
+.btn-pastel-success {
+    background-color: #b9fbc0;
+    color: #6f4832;
+}
+
+.btn-pastel-secondary {
+    background-color: #d3c4aa;
+    color: #6f4832;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
