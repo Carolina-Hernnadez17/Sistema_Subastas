@@ -3,14 +3,17 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 
-    // <link rel="stylesheet" href="~/css/StyleE.css" />
+    var usuarioId = (int?)ViewBag.UsuarioId;
+    var idVendedor = (int?)ViewBag.IdVendedor;
+    var tienePujas = (bool)(ViewBag.TienePujas ?? false);
+    var estadoSubasta = ViewBag.Estado?.ToString().Trim();
+    var fechaEstado = ViewBag.Fecha?.ToString().Trim();
 }
 
 @section Styles {
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <link href="~/css/StyleDetails.css" rel="stylesheet" />
 }
-
 
 <section class="detalle-producto-wrapper antialiased md:py-16 dark:bg-gray-900 py-8">
     <a asp-controller="Imagenes_articulos"
@@ -69,11 +72,11 @@
                     @ViewBag.Vendedor
                 </a>
             </div>
-            <div class=" d-flex">
+            <div class="d-flex">
                 <h5>Precio: </h5>
-                <h5 class="texto"> @ViewBag.Articulos.precio_salida</h5>
+                <h5 class="texto"> @ViewBag.Articulos.precio_venta</h5>
             </div>
-            <div class=" d-flex">
+            <div class="d-flex">
                 <h5>Categoria: </h5>
                 <h5 class="texto"> @ViewBag.CategoriaNombre</h5>
             </div>
@@ -101,77 +104,58 @@
             <hr class="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
             <div class="detalle-botones">
-                @{
-                    var usuarioId = (int?)ViewBag.UsuarioId;
-                    var idVendedor = (int?)ViewBag.IdVendedor;
-                    var tienePujas = (bool)(ViewBag.TienePujas ?? false);
-                    var estadoSubasta = ViewBag.Estado?.ToString().Trim();
-                    var fechaEstado = ViewBag.Fecha?.ToString().Trim();
-                }
+                <a asp-controller="Pujas"
+                   asp-action="Realizar"
+                   asp-route-id="@ViewBag.Articulos.Id"
+                   id="btn_puja"
+                   class="btn-detalle gris"
+                   role="button"
+                   style="display:none;">
+                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
+                    </svg>
+                    Realizar Oferta
+                </a>
 
-                @if (estadoSubasta == "Publicado" && !fechaEstado.Equals("Subasta Cerrada"))
-                {
-                    <a asp-controller="Pujas"
-                       asp-action="Realizar"
-                       asp-route-id="@ViewBag.Articulos.Id"
-                       id="btn_puja"
-                       class="btn-detalle gris"
-                       role="button">
-                        <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
-                        </svg>
-                        Realizar Oferta
-                    </a>
-                }
+                <a asp-controller="Pujas"
+                   asp-action="VerPujas"
+                   asp-route-id="@ViewBag.Articulos.Id"
+                   id="ver_puja"
+                   class="btn-detalle gris"
+                   role="button">
+                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2 4 4 6-6 5 5" />
+                    </svg>
+                    Ver Pujas
+                </a>
 
-                @if ((usuarioId != null && idVendedor != null && usuarioId == idVendedor)
-                || (estadoSubasta == "Publicado" && !fechaEstado.Equals("Subasta Cerrada") && usuarioId != idVendedor))
-                {
-                    <a asp-controller="Pujas"
-                       asp-action="VerPujas"
-                       asp-route-id="@ViewBag.Articulos.Id"
-                       id="ver_puja"
-                       class="btn-detalle gris"
-                       role="button">
-                        <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2 4 4 6-6 5 5" />
-                        </svg>
-                        Ver Pujas
-                    </a>
-                }
+                <a asp-controller="Disputas"
+                   asp-action="Create"
+                   asp-route-articulo_id="@ViewBag.Articulos.Id"
+                   asp-route-vendedor_id="@ViewBag.IdVendedor"
+                   id="boton_reporte"
+                   class="btn-detalle rojo"
+                   role="button"
+                   style="display:none;">
+                    <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
+                    </svg>
+                    Reportar
+                </a>
 
-
-                @if (estadoSubasta == "Publicado" && !fechaEstado.Equals("Subasta Cerrada"))
-                {
-                    <a asp-controller="Disputas"
-                       asp-action="Create"
-                       asp-route-articulo_id="@ViewBag.Articulos.Id"
-                       asp-route-vendedor_id="@ViewBag.IdVendedor"
-                       id="boton_reporte"
-                       class="btn-detalle rojo"
-                       role="button">
-                        <svg class="w-5 h-5 -ms-2 me-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m7-7H5" />
-                        </svg>
-                        Reportar
-                    </a>
-                }
-
-
-                @if (ViewBag.CantidadP == 0)
-                {
-                    <a href="/Articulos/Edit/@ViewBag.Articulos.Id"
-                       id="editarBtn"
-                       
-                       class="btn-detalle azul flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-                       role="button">
-                        <svg class="w-5 h-5 -ms-2 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M16.862 3.487a2.41 2.41 0 0 1 3.41 3.41L6.412 20.758a1.5 1.5 0 0 1-.754.403l-3.003.584.585-3.002a1.5 1.5 0 0 1 .403-.754L16.862 3.487Z" />
-                        </svg>
-                        Editar Artículo
-                    </a>
+                @if (ViewBag.CantidadP == 0){
+                <a href="/Articulos/Edit/@ViewBag.Articulos.Id"
+                   id="editarBtn"
+                   class="btn-detalle azul flex items-center justify-center py-2.5 px-5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                   role="button"
+                   style="display:none;">
+                    <svg class="w-5 h-5 -ms-2 me-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M16.862 3.487a2.41 2.41 0 0 1 3.41 3.41L6.412 20.758a1.5 1.5 0 0 1-.754.403l-3.003.584.585-3.002a1.5 1.5 0 0 1 .403-.754L16.862 3.487Z" />
+                    </svg>
+                    Editar Artículo
+                </a>
                 }
             </div>
         </div>
@@ -194,9 +178,9 @@
     </div>
 </section>
 
-
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
     <script>
         document.querySelectorAll(".img-zoom").forEach(img => {
             const container = img.closest(".carousel-item");
@@ -215,7 +199,7 @@
             });
         });
 
-                let usuarioId = localStorage.getItem("userId");
+        let usuarioId = localStorage.getItem("userId");
         const idVendedor = "@ViewBag.IdVendedor";
         const tienePujas = '@(ViewBag.TienePujas ?? false)'.toLowerCase() === 'true';
 
@@ -223,91 +207,94 @@
         const idVendedorNum = idVendedor ? Number(idVendedor) : null;
 
         const editarBtn = document.getElementById("editarBtn");
+        const btnPuja = document.getElementById("btn_puja");
+        const btnReporte = document.getElementById("boton_reporte");
+        const btnVerPujas = document.getElementById("ver_puja");
 
-        if (usuarioIdNum && idVendedorNum && usuarioIdNum === idVendedorNum && !tienePujas) {
-            editarBtn?.style.setProperty("display", "flex");
+        if (usuarioIdNum && idVendedorNum && usuarioIdNum === idVendedorNum) {
+            // Es el vendedor
+            if (!tienePujas) {
+                editarBtn?.style.setProperty("display", "flex");
+            } else {
+                editarBtn?.style.setProperty("display", "none");
+            }
+            btnPuja?.style.setProperty("display", "none");
+            btnReporte?.style.setProperty("display", "none");
+            btnVerPujas?.style.setProperty("display", "flex");
         } else {
+            // No es el vendedor
             editarBtn?.style.setProperty("display", "none");
+            btnPuja?.style.setProperty("display", "flex");
+            btnReporte?.style.setProperty("display", "flex");
+            btnVerPujas?.style.setProperty("display", "flex");
         }
 
-            // Los otros botones: Ver Pujas, Reportar, Realizar Oferta deben estar siempre visibles
-            // Si algún botón específico de vendedor existe, ocúltalo aquí (ejemplo con botonEliminar)
-            const botonEliminar = document.getElementById("botonEliminar");
-            if (botonEliminar) {
-                if (usuarioIdNum === idVendedorNum) {
-                    botonEliminar.style.display = "flex";
-                } else {
-                    botonEliminar.style.display = "none";
-                }
+                document.addEventListener("DOMContentLoaded", function () {
+            const vendedorLink = document.getElementById('vendedorLink');
+            if (vendedorLink) {
+                vendedorLink.addEventListener('click', function () {
+                    const vendedorId = this.getAttribute('data-vendedor-id');
+                    const modalElement = document.getElementById('valoracionesModal');
+                    const modal = new bootstrap.Modal(modalElement);
+                    const content = document.getElementById('valoracionesContent');
+
+                    content.innerHTML = '<div class="text-center"><span class="spinner-border"></span> Cargando valoraciones...</div>';
+
+                    fetch('/Usuarios/ObtenerValoraciones?vendedorId=' + vendedorId)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data || data.length === 0) {
+                                content.innerHTML = '<div class="alert alert-info">Este vendedor aún no tiene valoraciones.</div>';
+                            } else {
+                                let html = '<ul class="list-group">';
+                                data.forEach(val => {
+                                    html += `
+                                        <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
+                                            <footer>
+                                                <div class="flex items-center">
+                                                    <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
+                                                        <img class="mr-2 w-6 h-6 rounded-full"
+                                                             src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
+                                                             alt="${val.nombreUsuario}"> ${val.nombreUsuario}
+                                                    </p>
+                                                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                                                        <time datetime="${val.fecha ?? ''}" title="${val.fecha ?? 'Sin fecha'}">
+                                                            ${val.fecha ?? 'Sin fecha'}
+                                                        </time>
+                                                    </p>
+                                                </div>
+                                                <div class="flex items-center mt-2">`;
+
+                                    for (let i = 1; i <= 5; i++) {
+                                        if (i <= val.puntuacion) {
+                                            html += `<svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
+                                                    </svg>`;
+                                        } else {
+                                            html += `<svg class="w-5 h-5 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
+                                                    </svg>`;
+                                        }
+                                    }
+
+                                    html += `
+                                                </div>
+                                                <p class=" text-left text-dark mt-2">${val.comentario}</p>
+                                            </footer>
+                                        </article>`;
+                                });
+                                html += '</ul>';
+                                content.innerHTML = html;
+                            }
+                        })
+                        .catch(() => {
+                            content.innerHTML = '<div class="alert alert-danger">Error al cargar las valoraciones.</div>';
+                        });
+
+                    modal.show();
+                });
             }
         });
 
-
-
-        document.getElementById('vendedorLink').addEventListener('click', function () {
-            const vendedorId = this.getAttribute('data-vendedor-id');
-            const modal = new bootstrap.Modal(document.getElementById('valoracionesModal'));
-            const content = document.getElementById('valoracionesContent');
-
-            content.innerHTML = '<div class="text-center"><span class="spinner-border"></span> Cargando valoraciones...</div>';
-
-            fetch('/Usuarios/ObtenerValoraciones?vendedorId=' + vendedorId)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length === 0) {
-                        content.innerHTML = '<div class="alert alert-info">Este vendedor aún no tiene valoraciones.</div>';
-                    } else {
-                        let html = '<ul class="list-group">';
-                        data.forEach(val => {
-                            html += `
-                                <article class="p-6 text-base bg-white rounded-lg dark:bg-gray-900">
-                                    <footer>
-                                        <div class="flex items-center">
-                                            <p class="flex items-center mr-3 text-sm text-gray-900 dark:text-gray-400 font-semibold">
-                                                <img class="mr-2 w-6 h-6 rounded-full"
-                                                     src="https://flowbite.com/docs/images/examples/image-2@2x.jpg"
-                                                     alt="${val.nombreUsuario}"> ${val.nombreUsuario}
-                                            </p>
-                                            <p class="text-sm text-gray-600 dark:text-gray-400">
-                                                <time datetime="${val.fecha ?? ''}" title="${val.fecha ?? 'Sin fecha'}">
-                                                    ${val.fecha ?? 'Sin fecha'}
-                                                </time>
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center mt-2">`;
-
-                            for (let i = 1; i <= 5; i++) {
-                            if (i <= val.puntuacion) {
-                                html += `
-                                        <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
-                                        </svg>`;
-                            } else {
-                                html += `
-                                        <svg class="w-5 h-5 text-gray-300 dark:text-gray-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.562 4.794a1 1 0 00.95.69h5.047c.969 0 1.371 1.24.588 1.81l-4.086 2.97a1 1 0 00-.364 1.118l1.562 4.794c.3.921-.755 1.688-1.54 1.118l-4.086-2.97a1 1 0 00-1.176 0l-4.086 2.97c-.784.57-1.838-.197-1.539-1.118l1.562-4.794a1 1 0 00-.364-1.118L2.11 10.221c-.783-.57-.38-1.81.588-1.81h5.047a1 1 0 00.95-.69l1.562-4.794z"/>
-                                        </svg>`;
-                            }
-                        }
-
-                            html += `
-                                        </div>
-                                        <p class=" text-left text-dark mt-2">${val.comentario}</p>
-                                    </footer>
-                                </article>`;
-                        });
-
-                        html += '</ul>';
-                        content.innerHTML = html;
-                    }
-                })
-                .catch(() => {
-                    content.innerHTML = '<div class="alert alert-danger">Error al cargar las valoraciones.</div>';
-                });
-
-            modal.show();
-        });
     </script>
-
 }
-
