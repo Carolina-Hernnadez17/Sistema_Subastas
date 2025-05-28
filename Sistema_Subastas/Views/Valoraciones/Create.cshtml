@@ -6,6 +6,23 @@
     int? usuarioValora = @Context.Session.GetInt32("id_usuario");
 }
 
+<head>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .star-rating i {
+            font-size: 2rem;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+            .star-rating i.selected,
+            .star-rating i:hover,
+            .star-rating i.hovered {
+                color: #f5c518;
+            }
+    </style>
+
+</head>
 <h1>Create</h1>
 
 <h4>valoraciones</h4>
@@ -30,11 +47,23 @@
               <input asp-for="usuario_que_valora_id" class="form-control" />
               <span asp-validation-for="usuario_que_valora_id" class="text-danger"></span>
           </div> *@
-          <div class="form-group">
+         @*  <div class="form-group">
               <label asp-for="puntuacion" class="control-label"></label>
               <input asp-for="puntuacion" class="form-control" />
               <span asp-validation-for="puntuacion" class="text-danger"></span>
-          </div>
+          </div> *@
+            <div class="form-group">
+                <label class="control-label">Puntuación</label>
+                <div id="rating" class="star-rating">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="fa-regular fa-star" data-value="@i"></i>
+                    }
+                </div>
+                <input type="hidden" name="puntuacion" id="puntuacion" />
+                <span asp-validation-for="puntuacion" class="text-danger"></span>
+            </div>
+
           <div class="form-group">
               <label asp-for="comentario" class="control-label"></label>
               <input asp-for="comentario" class="form-control" />
@@ -60,4 +89,30 @@
 
 @section Scripts {
   @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        const stars = document.querySelectorAll("#rating i");
+        const input = document.getElementById("puntuacion");
+
+        stars.forEach((star, index) => {
+            star.addEventListener("click", () => {
+                input.value = index + 1;
+
+                stars.forEach(s => s.classList.remove("selected"));
+                for (let i = 0; i <= index; i++) {
+                    stars[i].classList.add("selected");
+                }
+            });
+
+            star.addEventListener("mouseover", () => {
+                stars.forEach((s, i) => {
+                    s.classList.toggle("hovered", i <= index);
+                });
+            });
+
+            star.addEventListener("mouseout", () => {
+                stars.forEach(s => s.classList.remove("hovered"));
+            });
+        });
+    </script>
 }

@@ -78,8 +78,7 @@ namespace Sistema_Subastas.Controllers
         public async Task<IActionResult> Create([Bind("id,usuario_valorado_id,usuario_que_valora_id,puntuacion,comentario,fecha")] valoraciones valoraciones)
         {
 
-
-
+            valoraciones.id= 0; 
 
             if (ModelState.IsValid)
             {
