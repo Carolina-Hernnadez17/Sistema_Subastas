@@ -15,17 +15,17 @@
             
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="titulo" class="control-label"></label>
+                <label asp-for="titulo" class="control-label">Titulo</label>
                 <input asp-for="titulo" class="form-control" />
                 <span asp-validation-for="titulo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="descripcion" class="control-label"></label>
+                <label asp-for="descripcion" class="control-label">Descripción</label>
                 <input asp-for="descripcion" class="form-control" />
                 <span asp-validation-for="descripcion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="estado" class="control-label"></label>
+                <label asp-for="estado" class="control-label">Estado del articulo</label>
                 <select asp-for="estado" class="form-control">
                     <option value="Nuevo">Nuevo</option>
                     <option value="Usado">Usado</option>
@@ -86,12 +86,39 @@
         </form>
        
     </div>
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0 rounded-4 p-4 bg-light">
+            <h4 class="text-dark mb-3"><i class="fa-solid fa-circle-info text-primary"></i> Información de la Venta</h4>
+            <ul class="list-unstyled fs-6">
+                <li class="mb-3">
+                    <i class="fa-solid fa-hand-holding-dollar text-success me-2"></i>
+                    Al establecer un <strong>precio de inicio</strong>, los compradores comenzarán a pujar desde ese valor.
+                </li>
+                <li class="mb-3">
+                    <i class="fa-solid fa-clock text-warning me-2"></i>
+                    La subasta estará disponible entre la <strong>fecha de inicio</strong> y la <strong>fecha de finalización</strong> que determines.
+                </li>
+                <li class="mb-3">
+                    <i class="fa-solid fa-eye text-info me-2"></i>
+                    Puedes elegir que las pujas sean <strong>visibles o privadas</strong> para los participantes.
+                </li>
+                <li class="mb-3">
+                    <i class="fa-solid fa-user-check text-primary me-2"></i>
+                    Asegúrate de ingresar todos los datos correctamente para mejorar la confianza de los compradores.
+                </li>
+                <li class="mb-3">
+                    <i class="fa-solid fa-chart-line text-secondary me-2"></i>
+                    Los artículos bien descritos y con precios razonables tienen más posibilidades de ser vendidos.
+                </li>
+            </ul>
+            <div class="alert alert-warning mt-4" role="alert">
+                <i class="fa-solid fa-triangle-exclamation"></i> Recuerda que no puedes editar el artículo una vez iniciada la subasta.
+            </div>
+        </div>
+    </div>
 
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

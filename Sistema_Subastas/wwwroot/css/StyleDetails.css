@@ -1,34 +1,10 @@
-﻿/* Contenedor general */
+﻿
 .detalle-producto-wrapper {
     background-color: #f5f6fa;
     padding: 2rem;
     display: flex;
     justify-content: center;
 }
-
-
-
-.btn-detalle {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: background 0.2s, color 0.2s;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-    .btn-detalle.azul {
-        background-color: #2563eb;
-        color: #fff;
-    }
-
-        .btn-detalle.azul:hover {
-            background-color: #1d4ed8;
-            color: #fff;
-        }
 
 /* Contenedor producto */
 .detalle-producto-contenido {
@@ -43,6 +19,19 @@
     flex-wrap: wrap;
     box-sizing: border-box;
 }
+
+.text-yellow-400 {
+    color: #facc15 !important;
+}
+
+.text-gray-300 {
+    color: #d1d5db !important;
+}
+
+.dark .text-gray-600 {
+    color: #4b5563 !important;
+}
+
 
 /* Columna imagen */
 .detalle-imagen {
@@ -454,6 +443,7 @@ hr.my-6.md\:my-8.border-gray-200.dark\:border-gray-800 {
     background-color: #fee2e2;
     color: #b91c1c;
 }
+
 .detalle-botones a#editarBtn svg,
 .detalle-botones a#ver_puja svg,
 .detalle-botones a#btn_puja svg,
