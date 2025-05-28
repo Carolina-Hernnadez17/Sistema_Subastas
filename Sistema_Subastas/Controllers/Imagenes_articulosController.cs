@@ -31,7 +31,7 @@ namespace Sistema_Subastas.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var ahora = DateTime.Now;
+            var ahora = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador");
 
             // Verificamos si hay alguna subasta que necesita ser cerrada
             bool hayPorFinalizar = _context.articulos
@@ -107,7 +107,7 @@ namespace Sistema_Subastas.Controllers
             ViewBag.Articulos = articulo;
 
             DateTime fecha_cierre = articulo.fecha_fin;
-            DateTime fecha_actual = DateTime.UtcNow;
+            DateTime fecha_actual = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"); ;
 
             TimeSpan tiempoRestante = fecha_cierre - fecha_actual;
 

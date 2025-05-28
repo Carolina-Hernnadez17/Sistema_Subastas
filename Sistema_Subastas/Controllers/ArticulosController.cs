@@ -113,7 +113,7 @@ namespace Sistema_Subastas.Controllers
         public async Task<IActionResult> Create([Bind("Id,titulo,descripcion,estado,precio_salida,precio_venta,fecha_inicio,fecha_fin,usuario_id,estado_subasta,visualizacion_puja,fecha_registro")] articulos articulos, int categoria_id, int userId)
         {
             articulos.usuario_id = userId;
-            articulos.fecha_registro = DateTime.Now;
+            articulos.fecha_registro = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.Now, "America/El_Salvador"); ;
             articulos.estado_subasta = "Publicado";
             articulos.Id = 0;
 
