@@ -51,7 +51,7 @@
                                 <option value="Diferente al descrito">Diferente al descrito</option>
                                 <option value="Problema con el pago">Problema con el pago</option>
                                 <option value="Conducta fraudulenta">Conducta fraudulenta</option>
-                                <option value="Otro">Otro</option>
+                               @*  <option value="Otro">Otro</option> *@
                             </select>
                             <span asp-validation-for="motivo" class="text-danger"></span>
                         </div>
@@ -66,21 +66,22 @@
                         @* Fecha *@
                         <div class="mb-3">
                             <label asp-for="fecha" class="form-label"></label>
-                            <input asp-for="fecha" class="form-control" id="fecha" />
+                            <input asp-for="fecha" class="form-control" id="fecha"/>
                             <span asp-validation-for="fecha" class="text-danger"></span>
                         </div>
 
                         @* Estado *@
                         <div class="mb-3">
-                            <label asp-for="estado" class="form-label"></label>
-                            <select asp-for="estado" class="form-select" required>
+                           @*  <label asp-for="estado" class="form-label"></label> *@
+                            <input asp-for="estado" class="form-control" value="Abierta" type="hidden" />
+                           @*  <select asp-for="estado" class="form-select" required>
                                 <option disabled selected value="">Seleccione un estado</option>
                                 <option value="Abierta">Abierta</option>
                                 <option value="En proceso">En proceso</option>
                                 <option value="Resuelta">Resuelta</option>
                                 <option value="Rechazada">Rechazada</option>
                             </select>
-                            <span asp-validation-for="estado" class="text-danger"></span>
+                            <span asp-validation-for="estado" class="text-danger"></span> *@
                         </div>
 
                         <div class="d-grid">
@@ -88,9 +89,9 @@
                         </div>
                     </form>
 
-                    <div class="text-center mt-4">
+                   @*  <div class="text-center mt-4">
                         <a asp-action="Index" class="btn btn-link">Volver al listado</a>
-                    </div>
+                    </div> *@
                 </div>
             </div>
         </div>
