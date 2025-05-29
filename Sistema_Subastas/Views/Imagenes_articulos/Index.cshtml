@@ -6,6 +6,7 @@
     var categorias = ViewBag.Categorias as List<Sistema_Subastas.Models.categorias>;
     var ca_img = ViewBag.ArticuloCategorias as List<Sistema_Subastas.Models.articulo_categoria>;
     var imagenes_articulos = Model as List<Sistema_Subastas.Models.imagenes_articulos>;
+	var fechaActual = DateTime.Now;
 }
 
 <head>
@@ -15,6 +16,7 @@
 <div class="row g-0">
     <div class="mb-4">
         <h1 class="display-4">Bienvenido @ViewBag.NombreUsuario</h1>
+        <h1 class="display-4">Hora  @fechaActual</h1>
         <input type="text" id="searchNombre" placeholder="Buscar por nombre..." class="border p-2 mr-2" />
         <input type="number" id="searchPrecioMin" placeholder="Precio mínimo" class="border p-2 mr-2" min="0" step="any" />
         <input type="number" id="searchPrecioMax" placeholder="Precio máximo" class="border p-2 mr-2" min="0" step="any" />
