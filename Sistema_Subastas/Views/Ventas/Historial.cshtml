@@ -9,8 +9,10 @@
     var categoriaSeleccionada = Context.Request.Query["categoria"];
 }
 
+<link href="~/css/colorCafe.css" rel="stylesheet" />
+
 <div class="container mt-5 text-light">
-    <h2 class="mb-4 text-info">Historial de Ventas</h2>
+    <h2 class="mb-4 text-cafe">Historial de Ventas</h2>
 
     <form method="get" class="row g-3 mb-4">
         <div class="col-md-4">
@@ -46,7 +48,7 @@
             </select>
         </div>
         <div class="col-md-12 d-flex justify-content-end">
-            <button type="submit" class="btn btn-outline-info">Aplicar filtros</button>
+            <button type="submit" class="btn colorc">Aplicar filtros</button>
         </div>
     </form>
 
@@ -54,32 +56,35 @@
 
     @if (Model != null && Model.Count > 0)
     {
-        <table class="table table-bordered table-dark table-striped">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Precio Final</th>
-                    <th>Fecha de Cierre</th>
-                    <th>Categoría</th>
-                    <th>Estado</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var venta in Model)
-                {
+        <div style="max-height: 400px; overflow-y: auto;">
+            <table class="table table-bordered table-striped">
+                <thead class="table colorc">
                     <tr>
-                        <td>@venta.Nombre</td>
-                        <td>@venta.Descripcion</td>
-                        <td>$@venta.PrecioFinal</td>
-                        <td>@venta.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
-                        <td>@venta.Categoria</td>
-                        <td>@venta.EstadoTransaccion</td>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio Final</th>
+                        <th>Fecha de Cierre</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var venta in Model)
+                    {
+                        <tr>
+                            <td>@venta.Nombre</td>
+                            <td>@venta.Descripcion</td>
+                            <td>$@venta.PrecioFinal</td>
+                            <td>@venta.FechaCierre.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@venta.Categoria</td>
+                            <td>@venta.EstadoTransaccion</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     }
+
     else
     {
         <div class="alert alert-info">
